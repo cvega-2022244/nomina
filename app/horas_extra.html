@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina</title>
+
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
+
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" 0 />
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <!--  BEGIN CUSTOM STYLE FILE  -->
+    <link href="../src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <!--  END CUSTOM STYLE FILE  -->
+
+
+    <!-- DATATBLE -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/table/datatable/datatables.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/table/datatable/dt-global_style.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
+    <!-- END DT -->
+
+    <!-- BASE X -->
+    <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+</head>
+
+<body class="layout-boxed">
+    <!-- BEGIN LOADER -->
+    <div id="load_screen">
+        <div class="loader">
+            <div class="loader-content">
+                <div class="spinner-grow align-self-center"></div>
+            </div>
+        </div>
+    </div>
+    <!--  END LOADER -->
+
+    <!--  BEGIN NAVBAR  -->
+    <div class="header-container container-xxl">
+        <header class="header navbar navbar-expand-sm expand-header">
+
+            <a href="javascript:void(0);" class="sidebarCollapse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-menu">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </a>
+
+            <div class="search-animated toggle-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-search">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <form class="form-inline search-full form-inline search" role="search">
+                    <div class="search-bar">
+                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-x search-close">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </div>
+                </form>
+                <span class="badge badge-secondary">Ctrl + /</span>
+            </div>
+
+            <ul class="navbar-item flex-row ms-lg-auto ms-0">
+
+                <li class="nav-item me-3">
+                    <span class="nav-link text-muted" id="usuario_nombre_navbar"></span>
+                </li>
+
+                <li class="nav-item theme-toggle-item">
+                    <a href="javascript:void(0);" class="nav-link theme-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-moon dark-mode">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-sun light-mode">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </li>
+
+                <li class="nav-item ms-2">
+                    <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Cerrar Sesión
+                    </button>
+                </li>
+
+            </ul>
+        </header>
+    </div>
+    <!--  END NAVBAR  -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+        <!--  BEGIN SIDEBAR  -->
+        <div class="sidebar-wrapper sidebar-theme">
+
+            <nav id="sidebar">
+
+                <div class="navbar-nav theme-brand flex-row  text-center">
+                    <div class="nav-logo">
+                        <div class="nav-item theme-logo">
+                            <a href="./index.html">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-cpu">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="nav-item theme-text">
+                            <a href="./index.html" class="nav-link"> Menú </a>
+                        </div>
+                    </div>
+                    <div class="nav-item sidebar-toggle">
+                        <div class="btn-toggle sidebarCollapse">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-chevrons-left">
+                                <polyline points="11 17 6 12 11 7"></polyline>
+                                <polyline points="18 17 13 12 18 7"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="shadow-bottom"></div>
+                <ul class="list-unstyled menu-categories" id="accordionExample">
+                    <li class="menu active">
+                        <a href="#dashboard" data-bs-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-home">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Nómina</span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-chevron-right">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled show" id="dashboard"
+                            data-bs-parent="#accordionExample">
+                            <li>
+                                <a href="./nomina.html"> Inicio </a>
+                            </li>
+                            <li>
+                                <a href="./seleccion_bonos.html"> Bonos </a>
+                            </li>
+                            <li class="active">
+                                <a href="./horas_extra.html"> Horas Extra </a>
+                            </li>
+                            <li class="menu-item-dias_laborados">
+                                <a href="./dias_laborados.html"> Dias Laborados </a>
+                            </li>
+                            <li class="menu-item-descuentos">
+                                <a href="./descuentos.html"> Descuentos </a>
+                            </li>
+                            <li class="menu-item-isr">
+                                <a href="./isr.html"> ISR </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </nav>
+
+        </div>
+        <!--  END SIDEBAR  -->
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+                <div class="fq-header-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 align-self-center order-md-0 order-1">
+                                <div class="faq-header-content">
+                                    <h1 class="mb-4">Horas Extra</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="middle-content container-xxl p-0">
+                    <div class="p-2">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="text-center mb-0" id="titulo_panel">Mi Panel - Horas Extra</h5>
+                            <a href="./crear-bono-variable.html?tipo=hora_extra" class="btn btn-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Crear Hora Extra
+                            </a>
+                        </div>
+                        
+                        <!-- Pestañas -->
+                        <ul class="nav nav-tabs" id="myTabHoras" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="historial-horas-tab" data-bs-toggle="tab" data-bs-target="#historial-horas" type="button" role="tab" aria-controls="historial-horas" aria-selected="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list">
+                                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                                    </svg>
+                                    Historial Completo
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="pendientes-horas-tab" data-bs-toggle="tab" data-bs-target="#pendientes-horas" type="button" role="tab" aria-controls="pendientes-horas" aria-selected="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12,6 12,12 16,14"></polyline>
+                                    </svg>
+                                    Pendientes de Aprobación
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="autorizadas-horas-tab" data-bs-toggle="tab" data-bs-target="#autorizadas-horas" type="button" role="tab" aria-controls="autorizadas-horas" aria-selected="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22,4 12,14.01 9,11.01"></polyline>
+                                    </svg>
+                                    Autorizadas
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="rechazadas-horas-tab" data-bs-toggle="tab" data-bs-target="#rechazadas-horas" type="button" role="tab" aria-controls="rechazadas-horas" aria-selected="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    </svg>
+                                    Rechazadas
+                                </button>
+                            </li>
+                        </ul>
+                        
+                        <!-- Contenido de las pestañas -->
+                        <div class="tab-content" id="myTabContentHoras">
+                            <!-- Pestaña Historial Completo -->
+                            <div class="tab-pane fade show active" id="historial-horas" role="tabpanel" aria-labelledby="historial-horas-tab">
+                                <div class="statbox widget box box-shadow">
+                                    <div class="widget-content widget-content-area">
+                                        <!-- Filtros -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Buscar</label>
+                                                <input type="text" class="form-control" id="filtro_buscar_horas" placeholder="Empleado, departamento...">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Estado</label>
+                                                <select class="form-control" id="filtro_estado_horas">
+                                                    <option value="">Todos</option>
+                                                    <option value="Pendiente">Pendiente</option>
+                                                    <option value="Autorizada">Autorizada</option>
+                                                    <option value="Rechazada">Rechazada</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Desde</label>
+                                                <input type="date" class="form-control" id="filtro_fecha_desde_horas">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Hasta</label>
+                                                <input type="date" class="form-control" id="filtro_fecha_hasta_horas">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">&nbsp;</label>
+                                                <div>
+                                                    <button type="button" class="btn btn-primary" id="btn_aplicar_filtros_horas">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-filter">
+                                                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                                        </svg>
+                                                        Filtrar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="table-responsive-custom">
+                                        <table id="tabla_historial_horas" class="table dt-table-hover dataTable no-footer" style="width:100%"
+                                            role="grid" aria-describedby="zero-config_info">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting" tabindex="0">ID</th>
+                                                    <th class="sorting" tabindex="0">Fecha Trabajada</th>
+                                                    <th class="sorting" tabindex="0">Fecha Generado</th>
+                                                    <th class="sorting" tabindex="0">Empleado</th>
+                                                    <th class="sorting" tabindex="0">Departamento</th>
+                                                    <th class="sorting" tabindex="0">Horas</th>
+                                                    <th class="sorting" tabindex="0">Jornada</th>
+                                                    <th class="sorting" tabindex="0">Monto</th>
+                                                    <th class="sorting" tabindex="0">Estado</th>
+                                                    <th class="no-content sorting" tabindex="0">Opciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cuerpo_tabla_historial_horas">
+                                                <tr>
+                                                    <td colspan="10" class="text-center">Cargando historial...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pestaña Pendientes -->
+                            <div class="tab-pane fade" id="pendientes-horas" role="tabpanel" aria-labelledby="pendientes-horas-tab">
+                                <div class="statbox widget box box-shadow">
+                                    <div class="widget-content widget-content-area">
+                                        <div class="form-check admin-only-aprobar" id="chx_todos_pendientes_horas">
+                                            <input class="form-check-input" type="checkbox" value="" id="customCheckPendientesHoras" onclick="click_seleccionar_todos_pendientes_horas()">
+                                            <label class="form-check-label" for="customCheckPendientesHoras">Seleccionar todos</label>
+                                        </div>
+                                        <table id="tabla_pendientes_horas" class="table dt-table-hover dataTable no-footer" style="width:100%"
+                                            role="grid" aria-describedby="zero-config_info">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting admin-only-aprobar" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Aprobar</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">ID</th>
+                                                    <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        style="width: 81.4844px;" aria-sort="ascending">Empleado</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Fecha Trabajada</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Horas</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.5781px;">Jornada</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 29.4531px;">Monto</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 29.4531px;">Estado</th>
+                                                    <th class="no-content sorting" tabindex="0" aria-controls="zero-config"
+                                                        rowspan="1" style="width: 49.5625px;">Opciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cuerpo_tabla_pendientes_horas">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pestaña Autorizadas -->
+                            <div class="tab-pane fade" id="autorizadas-horas" role="tabpanel" aria-labelledby="autorizadas-horas-tab">
+                                <div class="statbox widget box box-shadow">
+                                    <div class="widget-content widget-content-area">
+                                        <div class="form-check admin-only-confirmar" id="chx_todos_autorizadas_horas">
+                                            <input class="form-check-input" type="checkbox" value="" id="customCheckAutorizadasHoras" onclick="click_seleccionar_todos_autorizadas_horas()">
+                                            <label class="form-check-label" for="customCheckAutorizadasHoras">Seleccionar todos</label>
+                                        </div>
+                                        <table id="tabla_autorizadas_horas" class="table dt-table-hover dataTable no-footer" style="width:100%"
+                                            role="grid" aria-describedby="zero-config_info">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting admin-only-confirmar" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Confirmar</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">ID</th>
+                                                    <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        style="width: 81.4844px;" aria-sort="ascending">Empleado</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Fecha Trabajada</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Horas</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.5781px;">Jornada</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 29.4531px;">Monto</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 29.4531px;">Estado</th>
+                                                    <th class="no-content sorting" tabindex="0" aria-controls="zero-config"
+                                                        rowspan="1" style="width: 49.5625px;">Opciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cuerpo_tabla_autorizadas_horas">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pestaña Rechazadas -->
+                            <div class="tab-pane fade" id="rechazadas-horas" role="tabpanel" aria-labelledby="rechazadas-horas-tab">
+                                <div class="statbox widget box box-shadow">
+                                    <div class="widget-content widget-content-area">
+                                        <div class="form-check admin-only-reactivar" id="chx_todos_rechazadas_horas">
+                                            <input class="form-check-input" type="checkbox" value="" id="customCheckRechazadasHoras" onclick="click_seleccionar_todos_rechazadas_horas()">
+                                            <label class="form-check-label" for="customCheckRechazadasHoras">Seleccionar todos</label>
+                                        </div>
+                                        <table id="tabla_rechazadas_horas" class="table dt-table-hover dataTable no-footer" style="width:100%"
+                                            role="grid" aria-describedby="zero-config_info">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting admin-only-reactivar" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Reactivar</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">ID</th>
+                                                    <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        style="width: 81.4844px;" aria-sort="ascending">Empleado</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Fecha Trabajada</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.4844px;">Horas</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 30.5781px;">Jornada</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 29.4531px;">Monto</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                        colspan="1" style="width: 29.4531px;">Estado</th>
+                                                    <th class="no-content sorting" tabindex="0" aria-controls="zero-config"
+                                                        rowspan="1" style="width: 49.5625px;">Opciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="cuerpo_tabla_rechazadas_horas">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="detalle" tabindex="-1" role="dialog" aria-labelledby="detalle_label"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="detalle_label">Hora Extra</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <p>Nombre completo del empleado</p>
+                                        <input id="nombre_completo_detalle" type="text" placeholder="Nombre completo..."
+                                            class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <p>Departamento</p>
+                                        <input id="departamento_detalle" type="text" placeholder="Departamento..."
+                                            class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <p>Fecha trabajada</p>
+                                        <input id="fecha_trabajada_detalle" type="date" placeholder="Fecha Trabajada..."
+                                            class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <p>Empresa trabajada</p>
+                                        <input id="empresa_detalle" type="text" placeholder="Empresa..."
+                                            class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p>Horas trabajadas</p>
+                                        <input id="horas_trabajadas_detalle" type="number"
+                                            placeholder="Ingrese la cantidad de horas..." class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p>Jornada trabajada</p>
+                                        <input id="jornada_detalle" type="text" placeholder="Jornada..."
+                                            class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <p>Monto a pagar</p>
+                                        <input id="monto_detalle" type="text" placeholder="El monto es de..."
+                                            class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <p>Observaciones</p>
+                                        <input id="observaciones_detalle" type="text"
+                                            placeholder="Ingrese una observación..." class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-12">
+                                    <p>Solicitado por</p>
+                                    <input type="text" class="form-control" id="solicitador_detalle"
+                                        placeholder="Ingrese la tarea realizada">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-12">
+                                    <p>Fecha Solicitado</p>
+                                    <input type="date" class="form-control flatpickr flatpickr-input"
+                                        id="fecha_solicitado_detalle">
+                                </div>
+                            </div>
+                            <div class="row" id="input_obs_gerencia">
+                                <br>
+                                <div class="col-12">
+                                    <p>Observaciones Gerencia</p>
+                                    <textarea id="obs_gerencia_detalle" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" id="campo_footer">
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--  BEGIN FOOTER  -->
+            <div class="footer-wrapper">
+                <div class="footer-section f-section-1">
+                    <p class="">Departamento de Informática 2022</p>
+                </div>
+                <div class="footer-section f-section-2">
+                    <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                            <rect x="9" y="9" width="6" height="6"></rect>
+                            <line x1="9" y1="1" x2="9" y2="4"></line>
+                            <line x1="15" y1="1" x2="15" y2="4"></line>
+                            <line x1="9" y1="20" x2="9" y2="23"></line>
+                            <line x1="15" y1="20" x2="15" y2="23"></line>
+                            <line x1="20" y1="9" x2="23" y2="9"></line>
+                            <line x1="20" y1="14" x2="23" y2="14"></line>
+                            <line x1="1" y1="9" x2="4" y2="9"></line>
+                            <line x1="1" y1="14" x2="4" y2="14"></line>
+                        </svg>
+                    </p>
+                </div>
+            </div>
+            <!--  END FOOTER  -->
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+
+    <!-- SWEET ALERT -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    <script src="../src/plugins/src/sweetalerts2/custom-sweetalert-safe.js"></script>
+
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
+    <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <!-- <script src="../src/plugins/src/apex/apexcharts.min.js"></script> -->
+    <!-- <script src="../src/assets/js/dashboard/dash_1.js"></script> -->
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <script src="../src/plugins/src/table/datatable/datatables.js"></script>
+    <script src="js/validacion_usuario.js"></script>
+    <script src="js/role_manager.js"></script>
+    <script src="js/horas_extra_completo.js"></script>
+
+    <script>
+        // Función para cerrar sesión
+        function cerrarSesion() {
+            Swal.fire({
+                icon: 'question',
+                title: '¿Cerrar sesión?',
+                text: '¿Estás seguro de que deseas cerrar sesión?',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+        
+        // Protección de página - Admin y Operaciones pueden ver Horas Extra
+        $(document).ready(function() {
+            // Mostrar nombre de usuario en navbar
+            const userData = JSON.parse(sessionStorage.getItem('usuario_principal'));
+            if (userData && userData.nombre) {
+                $('#usuario_nombre_navbar').text('Hola, ' + userData.nombre);
+            }
+            
+            const userRole = sessionStorage.getItem('rol') || '';
+            
+            if (userRole !== 'admin' && userRole !== 'operaciones') {
+                // Redirigir con mensaje de acceso denegado
+                sessionStorage.setItem('access_denied', 'No tienes permiso para acceder a Horas Extra');
+                window.location.href = 'nomina.html';
+                return;
+            }
+            
+            // Admin tiene acceso completo
+            if (userRole === 'admin') {
+                $('.role-restricted').removeClass('role-restricted');
+            }
+            
+            // Operaciones: ocultar items del menú y columnas de aprobación
+            if (userRole === 'operaciones') {
+                $('.menu-item-dias_laborados').hide();
+                $('.menu-item-descuentos').hide();
+                $('.menu-item-isr').hide();
+                // Cambiar enlace del Menú para que vaya a nomina.html en vez de index.html
+                $('a.nav-link:contains("Menú")').attr('href', './nomina.html');
+                $('a[href="./index.html"]').attr('href', './nomina.html');
+                
+                // Ocultar columnas de aprobar/confirmar/reactivar para operaciones
+                $('.admin-only-aprobar').hide();
+                $('.admin-only-confirmar').hide();
+                $('.admin-only-reactivar').hide();
+            }
+            
+            console.log('✅ Acceso permitido a Horas Extra - ' + userRole);
+        });
+    </script></body>
+
+</html>

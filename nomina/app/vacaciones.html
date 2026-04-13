@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina</title>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css" />
+
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+    <link rel="stylesheet" type="text/css" href="../src/assets/css/light/elements/alert.css">
+    <link rel="stylesheet" type="text/css" href="../src/assets/css/dark/elements/alert.css">
+    <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+
+    <!-- DATATBLE -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/table/datatable/datatables.css" />
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/table/datatable/dt-global_style.css" />
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css" />
+    <!-- END DT -->
+    <!-- SELECT BOX -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/vanillaSelectBox/custom-vanillaSelectBox.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/vanillaSelectBox/custom-vanillaSelectBox.css">
+    <!-- END -->
+
+    <!-- BASE X -->
+    <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/components/font-icons.css" rel="stylesheet" type="text/css" />
+
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+
+    <!-- MODAL -->
+    <link href="../src/plugins/src/animate/animate.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="layout-boxed">
+    <!-- BEGIN LOADER -->
+    <div id="load_screen">
+        <div class="loader">
+            <div class="loader-content">
+                <div class="spinner-grow align-self-center"></div>
+            </div>
+        </div>
+    </div>
+    <!--  END LOADER -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div>
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div class="main-content">
+            <div class="fq-header-wrapper">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 align-self-center order-md-0 order-1">
+                            <div class="faq-header-content">
+                                <h1 class="mb-4">Vacaciones</h1>
+                                <p class="mt-4 mb-0">
+                                    Vacaciones del empleado
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fq-content">
+                <div class="container">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                        Agregar vacaciones
+                    </button>
+                    <br><br><br>
+                    <div class="h5" id="dias_vacaciones"></div>
+                    <div class="table-responsive">
+                        <table class="table dt-table-hover dataTable no-footer" id="tabla">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" scope="col">ID boleta</th>
+                                    <th class="text-center" scope="col">correlativo</th>
+                                    <th class="text-center" scope="col">Fecha solicitud</th>
+                                    <th class="text-center" scope="col">Total días</th>
+                                    <th class="text-center" scope="col">Fecha Autorizado</th>
+                                    <th class="text-center" scope="col">Creador</th>
+                                    <th class="text-center" scope="col">Departamento</th>
+                                    <th class="text-center" scope="col">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listado_empleados"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  END CONTENT AREA  -->
+        <!-- Modal -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <!-- Contenido del modal -->
+                <div class="modal-header">
+                  <h4 class="modal-title">Agregar vacaciones</h4>
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <h6>Observaciones</h6>
+                            <input id="observacion" type="text" placeholder="Observaciones" class="form-control">
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select1">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_1" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select2">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_2" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select3">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_3" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select4">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_4" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select5">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_5" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select6">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_6" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select7">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_7" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select8">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_8" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select9">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_9" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-7">
+                                <h6>Tipo de vacación</h6>
+                                <select id="select10">
+                                    <option value="0" selected>Seleccionar...</option>
+                                    <option value="Todo el dia.">Todo el dia.</option>
+                                    <option value="Medio día (por la tarde).">Medio día (por la tarde).</option>
+                                    <option value="Medio día (por la mañana).">Medio día (por la mañana).</option>
+                                </select>
+                            </div>
+                            <div class="col-5">
+                                <h6>Fecha de falta</h6>
+                                <input id="fecha_10" type="date" placeholder="Fecha" class="form-control" disabled>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  <button type="button" class="btn btn-primary" onclick="guardar_vacaciones()">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>          
+    </div>
+
+    <!-- SWEET ALERT -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    <script src="../src/plugins/src/sweetalerts2/custom-sweetalert.js"></script>
+
+    <!-- SELECT BOX -->
+    <script src="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.js"></script>
+    <script src="../src/plugins/src/vanillaSelectBox/custom-vanillaSelectBox.js"></script>
+
+
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
+    <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <script src="../src/plugins/src/table/datatable/datatables.js"></script>
+    <script src="js/validacion_usuario.js"></script>
+    <script src="js/vacaciones.js"></script>
+</body>
+
+</html>

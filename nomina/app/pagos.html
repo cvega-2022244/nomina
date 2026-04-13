@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina</title>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/table/datatable/datatables.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/table/datatable/dt-global_style.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
+
+    <link rel="stylesheet" type="text/css" href="../src/assets/css/light/elements/alert.css">
+    <link rel="stylesheet" type="text/css" href="../src/assets/css/dark/elements/alert.css">
+    <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <link href="../src/plugins/src/animate/animate.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL PLUGINS -->
+
+    <!-- SWEET ALERT -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <!--  END -->
+
+    <!-- SELECT BOX -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/vanillaSelectBox/custom-vanillaSelectBox.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/vanillaSelectBox/custom-vanillaSelectBox.css">
+    <!-- END -->
+
+    <!--  BEGIN CUSTOM STYLE FILE  -->
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/light/components/carousel.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/light/components/tabs.css" rel="stylesheet" type="text/css">
+
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/components/carousel.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/components/tabs.css" rel="stylesheet" type="text/css">
+    <!--  END CUSTOM STYLE FILE  -->
+
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+
+</head>
+
+<body class="layout-boxed">
+
+    <!-- BEGIN LOADER -->
+    <div id="load_screen">
+        <div class="loader">
+            <div class="loader-content">
+                <div class="spinner-grow align-self-center"></div>
+            </div>
+        </div>
+    </div>
+    <!--  END LOADER -->
+
+    <!--  BEGIN NAVBAR  -->
+    <div class="header-container container-xxl">
+        <header class="header navbar navbar-expand-sm expand-header">
+
+            <a href="javascript:void(0);" class="sidebarCollapse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-menu">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </a>
+
+            <div class="search-animated toggle-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-search">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <form class="form-inline search-full form-inline search" role="search">
+                    <div class="search-bar">
+                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-x search-close">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </div>
+                </form>
+                <span class="badge badge-secondary">Ctrl + /</span>
+            </div>
+
+            <ul class="navbar-item flex-row ms-lg-auto ms-0">
+
+                <li class="nav-item theme-toggle-item">
+                    <a href="javascript:void(0);" class="nav-link theme-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-moon dark-mode">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-sun light-mode">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </li>
+
+
+            </ul>
+        </header>
+    </div>
+    <!--  END NAVBAR  -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container " id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+        <!--  BEGIN SIDEBAR  -->
+        <div class="sidebar-wrapper sidebar-theme">
+
+            <nav id="sidebar">
+
+                <div class="navbar-nav theme-brand flex-row  text-center">
+                    <div class="nav-logo">
+                        <div class="nav-item theme-logo">
+                            <a href="./index.html">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-cpu">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="nav-item theme-text">
+                            <a href="./index.html" class="nav-link"> Menú </a>
+                        </div>
+                    </div>
+                    <div class="nav-item sidebar-toggle">
+                        <div class="btn-toggle sidebarCollapse">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-chevrons-left">
+                                <polyline points="11 17 6 12 11 7"></polyline>
+                                <polyline points="18 17 13 12 18 7"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="shadow-bottom"></div>
+                <ul class="list-unstyled menu-categories" id="accordionExample">
+                    <li class="menu active">
+                        <a href="#dashboard" data-bs-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-home">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Nómina</span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-chevron-right">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled show" id="dashboard"
+                            data-bs-parent="#accordionExample">
+                            <li>
+                                <a href="./nomina.html"> Inicio </a>
+                            </li>
+                            <li>
+                                <a href="./seleccion_bonos.html"> Bonos </a>
+                            </li>
+                            <li>
+                                <a href="./horas_extra.html"> Horas Extra </a>
+                            </li>
+                            <li>
+                                <a href="./dias_laborados.html"> Dias Laborados </a>
+                            </li>
+                            <li>
+                                <a href="./descuentos.html"> Descuentos </a>
+                            </li>
+                            <li class="active">
+                                <a href="./pagos.html"> Pagos </a>
+                            </li>
+                            <li>
+                                <a href="./isr.html"> ISR </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </nav>
+
+        </div>
+        <!--  END SIDEBAR  -->
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+                <div class="middle-content container-xxl p-0">
+                    <div class="p-2">
+                        <br>
+                        <h5 class="text-center">Listado Pagos</h5>
+                        <br>
+                        <div class="row">
+                            <div class="col-2">
+                                <select name="" id="slc_centro_costo" onchange="seleccionar_centro_costo()"></select>
+                            </div>
+                            <div class="col-2">
+                                <select name="" id="slc_departamento" onchange="seleccionar_departamento()"></select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="statbox widget box box-shadow">
+                            <div class="widget-content widget-content-area">
+                                <table id="tabla" class="table dt-table-hover dataTable no-footer" style="width:100%"
+                                    role="grid" aria-describedby="zero-config_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Correlativo</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Nombre Empleado</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Empresa</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Área</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Departamento</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Puesto</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Dias Laborados</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Salario Ordinario</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Bonificacion Incentivo</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Bonificacion Decreto 37-2001</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Bonos</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Total Devengado</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Horas Simples</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Valor Horas Simples</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Horas Dobles</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Valor Horas Dobles</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Otros Ingresos</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Salario Total</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                IGSS</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                ISR</th>
+                                            <th class="sorting_asc" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                style="width: 81.4844px;" aria-sort="ascending">
+                                                Cafeteria</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Celular</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Uniforme</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Calzado</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Equipo</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Producto</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Bancos</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Otros</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Judiciales</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Seguro</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Parqueo</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Boleta De Ornato</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Otros Egresos</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Total Egresos</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Liquido A Recibir</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Liquido Primer Quincena</th>
+                                            <th class="sorting" tabindex="0" aria-controls="zero-config" rowspan="1"
+                                                colspan="1" style="width: 29.4531px;">
+                                                Liquido Segunda Quincena</th>
+                                            <th class="no-content sorting" tabindex="0" aria-controls="zero-config"
+                                                rowspan="1" style="width: 49.5625px;">Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cuerpo_tabla">
+                                    </tbody>
+                                </table>
+                                <br>
+                                <button class="btn btn-success" onclick="plantilla_proquima()">Plantilla
+                                    Proquima</button>
+                                <button class="btn btn-success" onclick="plantilla_unhesa()">Plantilla Unhesa</button>
+                                <button class="btn btn-success" onclick="reporte_cheques()">Reporte Cheques</button>
+                                <button class="btn btn-success" onclick="verificador_pago()">Verificador De
+                                    Pago</button>
+                            </div>
+                            <br>
+                            <br>
+                            <button class="btn btn-danger" onclick="verificador_cierre_nomina()"
+                                style="text-align: right;">Cerrar Nómina</button>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="detalle" tabindex="-1" role="dialog" aria-labelledby="detalle_label"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="detalle_label">Detalle de pago</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h5>Información del empleado</h5>
+                                <hr>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <p>Nombre completo del empleado</p>
+                                            <input id="nombre" type="text" placeholder="Nombre completo..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <p>Empresa a pagar</p>
+                                            <input id="empresa" type="text" placeholder="Empresa..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Departamento</p>
+                                            <input id="departamento" type="text" placeholder="Departamento..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Centro de costo</p>
+                                            <input id="centro_costo" type="text" placeholder="Centro de costo..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Condición Laboral</p>
+                                            <input id="condicion" type="text" placeholder="Centro de costo..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <br>
+                                <h5>Ingresos</h5>
+                                <hr>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Sueldo</p>
+                                            <input id="sueldo_total" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Otros ingresos</p>
+                                            <input id="otros_ingresos" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p style="color:white;">Total</p>
+                                            <input id="total_ingresos" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Bonificación incentivo</p>
+                                            <input id="bonificacion" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Bonificación Decreto 37-2001</p>
+                                            <input id="bon_dec_tot" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p style="color:white;">Total</p>
+                                            <input id="bon_tot" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Horas de días</p>
+                                            <input id="horas_dia" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Horas de noche</p>
+                                            <input id="horas_noche" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p style="color:white;">Total</p>
+                                            <input id="horas_tot" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p style="color:white;">Bonos</p>
+                                            <input id="bonos_tot" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p style="color:white;">Vacaciones</p>
+                                            <input id="vacaciones" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p style="color:white;">INGRESOS TOTALES</p>
+                                            <input id="ingresos_totales" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <br>
+                                <h5>Egresos</h5>
+                                <hr>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>IGSS</p>
+                                            <input id="igss_quincenal" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>ISR</p>
+                                            <input id="isr_quincenal" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Boleta de ornato</p>
+                                            <input id="ornato" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Cafeteria</p>
+                                            <input id="cafeteria" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Celular</p>
+                                            <input id="celular" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Uniforme</p>
+                                            <input id="uniforme" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Calzado</p>
+                                            <input id="calzado" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Equipo</p>
+                                            <input id="equipo" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Producto</p>
+                                            <input id="producto" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <p>Bancos</p>
+                                            <input id="bancos" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <p>Otros</p>
+                                            <input id="otros" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <p>Judiciales</p>
+                                            <input id="judiciales" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <p>Seguro</p>
+                                            <input id="seguro" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <p>Parqueo</p>
+                                            <input id="parqueo" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <p>Otros Egresos</p>
+                                            <input id="otros_egresos" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <p style="color: white">EGRESOS TOTALES</p>
+                                            <input id="total_egresos" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <hr>
+                                <h5>Reporte final</h5>
+                                <br>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p style="color: white;">LIQUIDO</p>
+                                            <input id="liquido_detalle" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Banco</p>
+                                            <input id="banco_detalle" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <p>Método de pago</p>
+                                            <input id="metodo_detalle" type="text" placeholder="..."
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row text-center" id="detalle_cuenta">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <p>No. Cuenta</p>
+                                            <input id="no_cuenta" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <p>Tipo de Cuenta</p>
+                                            <input id="tipo_cuenta" type="text" placeholder="..." class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer" id="campo_footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modal_verificador_pago" tabindex="-1" role="dialog"
+                    aria-labelledby="modal_verificador_pagoLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modal_verificador_pagoLabel">
+                                    Verificador De Pago
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <p>Lote A Eliminar</p>
+                                            <input id="lote_eliminar" class="form-control flatpickr flatpickr-input"
+                                                type="text" placeholder="Ingrese el lote a eliminar">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <p>Lote Correcto</p>
+                                            <input id="lote_correcto" type="text" placeholder="Ingrese el lote correcto"
+                                                class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <p>Fecha Transferencia</p>
+                                            <input id="fecha_verificador" class="form-control flatpickr flatpickr-input"
+                                                type="date">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <p>Hora Transferencia</p>
+                                            <input id="hora_verificador" class="form-control flatpickr flatpickr-input"
+                                                type="time">
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal"
+                                    onclick="limpiar_inputs_verificador()">Cerrar</button>
+                                <button type="button" class="btn btn-success" id="btn_guardar_lote"
+                                    onclick="validar_verificador()">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--  BEGIN FOOTER  -->
+            <div class="footer-wrapper">
+                <div class="footer-section f-section-1">
+                    <p class="">Departamento de Informática 2022</p>
+                </div>
+                <div class="footer-section f-section-2">
+                    <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                            <rect x="9" y="9" width="6" height="6"></rect>
+                            <line x1="9" y1="1" x2="9" y2="4"></line>
+                            <line x1="15" y1="1" x2="15" y2="4"></line>
+                            <line x1="9" y1="20" x2="9" y2="23"></line>
+                            <line x1="15" y1="20" x2="15" y2="23"></line>
+                            <line x1="20" y1="9" x2="23" y2="9"></line>
+                            <line x1="20" y1="14" x2="23" y2="14"></line>
+                            <line x1="1" y1="9" x2="4" y2="9"></line>
+                            <line x1="1" y1="14" x2="4" y2="14"></line>
+                        </svg>
+                    </p>
+                </div>
+            </div>
+            <!--  END FOOTER  -->
+        </div>
+        <!--  END CONTENT AREA  -->
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/plugins/src/global/vendors.min.js"></script>
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
+    <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <script src="../src/assets/js/custom.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+    <!-- SWEET ALERT -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    <script src="../src/plugins/src/sweetalerts2/custom-sweetalert.js"></script>
+    <!-- SELECT BOX -->
+    <script src="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.js"></script>
+    <script src="../src/plugins/src/vanillaSelectBox/custom-vanillaSelectBox.js"></script>
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="../src/plugins/src/table/datatable/datatables.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <script src="./js/pagos.js"></script>
+</body>
+
+</html>

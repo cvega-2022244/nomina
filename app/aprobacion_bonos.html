@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina - Aprobación de Bonos</title>
+
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    
+    <!--  BEGIN CUSTOM STYLE FILE  -->
+    <link href="../src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/elements/infobox.css" rel="stylesheet" type="text/css" />
+
+    <!-- DATATABLE -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/table/datatable/datatables.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/table/datatable/dt-global_style.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
+
+    <!-- BASE X -->
+    <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    
+    <style>
+        .badge-pendiente {
+            background-color: #e2a03f;
+            color: white;
+        }
+        .badge-bono {
+            background-color: #2196f3;
+            color: white;
+        }
+        .badge-hora-extra {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        .table-responsive-custom {
+            overflow-x: auto;
+        }
+        .btn-aprobar {
+            background-color: #00ab55;
+            border-color: #00ab55;
+            color: white;
+        }
+        .btn-aprobar:hover {
+            background-color: #009344;
+            border-color: #009344;
+            color: white;
+        }
+        .btn-rechazar {
+            background-color: #e7515a;
+            border-color: #e7515a;
+            color: white;
+        }
+        .btn-rechazar:hover {
+            background-color: #c9414a;
+            border-color: #c9414a;
+            color: white;
+        }
+        .stats-card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stats-card .card-body h3 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body class="layout-boxed">
+    <!-- BEGIN LOADER -->
+    <div id="load_screen">
+        <div class="loader">
+            <div class="loader-content">
+                <div class="spinner-grow align-self-center"></div>
+            </div>
+        </div>
+    </div>
+    <!--  END LOADER -->
+
+    <!--  BEGIN NAVBAR  -->
+    <div class="header-container container-xxl">
+        <header class="header navbar navbar-expand-sm expand-header">
+
+            <a href="javascript:void(0);" class="sidebarCollapse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-menu">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </a>
+
+            <ul class="navbar-item flex-row ms-lg-auto ms-0">
+
+                <li class="nav-item me-3">
+                    <span class="nav-link text-muted" id="usuario_nombre_navbar"></span>
+                </li>
+
+                <li class="nav-item theme-toggle-item">
+                    <a href="javascript:void(0);" class="nav-link theme-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-moon dark-mode">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-sun light-mode">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </li>
+
+                <li class="nav-item ms-2">
+                    <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Cerrar Sesión
+                    </button>
+                </li>
+
+            </ul>
+        </header>
+    </div>
+    <!--  END NAVBAR  -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+        <!--  BEGIN SIDEBAR  -->
+        <div class="sidebar-wrapper sidebar-theme">
+
+            <nav id="sidebar">
+
+                <div class="navbar-nav theme-brand flex-row  text-center">
+                    <div class="nav-logo">
+                        <div class="nav-item theme-logo">
+                            <a href="./index.html">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-cpu">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="nav-item theme-text">
+                            <a href="./index.html" class="nav-link"> Menú </a>
+                        </div>
+                    </div>
+                    <div class="nav-item sidebar-toggle">
+                        <div class="btn-toggle sidebarCollapse">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-chevrons-left">
+                                <polyline points="11 17 6 12 11 7"></polyline>
+                                <polyline points="18 17 13 12 18 7"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="shadow-bottom"></div>
+                <ul class="list-unstyled menu-categories" id="accordionExample">
+                    <li class="menu">
+                        <a href="./index.html">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-home">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Inicio</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="menu active">
+                        <a href="./aprobacion_bonos.html">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-check-square">
+                                    <polyline points="9 11 12 14 22 4"></polyline>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                                <span>Aprobación Bonos</span>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+            </nav>
+
+        </div>
+        <!--  END SIDEBAR  -->
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+                <div class="fq-header-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 align-self-center order-md-0 order-1">
+                                <div class="faq-header-content">
+                                    <h1 class="mb-4">Aprobación de Bonos y Horas Extra</h1>
+                                    <p class="text-muted">Revise y apruebe las solicitudes pendientes de operaciones</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="middle-content container-xxl p-0">
+                    <div class="p-2">
+
+                        <!-- Estadísticas -->
+                        <div class="row mb-4" id="resumen_estadisticas">
+                            <div class="col-md-4">
+                                <div class="card stats-card bg-warning text-white">
+                                    <div class="card-body text-center">
+                                        <h6>Pendientes</h6>
+                                        <h3 id="stat_pendientes">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card stats-card bg-info text-white">
+                                    <div class="card-body text-center">
+                                        <h6>Bonos</h6>
+                                        <h3 id="stat_bonos">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card stats-card bg-secondary text-white">
+                                    <div class="card-body text-center">
+                                        <h6>Horas Extra</h6>
+                                        <h3 id="stat_horas_extra">0</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Acciones masivas -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">Solicitudes Pendientes de Aprobación</h5>
+                            <div>
+                                <button class="btn btn-aprobar me-2" onclick="aprobarSeleccionados()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                    Aprobar Seleccionados
+                                </button>
+                                <button class="btn btn-rechazar" onclick="rechazarSeleccionados()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                                    </svg>
+                                    Rechazar Seleccionados
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de pendientes -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive-custom">
+                                    <table id="tabla_pendientes" class="table table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" id="select_all" onclick="toggleSelectAll()"></th>
+                                                <th>Tipo</th>
+                                                <th>Empleado</th>
+                                                <th>Departamento</th>
+                                                <th>Empresa</th>
+                                                <th>Fecha Trabajado</th>
+                                                <th>Horas</th>
+                                                <th>Jornada</th>
+                                                <th>Monto</th>
+                                                <th>Tarea/Descripción</th>
+                                                <th>Solicitante</th>
+                                                <th>Fecha Solicitud</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody_pendientes">
+                                            <!-- Se llena dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-wrapper">
+                <div class="footer-section f-section-1">
+                    <p class="">Copyright © <span class="dynamic-year">2024</span> <a target="_blank" href="#">Sistema de Nómina</a></p>
+                </div>
+            </div>
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
+    <script src="../src/plugins/src/waves/waves.min.js"></script>
+    <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+    <!-- SWEET ALERTS -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    
+    <!-- DATATABLE -->
+    <script src="../src/plugins/src/table/datatable/datatables.js"></script>
+
+    <script>
+        // Variables globales
+        let bonosPendientes = [];
+
+        $(document).ready(function() {
+            // Verificar sesión
+            const usuarioData = sessionStorage.getItem('usuario_principal');
+            const rol = sessionStorage.getItem('rol');
+            
+            if (!usuarioData) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Solo admin puede ver esta página
+            if (rol !== 'admin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Acceso denegado',
+                    text: 'Solo administradores pueden acceder a esta página'
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+                return;
+            }
+            
+            // Mostrar nombre en navbar
+            try {
+                const usuario = JSON.parse(usuarioData);
+                if (usuario.primer_nombre) {
+                    $('#usuario_nombre_navbar').text(usuario.primer_nombre + ' ' + (usuario.primer_apellido || ''));
+                } else if (usuario.nombre) {
+                    $('#usuario_nombre_navbar').text(usuario.nombre);
+                }
+            } catch(e) {
+                console.error('Error parsing usuario:', e);
+            }
+            
+            // Cargar datos
+            cargarBonosPendientes();
+        });
+
+        function cargarBonosPendientes() {
+            $.ajax({
+                url: 'servidor-bonos.php?quest=bonos_pendientes_aprobacion',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    bonosPendientes = data;
+                    renderizarTabla(data);
+                    actualizarEstadisticas(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error al cargar bonos:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudieron cargar las solicitudes pendientes'
+                    });
+                }
+            });
+        }
+
+        function renderizarTabla(data) {
+            const tbody = $('#tbody_pendientes');
+            tbody.empty();
+            
+            if (data.length === 0) {
+                tbody.html('<tr><td colspan="13" class="text-center text-muted">No hay solicitudes pendientes de aprobación</td></tr>');
+                return;
+            }
+            
+            data.forEach(function(item) {
+                const tipoBadge = item.tipo_registro === 'bono' 
+                    ? '<span class="badge badge-bono">Bono</span>' 
+                    : '<span class="badge badge-hora-extra">Hora Extra</span>';
+                
+                const fechaTrabajado = item.fecha_trabajado ? new Date(item.fecha_trabajado).toLocaleDateString('es-GT') : '-';
+                const fechaGenerado = item.fecha_generado ? new Date(item.fecha_generado).toLocaleDateString('es-GT') : '-';
+                
+                const row = `
+                    <tr>
+                        <td><input type="checkbox" class="check-item" value="${item.id}"></td>
+                        <td>${tipoBadge}</td>
+                        <td>${item.empleado || '-'}</td>
+                        <td>${item.departamento || '-'}</td>
+                        <td>${item.empresa || '-'}</td>
+                        <td>${fechaTrabajado}</td>
+                        <td>${item.horas > 0 ? item.horas : '-'}</td>
+                        <td>${item.tipo_jornada || '-'}</td>
+                        <td>Q${parseFloat(item.monto).toFixed(2)}</td>
+                        <td>${item.tarea || '-'}</td>
+                        <td>${item.solicitante || '-'}</td>
+                        <td>${fechaGenerado}</td>
+                        <td>
+                            <button class="btn btn-sm btn-aprobar me-1" onclick="aprobarBono(${item.id})" title="Aprobar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </button>
+                            <button class="btn btn-sm btn-rechazar" onclick="rechazarBono(${item.id})" title="Rechazar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.append(row);
+            });
+        }
+
+        function actualizarEstadisticas(data) {
+            const total = data.length;
+            const bonos = data.filter(item => item.tipo_registro === 'bono').length;
+            const horasExtra = data.filter(item => item.tipo_registro === 'hora_extra').length;
+            
+            $('#stat_pendientes').text(total);
+            $('#stat_bonos').text(bonos);
+            $('#stat_horas_extra').text(horasExtra);
+        }
+
+        function toggleSelectAll() {
+            const selectAll = $('#select_all').prop('checked');
+            $('.check-item').prop('checked', selectAll);
+        }
+
+        function getSelectedIds() {
+            const ids = [];
+            $('.check-item:checked').each(function() {
+                ids.push($(this).val());
+            });
+            return ids;
+        }
+
+        function aprobarBono(id) {
+            Swal.fire({
+                title: '¿Aprobar esta solicitud?',
+                text: 'El monto será agregado a la nómina del empleado',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00ab55',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, aprobar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'servidor-bonos.php',
+                        type: 'POST',
+                        data: {
+                            quest: 'aprobar_bono',
+                            id_comision: id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Aprobado',
+                                    text: response.success,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                cargarBonosPendientes();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.error || 'No se pudo aprobar'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function rechazarBono(id) {
+            Swal.fire({
+                title: '¿Rechazar esta solicitud?',
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e7515a',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, rechazar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'servidor-bonos.php',
+                        type: 'POST',
+                        data: {
+                            quest: 'rechazar_bono',
+                            id_comision: id
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Rechazado',
+                                    text: response.success,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                cargarBonosPendientes();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.error || 'No se pudo rechazar'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error de conexión'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function aprobarSeleccionados() {
+            const ids = getSelectedIds();
+            if (ids.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin selección',
+                    text: 'Seleccione al menos una solicitud para aprobar'
+                });
+                return;
+            }
+            
+            Swal.fire({
+                title: `¿Aprobar ${ids.length} solicitud(es)?`,
+                text: 'Los montos serán agregados a las nóminas correspondientes',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00ab55',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, aprobar todos',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    procesarMultiples(ids, 'aprobar_bono', 0, ids.length);
+                }
+            });
+        }
+
+        function rechazarSeleccionados() {
+            const ids = getSelectedIds();
+            if (ids.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin selección',
+                    text: 'Seleccione al menos una solicitud para rechazar'
+                });
+                return;
+            }
+            
+            Swal.fire({
+                title: `¿Rechazar ${ids.length} solicitud(es)?`,
+                text: 'Esta acción no se puede deshacer',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e7515a',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, rechazar todos',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    procesarMultiples(ids, 'rechazar_bono', 0, ids.length);
+                }
+            });
+        }
+
+        function procesarMultiples(ids, action, index, total) {
+            if (index >= ids.length) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Completado',
+                    text: `Se procesaron ${total} solicitudes correctamente`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                cargarBonosPendientes();
+                return;
+            }
+            
+            $.ajax({
+                url: 'servidor-bonos.php',
+                type: 'POST',
+                data: {
+                    quest: action,
+                    id_comision: ids[index]
+                },
+                dataType: 'json',
+                success: function() {
+                    procesarMultiples(ids, action, index + 1, total);
+                },
+                error: function() {
+                    procesarMultiples(ids, action, index + 1, total);
+                }
+            });
+        }
+
+        function cerrarSesion() {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+    </script>
+
+</body>
+</html>

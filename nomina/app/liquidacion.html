@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina</title>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css" />
+
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+    <link rel="stylesheet" type="text/css" href="../src/assets/css/light/elements/alert.css">
+    <link rel="stylesheet" type="text/css" href="../src/assets/css/dark/elements/alert.css">
+    <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+
+    <!-- DATATBLE -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/table/datatable/datatables.css" />
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/table/datatable/dt-global_style.css" />
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css" />
+    <!-- END DT -->
+    <!-- SELECT BOX -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/vanillaSelectBox/custom-vanillaSelectBox.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/vanillaSelectBox/custom-vanillaSelectBox.css">
+    <!-- END -->
+
+    <!-- BASE X -->
+    <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/components/font-icons.css" rel="stylesheet" type="text/css" />
+
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+
+    <!-- MODAL -->
+    <link href="../src/plugins/src/animate/animate.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="layout-boxed">
+    <!-- BEGIN LOADER -->
+    <div id="load_screen">
+        <div class="loader">
+            <div class="loader-content">
+                <div class="spinner-grow align-self-center"></div>
+            </div>
+        </div>
+    </div>
+    <!--  END LOADER -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div>
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div class="main-content">
+            <div class="fq-header-wrapper">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-12 align-self-center order-md-0 order-1">
+                            <div class="faq-header-content">
+                                <h1 class="mb-4">Cálculo liquidación laboral</h1>
+                                <p class="mt-4 mb-0" id="empresa">Empresa</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fq-content">
+                <div class="container">
+                    <hr>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Nombre:</strong></h6></div>
+                        <div class="col-3"><h6 id="nombre"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Fecha ingreso:</strong></h6></div>
+                        <div class="col-3 align-left"><h6 id="fecha_ingreso"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Fecha egreso:</strong></h6></div>
+                        <div class="col-3"><h6 id="fecha_egreso"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Sueldo base:</strong></h6></div>
+                        <div class="col-3"><h6 id="sueldo_ordinario"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Total días trabajados:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_trabajados"></h6></div>
+                    </div>
+                    <hr>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h5><strong>Indemnización:</strong></h5></div>
+                        <div class="col-3"><h5 id="indemnizacion"></h5></div>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6>Periodo:</h6></div>
+                        <div class="col-3"></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>1/12 aguinaldo:</strong></h6></div>
+                        <div class="col-3"><h6 id="inde_aguinaldo"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>1/12 bono:</strong></h6></div>
+                        <div class="col-3"><h6 id="inde_bono"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Sueldo base:</strong></h6></div>
+                        <div class="col-3"><h6 id="sueldo_base"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Base para cálculo:</strong></h6></div>
+                        <div class="col-3"><h6 id="base_calculo"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Días:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_calculo"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Porcentaje:</strong></h6></div>
+                        <div class="col-3"><h6 id="porcentaje"></h6></div>
+                    </div>
+                    <br><hr>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h5><strong>Aguinaldo:</strong></h5></div>
+                        <div class="col-3"><h5 id="aguinaldo"></h5></div>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6>Periodo:</h6></div>
+                        <div class="col-3"></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Días incluidos para cálculo:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_aguinaldo"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"></div>
+                        <div class="col-3"><h6 id="inicio_aguinaldo"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"></div>
+                        <div class="col-3"><h6 id="final_aguinaldo"></h6></div>
+                    </div>
+                    <br><hr>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h5><strong>Bono 14:</strong></h5></div>
+                        <div class="col-3"><h5 id="bono"></h5></div>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6>Periodo:</h6></div>
+                        <div class="col-3"></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Días incluidos para cálculo:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_bono"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"></div>
+                        <div class="col-3"><h6 id="inicio_bono"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"></div>
+                        <div class="col-3"><h6 id="final_bono"></h6></div>
+                    </div>
+                    <br><hr>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h5><strong>Vacaciones:</strong></h5></div>
+                        <div class="col-3"><h5 id="monto_vacaciones"></h5></div>
+                    </div>
+                    <br>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6>Periodo:</h6></div>
+                        <div class="col-3"></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Fecha ingreso:</strong></h6></div>
+                        <div class="col-3 align-left"><h6 id="inicio_vac"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Fecha egreso:</strong></h6></div>
+                        <div class="col-3"><h6 id="final_vac"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Días trabajados:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_trab_vac"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Días vacaciones:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_vacaciones"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Días gozados:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_gozados"></h6></div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h6><strong>Días a pagar:</strong></h6></div>
+                        <div class="col-3"><h6 id="dias_sobrantes"></h6></div>
+                    </div>
+                    <br><hr><br>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h5><strong>TOTAL:</strong></h5></div>
+                        <div class="col-3"><h5 id="total_ingresos"></h5></div>
+                    </div>
+                    <br><hr><br>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h5><strong>Descuentos:</strong></h5></div>
+                        <div class="col-3"><h5 id="monto_descuentos"></h5></div>
+                    </div>
+                    <div id="descuentos_variables"></div>
+                    <div id="descuentos_fijo"></div>
+                    <br><hr><br>
+                    <div class="row justify-content-center">
+                        <div class="col-2"><h5><strong>Total a recibir:</strong></h5></div>
+                        <div class="col-3"><h5 id="total"></h5></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  END CONTENT AREA  -->
+    </div>
+
+    <!-- SWEET ALERT -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    <script src="../src/plugins/src/sweetalerts2/custom-sweetalert.js"></script>
+
+    <!-- SELECT BOX -->
+    <script src="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.js"></script>
+    <script src="../src/plugins/src/vanillaSelectBox/custom-vanillaSelectBox.js"></script>
+
+
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
+    <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <script src="../src/plugins/src/table/datatable/datatables.js"></script>
+    <script src="js/validacion_usuario.js"></script>
+    <script src="js/liquidacion.js"></script>
+</body>
+
+</html>

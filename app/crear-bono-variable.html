@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina</title>
+
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
+
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <!--  BEGIN CUSTOM STYLE FILE  -->
+    <link href="../src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <!--  END CUSTOM STYLE FILE  -->
+
+    <!-- BASE X -->
+    <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    
+    <style>
+        .role-restricted {
+            display: none !important;
+        }
+        .menu-item-restricted {
+            display: none !important;
+        }
+        
+        /* Estilos para el modal de tipo */
+        #modalTipoRegistro .modal-content {
+            background-color: #0e1726;
+            border: 1px solid #191e3a;
+        }
+        #modalTipoRegistro .modal-header {
+            border-bottom: 1px solid #191e3a;
+        }
+        #modalTipoRegistro .modal-title {
+            color: #e0e6ed;
+        }
+        
+        /* Cards de selección tipo */
+        .tipo-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .tipo-card:hover {
+            transform: translateY(-5px);
+            border-color: #4361ee;
+        }
+        .tipo-card.selected {
+            border-color: #4361ee;
+            box-shadow: 0 0 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        /* Cards del modal mismo tamaño */
+        #modalTipoRegistro .modal-dialog {
+            max-width: 1100px;
+        }
+        #modalTipoRegistro .modal-content {
+            padding: 30px;
+        }
+        #modalTipoRegistro .modal-header {
+            padding-bottom: 30px;
+        }
+        #modalTipoRegistro .modal-title {
+            font-size: 1.6rem;
+        }
+        #modalTipoRegistro .modal-body {
+            padding: 25px 40px 40px;
+        }
+        #modalTipoRegistro .info-box-3 {
+            min-height: 180px;
+            min-width: 380px;
+            display: flex;
+            align-items: center;
+            padding: 35px 60px 35px 40px;
+            margin: 0;
+        }
+        #modalTipoRegistro .info-box-3-icon {
+            width: 100px;
+            height: 100px;
+            min-width: 100px;
+            margin-right: 30px;
+        }
+        #modalTipoRegistro .info-box-3-icon svg {
+            width: 48px;
+            height: 48px;
+        }
+        #modalTipoRegistro .info-box-3-content-wrapper {
+            flex: 1;
+            min-width: 150px;
+        }
+        #modalTipoRegistro .info-box-3-title {
+            margin-bottom: 12px;
+            font-size: 1.8rem;
+            white-space: nowrap;
+        }
+        #modalTipoRegistro .info-box-3-content {
+            font-size: 16px;
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+        
+        /* Tarjetas de selección simétricas */
+        .tipo-selector-card {
+            cursor: pointer;
+            max-width: 100%;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .tipo-selector-card:hover {
+            transform: translateY(-3px);
+            border-color: #4361ee;
+        }
+        
+        /* Lista de empleados con checkboxes */
+        #lista_empleados {
+            max-height: 280px;
+            overflow-y: auto;
+            background: #0e1726;
+            border: 1px solid #191e3a;
+            border-radius: 6px;
+            padding: 8px;
+        }
+        #lista_empleados::-webkit-scrollbar {
+            width: 6px;
+        }
+        #lista_empleados::-webkit-scrollbar-track {
+            background: #0e1726;
+        }
+        #lista_empleados::-webkit-scrollbar-thumb {
+            background: #4361ee;
+            border-radius: 3px;
+        }
+        
+        .empleado-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            background: #1b2e4b;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        .empleado-item:hover {
+            background: #253b5c;
+            border-color: #4361ee;
+        }
+        .empleado-item.selected {
+            background: rgba(67, 97, 238, 0.15);
+            border-color: #4361ee;
+        }
+        .empleado-item input[type="checkbox"],
+        .empleado-item input[type="radio"] {
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            margin-right: 12px;
+            accent-color: #4361ee;
+            cursor: pointer;
+        }
+        .empleado-item label {
+            margin: 0;
+            cursor: pointer;
+            color: #e0e6ed;
+            font-size: 14px;
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        /* Buscador de empleados */
+        #buscar_empleado {
+            background: #1b2e4b;
+            border: 1px solid #3b3f5c;
+            color: #e0e6ed;
+        }
+        #buscar_empleado:focus {
+            border-color: #4361ee;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+        #buscar_empleado::placeholder {
+            color: #888ea8;
+        }
+        
+        /* Contador de empleados */
+        .empleados-contador {
+            font-size: 13px;
+            color: #888ea8;
+            margin-top: 8px;
+        }
+        .empleados-contador strong {
+            color: #4361ee;
+        }
+        
+        /* Checkbox autorizado cenas */
+        .autorizado-cenas-wrapper {
+            background: #1b2e4b;
+            border: 1px solid #3b3f5c;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 10px;
+        }
+        .autorizado-cenas-wrapper .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            accent-color: #00ab55;
+        }
+        .autorizado-cenas-wrapper label {
+            color: #e0e6ed;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body class="layout-boxed">
+    <!-- BEGIN LOADER -->
+    <div id="load_screen">
+        <div class="loader">
+            <div class="loader-content">
+                <div class="spinner-grow align-self-center"></div>
+            </div>
+        </div>
+    </div>
+    <!--  END LOADER  -->
+
+    <!--  BEGIN NAVBAR  -->
+    <div class="header-container container-xxl">
+        <header class="header navbar navbar-expand-sm expand-header">
+
+            <a href="javascript:void(0);" class="sidebarCollapse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-menu">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </a>
+
+            <div class="search-animated toggle-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-search">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <form class="form-inline search-full form-inline search" role="search">
+                    <div class="search-bar">
+                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-x search-close">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </div>
+                </form>
+                <span class="badge badge-secondary">Ctrl + /</span>
+            </div>
+
+            <ul class="navbar-item flex-row ms-lg-auto ms-0">
+
+                <li class="nav-item me-3">
+                    <span class="nav-link text-muted" id="usuario_nombre_navbar"></span>
+                </li>
+
+                <li class="nav-item theme-toggle-item">
+                    <a href="javascript:void(0);" class="nav-link theme-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-moon dark-mode">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-sun light-mode">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </li>
+
+                <li class="nav-item ms-2">
+                    <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Cerrar Sesión
+                    </button>
+                </li>
+
+            </ul>
+        </header>
+    </div>
+    <!--  END NAVBAR  -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="main-container" id="container">
+
+        <div class="overlay"></div>
+        <div class="search-overlay"></div>
+
+        <!--  BEGIN SIDEBAR  -->
+        <div class="sidebar-wrapper sidebar-theme">
+
+            <nav id="sidebar">
+
+                <div class="navbar-nav theme-brand flex-row  text-center">
+                    <div class="nav-logo">
+                        <div class="nav-item theme-logo">
+                            <a href="./index.html">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-cpu">
+                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                                    <rect x="9" y="9" width="6" height="6"></rect>
+                                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="nav-item theme-text">
+                            <a href="./index.html" class="nav-link"> Menú </a>
+                        </div>
+                    </div>
+                    <div class="nav-item sidebar-toggle">
+                        <div class="btn-toggle sidebarCollapse">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="feather feather-chevrons-left">
+                                <polyline points="11 17 6 12 11 7"></polyline>
+                                <polyline points="18 17 13 12 18 7"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="shadow-bottom"></div>
+                <ul class="list-unstyled menu-categories" id="accordionExample">
+                    <li class="menu active">
+                        <a href="#dashboard" data-bs-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-home">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Nómina</span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="feather feather-chevron-right">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled show" id="dashboard"
+                            data-bs-parent="#accordionExample">
+                            <li>
+                                <a href="./nomina.html"> Inicio </a>
+                            </li>
+                            <li class="active menu-bonos">
+                                <a href="./seleccion_bonos.html"> Bonos </a>
+                            </li>
+                            <li class="menu-horas-extra">
+                                <a href="./horas_extra.html"> Horas Extra </a>
+                            </li>
+                            <li class="menu-item-dias_laborados">
+                                <a href="./dias_laborados.html"> Dias Laborados </a>
+                            </li>
+                            <li class="menu-item-descuentos">
+                                <a href="./descuentos.html"> Descuentos </a>
+                            </li>
+                            <li class="menu-item-isr">
+                                <a href="./isr.html"> ISR </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </nav>
+
+        </div>
+        <!--  END SIDEBAR  -->
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+            <div class="layout-px-spacing">
+
+                <div class="fq-header-wrapper" id="comisiones">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 align-self-center order-md-0 order-1">
+                                <div class="faq-header-content">
+                                    <h1 class="mb-4">Comisiones</h1>
+                                    <p class="mt-4 mb-0">Sistema de solicitud de Comisiones</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="middle-content container-xxl p-0">
+                    <div class="p-2">
+                        <div class="statbox widget box box-shadow">
+                            <div class="widget-content widget-content-area">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-secondary" id="badge_tipo_registro" style="display:none">Tipo: <span id="badge_tipo_texto"></span></span>
+                                    <button type="button" class="btn btn-outline-primary" id="btn_cambiar_tipo">Cambiar tipo</button>
+                                </div>
+                                
+                                <!-- Formulario Bono (oculto inicialmente) -->
+                                <div id="formulario_bono" style="display:none">
+                                    <form id="form_bono">
+                                        <input type="hidden" id="tipo_registro_bono" name="tipo_registro" value="bono">
+                                    <!-- Empleado (selección única) -->
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Empleado</label>
+                                        <input type="text" class="form-control mb-2" id="buscar_empleado" placeholder="Buscar empleado...">
+                                        <div id="lista_empleados" style="max-height: 280px; overflow-y: auto; border: 1px solid #191e3a; border-radius: 6px; padding: 10px;">
+                                            <p class="text-muted text-center">Cargando empleados...</p>
+                                        </div>
+                                        <small class="form-text text-muted">Seleccionado: <strong id="contador_empleados">0</strong> <span style="color: #888;">(La empresa se selecciona automáticamente)</span></small>
+                                    </div>
+
+                                    <!-- Autorizado cenas -->
+                                    <div class="autorizado-cenas-wrapper mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="autorizado_cenas" name="autorizado_cenas" value="1">
+                                            <label class="form-check-label" for="autorizado_cenas">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                                                    <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                                    <line x1="6" y1="1" x2="6" y2="4"></line>
+                                                    <line x1="10" y1="1" x2="10" y2="4"></line>
+                                                    <line x1="14" y1="1" x2="14" y2="4"></line>
+                                                </svg>
+                                                Autorizado cenas
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Primera fila de 3 columnas -->
+                                    <div class="row">
+                                        <!-- Fecha Trabajada -->
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label for="fecha_trabajado" class="form-label">Fecha Trabajada</label>
+                                                <input type="date" class="form-control" id="fecha_trabajado" name="fecha_trabajado" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Empresa Trabajada -->
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label for="empresa_trabajo" class="form-label">Empresa Trabajada</label>
+                                                <select class="form-control" id="empresa_trabajo" name="empresa_trabajo" required>
+                                                    <option value="">Empresa...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+               <!-- Jornada -->
+               <div class="col-md-4">
+                   <div class="form-group mb-3">
+                       <label for="tipo_jornada" class="form-label">Jornada</label>
+                       <select class="form-control" id="tipo_jornada" name="tipo_jornada" required>
+                           <option value="">Jornada...</option>
+                           <option value="1">Diurna</option>
+                           <option value="2">Nocturna</option>
+                       </select>
+                   </div>
+               </div>
+                                    </div>
+
+                                    <!-- Segunda fila de 2 columnas -->
+                                    <div class="row">
+                                        <!-- Tipo de Bono -->
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label for="area_trabajo" class="form-label">Tipo de Bono</label>
+                                                <select class="form-control" id="area_trabajo" name="area_trabajo" required>
+                                                    <option value="">Seleccionar...</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+               <!-- Monto -->
+               <div class="col-md-6">
+                   <div class="form-group mb-3">
+                       <label for="monto" class="form-label">Monto</label>
+                       <input type="number" class="form-control" id="monto" name="monto" 
+                              placeholder="Monto del bono" step="0.01" min="0" required>
+                       <small class="form-text text-muted">Valores por defecto: Planta = 225, Logística = 240</small>
+                   </div>
+               </div>
+                                    </div>
+
+                                    <!-- Puesto de Trabajo -->
+                                    <div class="form-group mb-3">
+                                        <label for="puesto_trabajo" class="form-label">Puesto de Trabajo</label>
+                                        <input type="text" class="form-control" id="puesto_trabajo" name="puesto_trabajo" 
+                                               placeholder="Ingrese el puesto de trabajo" required>
+                                    </div>
+
+                                    <!-- Descripción de la Tarea -->
+                                    <div class="form-group mb-3">
+                                        <label for="tarea" class="form-label">Descripción de la Tarea</label>
+                                        <textarea class="form-control" id="tarea" name="tarea" rows="3" 
+                                                  placeholder="Describa la tarea realizada..." required></textarea>
+                                    </div>
+
+           <!-- Solicitante (automático del usuario logueado) -->
+           <div class="form-group mb-3">
+               <label for="nombre_solicitante" class="form-label">Solicitante</label>
+               <input type="text" class="form-control" id="nombre_solicitante" readonly>
+               <input type="hidden" id="id_solicitante" name="id_solicitante">
+           </div>
+           
+
+                                        <!-- Botón Guardar Bono -->
+                                        <div class="text-end">
+                                            <button type="button" class="btn btn-success" id="btn_guardar_bono">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save">
+                                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                                    <polyline points="17,21 17,13 7,13 7,21"></polyline>
+                                                    <polyline points="7,3 7,8 15,8"></polyline>
+                                                </svg>
+                                                Guardar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Formulario Hora Extra (oculto inicialmente) -->
+                                <div id="formulario_hora_extra" style="display:none">
+                                    <form id="form_hora_extra">
+                                        <input type="hidden" id="tipo_registro_hora" name="tipo_registro" value="hora_extra">
+                                            
+                                            <!-- Empleado (selección única) -->
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">Empleado</label>
+                                                <input type="text" class="form-control mb-2" id="buscar_empleado_hora" placeholder="Buscar empleado...">
+                                                <div id="lista_empleados_hora" style="max-height: 280px; overflow-y: auto; border: 1px solid #191e3a; border-radius: 6px; padding: 10px;">
+                                                    <p class="text-muted text-center">Cargando empleados...</p>
+                                                </div>
+                                                <small class="form-text text-muted">Seleccionado: <strong id="contador_empleados_hora">0</strong> <span style="color: #888;">(La empresa se selecciona automáticamente)</span></small>
+                                            </div>
+
+                                            <!-- Autorizado cenas -->
+                                            <div class="autorizado-cenas-wrapper mb-3">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="autorizado_cenas_hora" name="autorizado_cenas" value="1">
+                                                    <label class="form-check-label" for="autorizado_cenas_hora">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
+                                                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                                                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                                                            <line x1="6" y1="1" x2="6" y2="4"></line>
+                                                            <line x1="10" y1="1" x2="10" y2="4"></line>
+                                                            <line x1="14" y1="1" x2="14" y2="4"></line>
+                                                        </svg>
+                                                        Autorizado cenas
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Primera fila de 3 columnas -->
+                                            <div class="row">
+                                                <!-- Fecha Trabajada -->
+                                                <div class="col-md-4">
+                                                    <div class="form-group mb-3">
+                                                        <label for="fecha_trabajado_hora" class="form-label">Fecha Trabajada</label>
+                                                        <input type="date" class="form-control" id="fecha_trabajado_hora" name="fecha_trabajado" required>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Empresa Trabajada -->
+                                                <div class="col-md-4">
+                                                    <div class="form-group mb-3">
+                                                        <label for="empresa_trabajo_hora" class="form-label">Empresa Trabajada</label>
+                                                        <select class="form-control" id="empresa_trabajo_hora" name="empresa_trabajo" required>
+                                                            <option value="">Empresa...</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Jornada -->
+                                                <div class="col-md-4">
+                                                    <div class="form-group mb-3">
+                                                        <label for="tipo_jornada_hora" class="form-label">Jornada</label>
+                                                        <select class="form-control" id="tipo_jornada_hora" name="tipo_jornada" required>
+                                                            <option value="">Jornada...</option>
+                                                            <option value="1">Diurna</option>
+                                                            <option value="2">Nocturna</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Horas Trabajadas -->
+                                            <div class="form-group mb-3">
+                                                <label for="horas_hora" class="form-label">Horas Trabajadas</label>
+                                                <input type="number" class="form-control" id="horas_hora" name="horas" 
+                                                       placeholder="Ingrese la cantidad de horas..." step="0.01" min="0" required>
+                                            </div>
+
+                                            <!-- Observaciones -->
+                                            <div class="form-group mb-3">
+                                                <label for="observaciones_hora" class="form-label">Observaciones</label>
+                                                <textarea class="form-control" id="observaciones_hora" name="observaciones" rows="3" 
+                                                          placeholder="Ingrese una observación del trabajo realizado..." required></textarea>
+                                            </div>
+
+                                            <!-- Monto a pagar -->
+                                            <div class="form-group mb-3">
+                                                <label for="monto_hora" class="form-label">Monto a pagar</label>
+                                                <input type="number" class="form-control" id="monto_hora" name="monto" 
+                                                       placeholder="El monto se calculará automáticamente..." step="0.01" min="0" readonly>
+                                                <small class="form-text text-muted">
+                                                    <strong>El monto se calcula automáticamente:</strong><br>
+                                                    • Valor hora = Sueldo ÷ 30 días ÷ 8 horas<br>
+                                                    • Factor: Diurna = 1.5x, Nocturna = 2x<br>
+                                                    • Monto = Valor hora × Factor × Horas trabajadas
+                                                </small>
+                                            </div>
+
+                                        <!-- Botón Guardar Hora Extra -->
+                                        <div class="text-end">
+                                            <button type="button" class="btn btn-success" id="btn_guardar_hora">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save">
+                                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                                    <polyline points="17,21 17,13 7,13 7,21"></polyline>
+                                                    <polyline points="7,3 7,8 15,8"></polyline>
+                                                </svg>
+                                                Guardar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--  BEGIN FOOTER  -->
+            <div class="footer-wrapper">
+                <div class="footer-section f-section-1">
+                    <p class="">Departamento de Informática 2022</p>
+                </div>
+                <div class="footer-section f-section-2">
+                    <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                            <rect x="9" y="9" width="6" height="6"></rect>
+                            <line x1="9" y1="1" x2="9" y2="4"></line>
+                            <line x1="15" y1="1" x2="15" y2="4"></line>
+                            <line x1="9" y1="20" x2="9" y2="23"></line>
+                            <line x1="15" y1="20" x2="15" y2="23"></line>
+                            <line x1="20" y1="9" x2="23" y2="9"></line>
+                            <line x1="20" y1="14" x2="23" y2="14"></line>
+                            <line x1="1" y1="9" x2="4" y2="9"></line>
+                            <line x1="1" y1="14" x2="4" y2="14"></line>
+                        </svg>
+                    </p>
+                </div>
+            </div>
+            <!--  END FOOTER  -->
+        </div>
+        <!--  END CONTENT AREA  -->
+
+    </div>
+
+    <!-- SWEET ALERT -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    <script src="../src/plugins/src/sweetalerts2/custom-sweetalert-safe.js"></script>
+
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
+    <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <script src="js/validacion_usuario.js"></script>
+    <script src="js/role_manager.js"></script>
+    <script src="js/crear-bono-variable.js"></script>
+    <script>
+        // Verificar permisos para esta página - Todos pueden crear bonos
+        $(document).ready(function() {
+            // No hay restricciones - todos los usuarios pueden acceder
+            
+            // Si hay hash #comisiones, hacer scroll a esa sección
+            if (window.location.hash === '#comisiones') {
+                setTimeout(function() {
+                    document.getElementById('comisiones').scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 500);
+            }
+        });
+    </script>
+
+    <script>
+        // Función para cerrar sesión
+        function cerrarSesion() {
+            Swal.fire({
+                icon: 'question',
+                title: '¿Cerrar sesión?',
+                text: '¿Estás seguro de que deseas cerrar sesión?',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+        
+        // Protección de página según rol
+        $(document).ready(function() {
+            // Mostrar nombre de usuario en navbar
+            const userData = JSON.parse(sessionStorage.getItem('usuario_principal'));
+            if (userData && userData.nombre) {
+                $('#usuario_nombre_navbar').text('Hola, ' + userData.nombre);
+            }
+            
+            const userRole = sessionStorage.getItem('rol') || '';
+            
+            // Admin tiene acceso completo
+            if (userRole === 'admin') {
+                $('.role-restricted').removeClass('role-restricted');
+            }
+            
+            // Operaciones: ocultar items del menú que no le corresponden
+            if (userRole === 'operaciones') {
+                $('.menu-bonos').hide();
+                $('.menu-horas-extra').hide();
+                $('.menu-item-dias_laborados').hide();
+                $('.menu-item-descuentos').hide();
+                $('.menu-item-isr').hide();
+                // Ocultar el enlace "Menú" del header para operaciones
+                $('a.nav-link[href="./index.html"]').hide();
+            }
+            
+            console.log('✅ Acceso - ' + userRole);
+        });
+    </script>
+
+
+
+    <!-- Modal: Selección de tipo (Bono | Hora Extra) -->
+    <div class="modal fade" id="modalTipoRegistro" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header border-0 justify-content-center">
+                    <h4 class="modal-title">¿Qué deseas registrar?</h4>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="d-flex justify-content-center" style="gap: 40px;">
+                        <!-- Opción Bono -->
+                        <div>
+                            <div class="info-box-3 tipo-selector-card" data-select-tipo="bono">
+                                <div class="info-box-3-icon" style="background:#00ab55; box-shadow: 0 0 30px 0 #06081885 inset, 0 15px 45px 0 #00ab5538;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title">Bono</h3>
+                                    <div class="info-box-3-content">Bono variable</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Opción Hora Extra -->
+                        <div>
+                            <div class="info-box-3 tipo-selector-card" data-select-tipo="hora_extra">
+                                <div class="info-box-3-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title">Hora Extra</h3>
+                                    <div class="info-box-3-content">Horas extras</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </body>
+
+</html>

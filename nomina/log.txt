@@ -1,0 +1,26 @@
+-------------------------------------------------------------------------------------------------- Miercoles 24/01/2024
+CAMBIO ASTERISCO CAMPOS OBLIGATORIOS
+
+- Se cambio el asterisco que identifica los campos obligatorios al momento de ingresar, ver o editar un empleado, por la palabra OBLIGATORIO.
+
+-------------------------------------------------------------------------------------------------- Martes 06/02/2024
+
+TABLAS
+
+- Se agrego la opción de exportar a excel todas las tablas de bono y aguinaldo en nómina general.
+
+-------------------------------------------------------------------------------------------------- Viernes 09/02/2024
+
+DPI NÓMINA
+
+- Al momento de que la persona vaya a crear un nuevo empleado, que el programa vaya a ver si ya existe algún empleado con ese número de DPI, sí existe, que muestre un mensaje que indique ello.
+
+FORMULARIO LIMPIO
+
+- Al momento de entrar  al formulario para crear un nuevo empleado, todos los campos deben estar en blanco, listos para que se ingrese la información.
+
+-------------------------------------------------------------------------------------------------- Viernes 09/02/2024
+
+VALIDACIÓN EMPLEADO EXISTENTE
+
+- Se modifico la validación del empleado existente ya que mostraba el mensaje de empleado existente aun cuando era un empleado nuevo.

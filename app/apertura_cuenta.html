@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apertura de cuenta</title>
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <!-- SWEET ALERT -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <!--  END -->
+</head>
+
+<body id="bodys">
+    <br>
+    <div style="height: 130px;"></div>
+    <p style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px;'
+        id="fecha_actual"></p>
+    <div style="height: 20px;"></div>
+    <div style="line-height: 8px;">
+        <strong>
+            <p style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px;'>
+                Señores
+            </p>
+        </strong>
+        <strong>
+            <p style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px;'
+                id="nombre_banco"></p>
+        </strong>
+        <p style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px;'>Presente
+        </p>
+    </div>
+    <div style="height: 40px;"></div>
+    <p style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px;'>Estimado Jefe
+        de Agencia:</p>
+    <div style="height: 10px;"></div>
+    <p
+        style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px; line-height: 23px;'>
+        Por este
+        medio solicito la apertura de cuenta <strong id="nombre_empleado"></strong> quien se identifica con No. de DPI,
+        <strong id="dpi"></strong> Extendida por el RENAP, quien inició a laborar en la presente fecha.
+    </p>
+    <div style="height: 8px;"></div>
+    <p
+        style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px; line-height: 23px;'>
+        Agradezco
+        cosiderar que el uso de dicha cuenta es para realizar pagos de planilla provenientes de la cuenta
+        <strong>000-018447-3 de UNION HERMANOS, S.A.</strong> Por esta razón agradecemos la apertura con valor Q.0.00.
+    </p>
+    <div style="height: 8px;"></div>
+    <p
+        style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px; line-height: 23px;'>
+        De antemano agradezco su apoyo, sin otro en particular.
+    </p>
+    <div style="height: 8px;"></div>
+    <p
+        style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px; line-height: 23px;'>
+        Cordialmente,
+    </p>
+    <div style="height: 80px;"></div>
+    <div style="line-height: 8px;">
+        <p style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px;'
+            id="representante">
+        </p>
+        <p style='margin-left: 80px; margin-right: 80px; font-family: "Arial", Times, serif; font-size: 16px;'>Recursos
+            Humanos
+        </p>
+    </div>
+    <!-- SWEET ALERT -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    <script src="../src/plugins/src/sweetalerts2/custom-sweetalert-safe.js"></script>
+    <script src="js/aperturar_cuenta.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina</title>
+
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!--  BEGIN CUSTOM STYLE FILE  -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.css">
+
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/vanillaSelectBox/custom-vanillaSelectBox.css">
+
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/vanillaSelectBox/custom-vanillaSelectBox.css">
+    <!--  END CUSTOM STYLE FILE  -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
+
+    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+
+    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
+    <!--  BEGIN CUSTOM STYLE FILE  -->
+    <link href="../src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/elements/infobox.css" rel="stylesheet" type="text/css" />
+    <!--  END CUSTOM STYLE FILE  -->
+
+    <!-- BASE X -->
+    <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    
+    <!-- CSS para ocultar secciones por defecto hasta que se determine el rol -->
+    <style>
+        .role-restricted {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="layout-boxed">
+    <!-- BEGIN LOADER -->
+    <div id="load_screen">
+        <div class="loader">
+            <div class="loader-content">
+                <div class="spinner-grow align-self-center"></div>
+            </div>
+        </div>
+    </div>
+    <!--  END LOADER -->
+
+    <!--  BEGIN MAIN CONTAINER  -->
+    <div class="" id="container">
+
+        <!-- BEGIN HEADER WITH LOGOUT -->
+        <div class="d-flex justify-content-end align-items-center p-3" style="position: absolute; top: 10px; right: 20px; z-index: 1000;">
+            <span class="me-3 text-white" id="usuario_nombre_header" style="font-size: 14px;"></span>
+            <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Cerrar Sesión
+            </button>
+        </div>
+        <!-- END HEADER WITH LOGOUT -->
+
+        <!--  BEGIN CONTENT AREA  -->
+        <div style="justify-content: center; align-items: center; text-align: center; padding-left: 2%;">
+            <div>
+                <div class="fq-header-wrapper">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 align-self-center order-md-0 order-1">
+                                <div class="faq-header-content">
+                                    <h1 class="mb-4" id="nombre_lote">Nómina</h1>
+                                    <p class="mt-4 mb-0">Sistema de Nómina</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="middle-content container-xxl p-0">
+                    <div class="p-2">
+                        <div class="row layout-top-spacing">
+                            <div class="info-box-3 col datos-maestros role-restricted" style="cursor: pointer" onclick="datos_maestros()">
+                                <div class="info-box-3-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-file-text">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title">Datos Maestros</h3>
+                                    <div class="info-box-3-content">Administración de los datos maestros: Empresas,
+                                        Empleados, Áreas, etc.</div>
+                                </div>
+                            </div>
+                            <div class="info-box-3 col administrar-nomina role-restricted" style="cursor: pointer" id="btn_nomina">
+                                <div class="info-box-3-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-dollar-sign">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title" id="titulo_nomina">Nómina</h3>
+                                    <div class="info-box-3-content">Administración de la nómina: Bonos, Horas Extra,
+                                        Dias Laborados, etc.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="info-box-3 col historial role-restricted" style="cursor: pointer" onclick="historial()">
+                                <div class="info-box-3-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-clock">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title">Historial</h3>
+                                    <div class="info-box-3-content">Historial de cambios y actualizaciones de la nómina
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row layout-top-spacing">
+                            <div class="info-box-3 col-4 bono-14 role-restricted" style="cursor: pointer" data-toggle="modal"
+                                data-target="#modal_empresa" onclick="variable(0)">
+                                <div class="info-box-3-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-calendar">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title">Bono 14</h3>
+                                    <div class="info-box-3-content">Bono que recibiran los empleados por su labor a lo
+                                        largo de 12 meses</div>
+                                </div>
+                            </div>
+                            <div class="info-box-3 col-4 aguinaldo role-restricted" style="cursor: pointer" data-toggle="modal"
+                                data-target="#modal_empresa" onclick="variable(1)">
+                                <div class="info-box-3-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-calendar">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title">Aguinaldo</h3>
+                                    <div class="info-box-3-content">Bono que recibiran los empleados por su labor a lo
+                                        largo de 12 meses</div>
+                                </div>
+                            </div>
+                            <div class="info-box-3 col-4 crear-bono-variable" style="cursor: pointer" onclick="window.location.href='./crear-bono-variable.html'">
+                                <div class="info-box-3-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="feather feather-plus-circle">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                                    </svg>
+                                </div>
+                                <div class="info-box-3-content-wrapper">
+                                    <h3 class="info-box-3-title">Crear Bono Variable</h3>
+                                    <div class="info-box-3-content">Crear comisiones y bonos variables para empleados</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--  BEGIN FOOTER  -->
+            <div class="footer-wrapper" style="padding-top: 14%;">
+                <div class="footer-section f-section-1">
+                    <p class="">Departamento de Informática 2022</p>
+                </div>
+                <div class="footer-section f-section-2">
+                    <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu">
+                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                            <rect x="9" y="9" width="6" height="6"></rect>
+                            <line x1="9" y1="1" x2="9" y2="4"></line>
+                            <line x1="15" y1="1" x2="15" y2="4"></line>
+                            <line x1="9" y1="20" x2="9" y2="23"></line>
+                            <line x1="15" y1="20" x2="15" y2="23"></line>
+                            <line x1="20" y1="9" x2="23" y2="9"></line>
+                            <line x1="20" y1="14" x2="23" y2="14"></line>
+                            <line x1="1" y1="9" x2="4" y2="9"></line>
+                            <line x1="1" y1="14" x2="4" y2="14"></line>
+                        </svg></p>
+                </div>
+            </div>
+            <!--  END FOOTER  -->
+        </div>
+        <!--  END CONTENT AREA  -->
+
+        <div class="modal fade" id="modal_empresa" tabindex="-1" role="dialog" aria-labelledby="modal_empresa"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal_empresaLabel">
+                            Empresa Nómina
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="info-box-3-content" style="text-align: center;">Seleccione la empresa en la cual
+                            desee trabajar:</div>
+                        <br>
+                        <div style="text-align: center;">
+                            <select name="" id="slc_empresa" onchange="seleccionar_empresa()"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_fact">
+                            Facturación e Intercompany
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success" id="btn_modal" onclick="iniciar()">Continuar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal_fact" tabindex="-1" role="dialog" aria-labelledby="modal_factLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal_factLabel">
+                            Facturación e Intercompany
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="info-box-3-content" style="text-align: center;">Seleccione el año del intercompany</div>
+                        <br>
+                        <input type="number" min="0" class="form-control" placeholder="Ingrese año..." id="anio_bono">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success" id="btn_modal"
+                            onclick="facturacion_intercompany()">Continuar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SWEET ALERT -->
+    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+    <script src="../src/plugins/src/sweetalerts2/custom-sweetalert-safe.js"></script>
+
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
+    <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+    <!-- SELECT BOX - Deshabilitado para evitar errores -->
+    <!-- 
+    <!-- <script src="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.js"></script>
+    <script src="../src/plugins/src/vanillaSelectBox/custom-vanillaSelectBox.js"></script> -->
+    -->
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <script src="js/validacion_usuario.js"></script>
+    <script src="js/role_manager.js"></script>
+    <script src="js/index.js"></script>
+    
+    <script>
+        // Función para cerrar sesión
+        function cerrarSesion() {
+            Swal.fire({
+                icon: 'question',
+                title: '¿Cerrar sesión?',
+                text: '¿Estás seguro de que deseas cerrar sesión?',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+        
+        // Sistema de restricciones por rol para el menú principal
+        $(document).ready(function() {
+            // Mostrar nombre de usuario en el header
+            const userData = JSON.parse(sessionStorage.getItem('usuario_principal'));
+            if (userData && userData.nombre) {
+                $('#usuario_nombre_header').text('Hola, ' + userData.nombre);
+            }
+            
+            // Verificar si hay un mensaje de acceso denegado pendiente
+            const accessDeniedMsg = sessionStorage.getItem('access_denied');
+            if (accessDeniedMsg) {
+                sessionStorage.removeItem('access_denied');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Acceso Denegado',
+                    text: accessDeniedMsg,
+                    confirmButtonText: 'Entendido'
+                });
+            }
+            
+            const rol = roleManager.getCurrentRole();
+            console.log('📋 Aplicando restricciones en index.html para rol:', rol);
+            
+            if (rol === 'admin') {
+                // Admin: mostrar todo
+                console.log('✅ Admin - Acceso completo');
+            } else if (rol === 'operaciones') {
+                // Operaciones: solo nómina (bonos y horas extra) y crear bono variable
+                console.log('🔧 Operaciones - Solo nómina y crear bono variable');
+                $('.datos-maestros').hide();
+                $('.historial').hide();
+                $('.bono-14').hide();
+                $('.aguinaldo').hide();
+                
+                // Mover crear-bono-variable a la primera fila y reorganizar
+                var crearBono = $('.crear-bono-variable').detach();
+                var primeraFila = $('.administrar-nomina').parent();
+                primeraFila.append(crearBono);
+                
+                // Centrar la fila y agregar espacio
+                primeraFila.addClass('justify-content-center');
+                
+                // Ajustar tamaños para que estén lado a lado con espacio
+                $('.administrar-nomina').removeClass('col').addClass('col-md-4 col-lg-4 mx-2');
+                $('.crear-bono-variable').removeClass('col-4').addClass('col-md-4 col-lg-4 mx-2');
+                
+                // Ocultar la segunda fila vacía
+                $('.bono-14').parent().hide();
+            } else if (rol === 'capturador') {
+                // Capturador: permisos a definir después
+                console.log('📝 Capturador - Permisos pendientes de configurar');
+                // Por ahora ocultar todo excepto lo que se defina
+                $('.datos-maestros').hide();
+                $('.administrar-nomina').hide();
+                $('.historial').hide();
+                $('.bono-14').hide();
+                $('.aguinaldo').hide();
+                $('.crear-bono-variable').hide();
+            }
+        });
+    </script>
+</body>
+
+</html>

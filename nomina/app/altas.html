@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- AJAX -->
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <title>Altas y bajas</title>
+    <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css" />
+</head>
+
+<body>
+    <div id="listado_empleados"></div>
+    <style>
+        #listado_empleados {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /* Opcional para centrar verticalmente en toda la altura visible */
+            text-align: center;
+            flex-direction: column;
+            /* Para centrar el contenido en columna */
+        }
+
+        /* El resto de tus estilos aquí */
+
+
+        .table {
+            border: 1px solid #ccc;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .table th {
+            background-color: rgba(0, 0, 0, 0.05);
+            font-weight: bold;
+            padding: 10px;
+        }
+
+        .table td,
+        .table th {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        #titulo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+    <script src="./js/altas.js"></script>
+</body>
+
+<!-- SWEET ALERT -->
+<script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
+<script src="../src/plugins/src/sweetalerts2/custom-sweetalert.js"></script>
+
+</html>

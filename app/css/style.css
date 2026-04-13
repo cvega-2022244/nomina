@@ -1,0 +1,164 @@
+@page {
+    size:  356mm 216mm;;
+    /* Tamaño oficio en centímetros */
+    margin: 0;
+    /* Sin márgenes para aprovechar todo el espacio */
+}
+
+.fila {
+    display: flex;
+    /* Utiliza flexbox para organizar las columnas en una fila */
+    justify-content: flex-start;
+    /* Espacio entre las columnas */
+    margin: 0;
+    /* Sin márgenes para aprovechar todo el espacio de la página */
+}
+
+.columna {
+    width: 100px; /* Todas las columnas tendrán el mismo ancho inicialmente */
+    padding: 10px;
+    border: 1px solid #000;
+}
+
+.columna:nth-child(1) {
+    width: 61px;
+}
+
+.columna:nth-child(2) {
+    width: 79px; 
+}
+
+.columna:nth-child(3) {
+    width: 115px; 
+}
+
+.columna:nth-child(4) {
+    width: 81px; 
+}
+
+.columna:nth-child(5) {
+    width: 89px; 
+}
+
+.columna:nth-child(6) {
+    width: 95px; 
+}
+
+.columna:nth-child(7) {
+    width: 84px; 
+}
+
+
+.columna:nth-child(8) {
+    width: 95px; 
+}
+
+.columna:nth-child(9) {
+    width: 91px; 
+}
+
+.columna:nth-child(10) {
+    width: 90px; 
+}
+
+.columna:nth-child(11) {
+    width: 82px; 
+}
+
+.columna:nth-child(12) {
+    width: 62px; 
+}
+
+.columna:nth-child(13) {
+    width: 100px; 
+}
+
+.columna:nth-child(14) {
+    width: 140px; 
+}
+
+.columna:nth-child(15) {
+    width: 111px; 
+}
+
+.columna:nth-child(16) {
+    width: 110px; 
+}
+
+.columna:nth-child(17) {
+    width: 95px; 
+}
+
+.columna:nth-child(18) {
+    width: 82px; 
+}
+
+.columna:nth-child(19) {
+    width: 120px; 
+}
+
+.columna_2 {
+    width: 100px; /* Todas las columnas tendrán el mismo ancho inicialmente */
+    padding: 10px;
+    border: 0px solid #000;
+}
+
+.columna_2:nth-child(1) {
+    width: 400px;
+    text-align: center;
+}
+
+.columna_2:nth-child(2) {
+    width: 190px;
+    text-align: center;
+}
+
+.columna_2:nth-child(3) {
+    width: 420px;
+    text-align: center;
+}
+
+.columna_2:nth-child(4) {
+    width: 400px;
+    text-align: center;
+}
+
+.columna_2:nth-child(5) {
+    width: 660px;
+    text-align: center;
+}
+
+.columna_3 {
+    width: 100px;
+    padding: 10px;
+    border: 0px solid #000;
+}
+
+.columna_3:nth-child(1) {
+    width: 400px;
+    text-align: center;
+}
+
+.columna_3:nth-child(2) {
+    width: 600px;
+    text-align: center;
+}
+
+.columna_3:nth-child(3) {
+    width: 450px;
+    text-align: center;
+}
+
+.columna_3:nth-child(4) {
+    width: 600px;
+    text-align: center;
+}
+
+.cuerpo {
+    page-break-after: always;
+}
+
+
+/* .informacion {
+    margin: 16.35cm 1cm;
+} */
