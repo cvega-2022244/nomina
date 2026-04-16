@@ -44,25 +44,26 @@ async function test() {
                 allowOutsideClick: false,
                 showConfirmButton: true,
             });
+            document.getElementById('listado_empleados').innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4"><i class="feather feather-info mb-2" style="font-size: 24px;"></i><br>No se encontraron registros de vacaciones para mostrar.</td></tr>';
             console.log(resp);
         } else {
             var dias = 0.0;
             let lista;
+            if (typeof resp === 'string') {
+                let lista;
+
                 if (typeof resp === 'string') {
-                    let lista;
 
-                    if (typeof resp === 'string') {
+                    lista = JSON.parse(resp);
 
-                        lista = JSON.parse(resp);
-
-                    } else {
-
-                        lista = resp; // jQuery ya parseó el JSON
-
-                    }
                 } else {
+
                     lista = resp; // jQuery ya parseó el JSON
+
                 }
+            } else {
+                lista = resp; // jQuery ya parseó el JSON
+            }
             let template = '';
             lista.forEach(lista => {
                 dias = dias + parseFloat(lista.total_dias);

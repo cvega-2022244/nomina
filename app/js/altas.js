@@ -25,6 +25,12 @@ $.ajax({
                 showConfirmButton: true,
             });
         } else if (resp.includes('No hay datos')) {
+            document.getElementById('listado_empleados').innerHTML = `
+                <div id="titulo">Altas</div>
+                <div style="text-align: center; margin-top: 50px; font-size: 1.2rem; color: #666;">
+                    No se encontraron registros de altas para este período.
+                </div>
+            `;
             Swal.fire({
                 title: 'No hay altas registradas',
                 icon: 'warning',
@@ -34,21 +40,21 @@ $.ajax({
         } else {
             console.log(resp);
             let lista;
+            if (typeof resp === 'string') {
+                let lista;
+
                 if (typeof resp === 'string') {
-                    let lista;
 
-                    if (typeof resp === 'string') {
+                    lista = JSON.parse(resp);
 
-                        lista = JSON.parse(resp);
-
-                    } else {
-
-                        lista = resp; // jQuery ya parseó el JSON
-
-                    }
                 } else {
+
                     lista = resp; // jQuery ya parseó el JSON
+
                 }
+            } else {
+                lista = resp; // jQuery ya parseó el JSON
+            }
             let template = '<table class="table">';
 
             template += `
@@ -80,5 +86,5 @@ $.ajax({
             ${template}
         `;
         }
-        }
+    }
 });

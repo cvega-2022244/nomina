@@ -13,6 +13,25 @@ $(document).ready(function () {
             location.reload(true);
         }, 100);
     }
+
+    // Inicializar filtros personalizados
+    $('#filtro_dpi').on('keyup', function() {
+        if($.fn.DataTable.isDataTable('#tabla')) {
+            $('#tabla').DataTable().column(2).search(this.value).draw();
+        }
+        if($.fn.DataTable.isDataTable('#tabla_baja')) {
+            $('#tabla_baja').DataTable().column(2).search(this.value).draw();
+        }
+    });
+
+    $('#filtro_id').on('keyup', function() {
+        if($.fn.DataTable.isDataTable('#tabla')) {
+            $('#tabla').DataTable().column(0).search(this.value).draw();
+        }
+        if($.fn.DataTable.isDataTable('#tabla_baja')) {
+            $('#tabla_baja').DataTable().column(0).search(this.value).draw();
+        }
+    });
 });
 
 function reiniciar_variable_recarga() {
@@ -49,10 +68,12 @@ function listado_empleados() {
                     }
                     let template = '';
                     lista.forEach(lista => {
+                        let partes = [lista.primer_nombre, lista.segundo_nombre, lista.otro_nombre, lista.primer_apellido, lista.segundo_apellido];
+                        let nombreCompleto = partes.filter(n => n && n !== 'null' && n.trim() !== '').join(' ');
                         template += `
                     <tr>
                     <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.id}</td>
-                    <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.segundo_nombre}</td>
+                    <td class="text-center" onclick = "detalle_empleado(${lista.id})">${nombreCompleto}</td>
                     <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.dpi}</td>
                     <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.empresa}</td>
                     <td class="text-center">
@@ -361,11 +382,12 @@ function listado_empleados_baja() {
                     }
                     let template = '';
                     lista.forEach(lista => {
+                        let partes = [lista.primer_nombre, lista.segundo_nombre, lista.otro_nombre, lista.primer_apellido, lista.segundo_apellido];
+                        let nombreCompleto = partes.filter(n => n && n !== 'null' && n.trim() !== '').join(' ');
                         template += `
                     <tr>
                     <td class="text-center">${lista.id}</td>
-                    <td class="text-center">${lista.primer_nombre}</td>
-                    <td class="text-center">${lista.primer_apellido}</td>
+                    <td class="text-center">${nombreCompleto}</td>
                     <td class="text-center">${lista.dpi}</td>
                     <td class="text-center">${lista.empresa}</td>
                     <td class="text-center">
@@ -549,7 +571,7 @@ function listado_empleados_empresa(id_empresa) {
                             allowOutsideClick: false,
                             showConfirmButton: true,
                         });
-                        document.getElementById('listado_empleados').innerHTML = '';
+                        document.getElementById('listado_empleados').innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i class="feather feather-info mb-2" style="font-size: 24px;"></i><br>No se encontraron registros de empleados activos en esta empresa.</td></tr>';
                         console.log(resp);
                     } else {
                         let lista;
@@ -570,11 +592,12 @@ function listado_empleados_empresa(id_empresa) {
                         }
                         let template = '';
                         lista.forEach(lista => {
+                            let partes = [lista.primer_nombre, lista.segundo_nombre, lista.otro_nombre, lista.primer_apellido, lista.segundo_apellido];
+                            let nombreCompleto = partes.filter(n => n && n !== 'null' && n.trim() !== '').join(' ');
                             template += `
                             <tr>
                             <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.id}</td>
-                            <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.primer_nombre}</td>
-                            <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.primer_apellido}</td>
+                            <td class="text-center" onclick = "detalle_empleado(${lista.id})">${nombreCompleto}</td>
                             <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.dpi}</td>
                             <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.empresa}</td>
                             <td class="text-center">
@@ -652,7 +675,7 @@ function listado_empleados_empresa_baja(id_empresa) {
                             allowOutsideClick: false,
                             showConfirmButton: true,
                         });
-                        document.getElementById('listado_empleados_baja').innerHTML = '';
+                        document.getElementById('listado_empleados_baja').innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4"><i class="feather feather-info mb-2" style="font-size: 24px;"></i><br>No se encontraron registros de empleados dados de baja en esta empresa.</td></tr>';
                         console.log(resp);
                     } else {
                         let lista;
@@ -673,11 +696,12 @@ function listado_empleados_empresa_baja(id_empresa) {
                         }
                         let template = '';
                         lista.forEach(lista => {
+                            let partes = [lista.primer_nombre, lista.segundo_nombre, lista.otro_nombre, lista.primer_apellido, lista.segundo_apellido];
+                            let nombreCompleto = partes.filter(n => n && n !== 'null' && n.trim() !== '').join(' ');
                             template += `
                             <tr>
                             <td class="text-center">${lista.id}</td>
-                            <td class="text-center">${lista.primer_nombre}</td>
-                            <td class="text-center">${lista.primer_apellido}</td>
+                            <td class="text-center">${nombreCompleto}</td>
                             <td class="text-center">${lista.dpi}</td>
                             <td class="text-center">${lista.empresa}</td>
                             <a onclick="detalle_empleado(${lista.id})" class="action-btn btn-view bs-tooltip me-2"

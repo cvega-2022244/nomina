@@ -20,7 +20,7 @@ $hoy = date("Y") . "-" . date("m") . "-" . date("d");
 
 // ---------------- SQL SERVER -------------------- //
 // Comentado temporalmente hasta que se habilite la extensión ODBC
-/*
+
 $dsn = "Driver={SQL Server};Server=192.168.1.7;Port=1433;Database=Permisos";
 $data_source = 'zzzz';
 $user = 'sa';
@@ -32,7 +32,7 @@ if (!$conn) {
     echo json_encode(['error' => 'Error de conexión SQL Server: ' . odbc_errormsg()]);
     exit;
 }
-*/
+
 // ---------------- MYSQL SISTEMAS -------------------- //
 
 $con = mysqli_connect("localhost", "root", "", null, 3306);
@@ -3722,7 +3722,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados_baja') {
-            $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 GROUP BY e.id";
+            $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 GROUP BY e.id";
 
             $result = mysqli_query($con, $sql);
 
@@ -3737,7 +3737,10 @@ if (isset($_GET)) {
                     $json[] = array(
                         'id' => $row["id"],
                         'primer_nombre' => $row["primer_nombre"],
+                        'segundo_nombre' => $row["segundo_nombre"],
+                        'otro_nombre' => $row["otro_nombre"],
                         'primer_apellido' => $row["primer_apellido"],
+                        'segundo_apellido' => $row["segundo_apellido"],
                         'dpi' => $row["dpi"],
                         'empresa' => $row["empresa"],
                         'id_empresa' => $row["id_empresa"],
@@ -3843,7 +3846,7 @@ if (isset($_GET)) {
 
 
         if ($_GET["quest"] == 'listado_empleados_empresa') {
-            $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 1 and ee.activo = 1 and ee.principal = 1 and ee.id_empresa = " . $_GET['id_empresa'] . " GROUP BY e.id";
+            $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.otro_nombre , e.primer_apellido, e.segundo_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 1 and ee.activo = 1 and ee.principal = 1 and ee.id_empresa = " . $_GET['id_empresa'] . " GROUP BY e.id";
 
             $result = mysqli_query($con, $sql);
 
@@ -3858,7 +3861,10 @@ if (isset($_GET)) {
                     $json[] = array(
                         'id' => $row["id"],
                         'primer_nombre' => $row["primer_nombre"],
+                        'segundo_nombre' => $row["segundo_nombre"],
+                        'otro_nombre' => $row["otro_nombre"],
                         'primer_apellido' => $row["primer_apellido"],
+                        'segundo_apellido' => $row["segundo_apellido"],
                         'dpi' => $row["dpi"],
                         'empresa' => $row["empresa"],
                         'id_empresa' => $row["id_empresa"],
@@ -3904,7 +3910,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados_empresa_baja') {
-            $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 and ee.id_empresa = " . $_GET['id_empresa'] . " GROUP BY e.id";
+            $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 and ee.id_empresa = " . $_GET['id_empresa'] . " GROUP BY e.id";
 
             $result = mysqli_query($con, $sql);
 
@@ -3919,7 +3925,10 @@ if (isset($_GET)) {
                     $json[] = array(
                         'id' => $row["id"],
                         'primer_nombre' => $row["primer_nombre"],
+                        'segundo_nombre' => $row["segundo_nombre"],
+                        'otro_nombre' => $row["otro_nombre"],
                         'primer_apellido' => $row["primer_apellido"],
+                        'segundo_apellido' => $row["segundo_apellido"],
                         'dpi' => $row["dpi"],
                         'empresa' => $row["empresa"],
                         'id_empresa' => $row["id_empresa"],

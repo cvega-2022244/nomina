@@ -268,20 +268,39 @@
 
       <div class="fq-content">
         <div class="container">
-          <div class="row">
-            <div class="col-6">
-              <button class="btn btn-outline-success btn-icon mb-2 me-4 btn-rounded bs-tooltip" data-toggle="tooltip"
-                data-placement="top" title="Agregar" onclick="agregar_empleados()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="feather feather-plus">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </button>
-            </div>
-            <div class="col-6" style="text-align: right;">
-              <select name="" id="slc_empresa" onchange="seleccionar_empresa()"></select>
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Filtros y Controles</h5>
+                  <div class="row align-items-end mt-3">
+                    <div class="col-md-3 mb-3 mb-md-0">
+                      <label for="slc_empresa" class="form-label">Filtrar por Empresa</label>
+                      <select class="form-select w-100" id="slc_empresa" onchange="seleccionar_empresa()">
+                      </select>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                      <label for="filtro_dpi" class="form-label">DPI</label>
+                      <input type="text" class="form-control" id="filtro_dpi" placeholder="Buscar por DPI...">
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                      <label for="filtro_id" class="form-label">ID Empleado</label>
+                      <input type="text" class="form-control" id="filtro_id" placeholder="Buscar por ID...">
+                    </div>
+                    <div class="col-md-3 text-md-end text-center mt-3 mt-md-0 d-flex justify-content-md-end justify-content-center align-items-center">
+                      <button class="btn btn-success me-2 py-2" onclick="agregar_empleados()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                          class="feather feather-plus me-1">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Agregar Empleado
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="table-responsive">
@@ -322,8 +341,7 @@
                 <thead>
                   <tr>
                     <th class="text-center" scope="col">ID</th>
-                    <th class="text-center" scope="col">Primer Nombre</th>
-                    <th class="text-center" scope="col">Primer Apellido</th>
+                    <th class="text-center" scope="col">Nombres y Apellidos</th>
                     <th class="text-center" scope="col">DPI</th>
                     <th class="text-center" scope="col">Empresa</th>
                     <th class="text-center" scope="col">Opciones</th>
