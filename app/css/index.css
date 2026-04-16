@@ -1,0 +1,232 @@
+/* Restricciones lógicas */
+.role-restricted {
+    display: none !important;
+}
+
+.menu-item-restricted {
+    display: none !important;
+}
+
+/* Variables CSS para MODO CLARO (Default) */
+:root {
+    --dash-card-bg: #ffffff;
+    --dash-border: #e0e6ed;
+    --dash-title: #3b3f5c;
+    --dash-text: #515365;
+    --dash-topbar: rgba(255, 255, 255, 0.85);
+    --dash-shadow-hover: rgba(0, 0, 0, 0.08);
+    --dash-btn-danger-bg: rgba(231, 81, 90, 0.1);
+}
+
+/* Variables CSS para MODO OSCURO (Se activan con la clase de la plantilla) */
+body.dark {
+    --dash-card-bg: #0e1726;
+    --dash-border: #1f2c4e;
+    --dash-title: #e0e6ed;
+    --dash-text: #888ea8;
+    --dash-topbar: rgba(14, 23, 38, 0.85);
+    --dash-shadow-hover: rgba(0, 0, 0, 0.4);
+    --dash-btn-danger-bg: rgba(231, 81, 90, 0.15);
+}
+
+/* Ajuste para que el topbar no cubra el contenido principal */
+#container {
+    padding-top: 80px;
+}
+
+/* Topbar estilo SaaS FIJA al tope */
+.saas-topbar {
+    background: var(--dash-topbar);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--dash-border);
+    padding: 12px 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-custom-danger {
+    background-color: var(--dash-btn-danger-bg);
+    color: #e7515a;
+    border: 1px solid transparent;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-custom-danger:hover {
+    background-color: #e7515a;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.dashboard-header {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--dash-border);
+}
+
+.dashboard-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--dash-title);
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+}
+
+.dashboard-header p {
+    color: var(--dash-text);
+}
+
+/* Tarjetas adaptables blindadas contra la plantilla */
+.info-box-3 {
+    background: var(--dash-card-bg) !important;
+    border: 1px solid var(--dash-border) !important;
+    border-radius: 14px !important;
+    padding: 24px !important;
+    margin-bottom: 24px !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    position: relative;
+    overflow: hidden;
+    height: 100% !important;
+    box-shadow: none !important;
+}
+
+.info-box-3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.info-box-3:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px var(--dash-shadow-hover) !important;
+    border-color: var(--dash-border) !important;
+}
+
+/* Colores de la barra superior de la tarjeta al hacer Hover */
+.datos-maestros:hover::before {
+    background: #4361ee;
+}
+
+.administrar-nomina:hover::before {
+    background: #10b981;
+}
+
+.historial:hover::before {
+    background: #8a2be2;
+}
+
+.bono-14:hover::before {
+    background: #e2a03f;
+}
+
+.aguinaldo:hover::before {
+    background: #e7515a;
+}
+
+.crear-bono-variable:hover::before {
+    background: #2196f3;
+}
+
+/* Contenedor del ícono blindado */
+.info-box-3-icon {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 20px !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Colores ESTÁTICOS de los íconos (Fondo suave e ícono de color) */
+.datos-maestros .info-box-3-icon {
+    background: rgba(67, 97, 238, 0.15) !important;
+    color: #4361ee !important;
+}
+
+.administrar-nomina .info-box-3-icon {
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: #10b981 !important;
+}
+
+.historial .info-box-3-icon {
+    background: rgba(138, 43, 226, 0.15) !important;
+    color: #8a2be2 !important;
+}
+
+.bono-14 .info-box-3-icon {
+    background: rgba(226, 160, 63, 0.15) !important;
+    color: #e2a03f !important;
+}
+
+.aguinaldo .info-box-3-icon {
+    background: rgba(231, 81, 90, 0.15) !important;
+    color: #e7515a !important;
+}
+
+.crear-bono-variable .info-box-3-icon {
+    background: rgba(33, 150, 243, 0.15) !important;
+    color: #2196f3 !important;
+}
+
+/* Tipografía de las tarjetas */
+.info-box-3-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dash-title) !important;
+    margin-bottom: 12px;
+}
+
+.info-box-3-content {
+    font-size: 14px;
+    color: var(--dash-text) !important;
+    line-height: 1.6;
+}
+
+/* Utilidades de layout y footer */
+.layout-top-spacing {
+    margin-top: 0 !important;
+    gap: 20px 0;
+}
+
+.footer-wrapper {
+    border-top: 1px solid var(--dash-border);
+    margin-top: 50px;
+    padding: 20px 0;
+    color: var(--dash-text);
+}
+
+/* Lógica para alternar el ícono Sol/Luna al cambiar de tema */
+.theme-toggle .light-mode {
+    display: none;
+}
+
+body.dark .theme-toggle .dark-mode {
+    display: none;
+}
+
+body.dark .theme-toggle .light-mode {
+    display: inline-block;
+}

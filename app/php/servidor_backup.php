@@ -35,7 +35,7 @@ if (!$conn) {
 */
 // ---------------- MYSQL SISTEMAS -------------------- //
 
-$con = mysqli_connect("localhost", "root", "", null, 3307);
+$con = mysqli_connect("localhost", "root", "", null, 3306);
 if (!$con) {
     echo json_encode(['error' => 'Error de conexión MySQL: ' . mysqli_connect_error()]);
     exit;

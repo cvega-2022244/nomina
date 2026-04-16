@@ -5,7 +5,7 @@ header('Content-Disposition: attachment; filename=cumpleaneros_'.$_GET["mes_text
 date_default_timezone_set('UTC');
 date_default_timezone_set("America/Guatemala");
 // ---------------- MYSQL -------------------- //
-$con = mysqli_connect("localhost", "root", "", null, 3307);
+$con = mysqli_connect("localhost", "root", "", null, 3306);
 if (!$con) {
     die('Could not connect: ' . mysqli_connect_error());
 }

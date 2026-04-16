@@ -6,7 +6,7 @@ date_default_timezone_set('UTC');
 date_default_timezone_set("America/Guatemala");
 $hoy = date("Y") . "-" . date("m") . "-" . date("d");
 
-$con = mysqli_connect("localhost", "root", "", null, 3307);
+$con = mysqli_connect("localhost", "root", "", null, 3306);
 if (!$con) {
     die('Could not connect: ' . mysqli_connect_error());
 }

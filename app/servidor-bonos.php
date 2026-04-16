@@ -10,7 +10,7 @@ header('Content-Type: application/json');
 
 // Evitar que mysqli lance excepciones fatales y manejar el error devolviendo JSON
 mysqli_report(MYSQLI_REPORT_OFF);
-$con = @mysqli_connect($host, $username, $password, $database, 3307);
+$con = @mysqli_connect($host, $username, $password, $database, 3306);
 
 if (!$con) {
     echo json_encode(['error' => 'Error de conexión MySQL: ' . mysqli_connect_error()]);

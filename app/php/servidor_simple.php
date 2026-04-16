@@ -3,7 +3,7 @@ header('Content-Type: application/json; charset=UTF-8');
 date_default_timezone_set("America/Guatemala");
 session_start();
 
-$con = mysqli_connect("localhost", "root", "", null, 3307);
+$con = mysqli_connect("localhost", "root", "", null, 3306);
 if (!$con) { echo json_encode(['error' => mysqli_connect_error()]); exit; }
 mysqli_select_db($con, "nomina");
 $con->set_charset("utf8");

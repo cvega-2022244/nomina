@@ -5,7 +5,7 @@ header('Content-Disposition: attachment; filename=Informe_Mintrab.xls');
 date_default_timezone_set("America/Guatemala");
 
 // Conexión a la base de datos
-$con = mysqli_connect("localhost", "root", "", null, 3307);
+$con = mysqli_connect("localhost", "root", "", null, 3306);
 if (!$con) {
     die('Could not connect: ' . mysqli_connect_error());
 }

@@ -27,7 +27,7 @@ function bonos() {
 }
 
 function empleados() {
-    window.location.href = './empleados.html';
+    window.location.href = './empleados.html?t=' + new Date().getTime();
 }
 
 function mantenimiento() {
