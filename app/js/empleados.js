@@ -3,11 +3,12 @@ $(document).ready(function () {
     cargando();
     listado_empleados();
     cargar_select_empresa_reporte();
-    
-    // Verificar si hay un parámetro de recarga forzada
+
+    // Verificar si hay un parámetro de recarga forzada pero evitar bucle infinito
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('t')) {
-        // Forzar recarga de datos sin cache
+    if (urlParams.get('t') && !sessionStorage.getItem('reloaded_t_' + urlParams.get('t'))) {
+        // Forzar recarga de datos sin cache una sola vez
+        sessionStorage.setItem('reloaded_t_' + urlParams.get('t'), 'true');
         setTimeout(() => {
             location.reload(true);
         }, 100);
@@ -31,28 +32,27 @@ function listado_empleados() {
                 },
                 success: function (resp) {
                     let lista;
-                if (typeof resp === 'string') {
-                    let lista;
-
                     if (typeof resp === 'string') {
+                        let lista;
 
-                        lista = JSON.parse(resp);
+                        if (typeof resp === 'string') {
 
+                            lista = JSON.parse(resp);
+
+                        } else {
+
+                            lista = resp; // jQuery ya parseó el JSON
+
+                        }
                     } else {
-
                         lista = resp; // jQuery ya parseó el JSON
-
                     }
-                } else {
-                    lista = resp; // jQuery ya parseó el JSON
-                }
                     let template = '';
                     lista.forEach(lista => {
                         template += `
                     <tr>
                     <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.id}</td>
-                    <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.primer_nombre}</td>
-                    <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.primer_apellido}</td>
+                    <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.segundo_nombre}</td>
                     <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.dpi}</td>
                     <td class="text-center" onclick = "detalle_empleado(${lista.id})">${lista.empresa}</td>
                     <td class="text-center">
@@ -137,9 +137,9 @@ function cargar_datos_empleado() {
             id_empleado: id_empleado,
             _t: new Date().getTime() // Evitar caché
         },
-        success: function(resp) {
+        success: function (resp) {
             Swal.close();
-            
+
             try {
                 let data = (typeof resp === 'string') ? JSON.parse(resp) : resp;
 
@@ -154,7 +154,7 @@ function cargar_datos_empleado() {
                 // 2. Rellenar los campos del formulario
                 // Asumiendo que tus inputs tienen IDs iguales a las columnas de la BD
                 // Ejemplo: <input id="primer_nombre">, <input id="dpi">, etc.
-                
+
                 // Datos Personales
                 $('#primer_nombre').val(empleado.primer_nombre);
                 $('#segundo_nombre').val(empleado.segundo_nombre);
@@ -170,28 +170,28 @@ function cargar_datos_empleado() {
                 $('#email').val(empleado.email); // Si existe en la tabla
                 $('#estado_civil').val(empleado.estado_civil); // Select
                 $('#genero').val(empleado.genero); // Select
-                
+
                 // Datos Laborales
                 $('#fecha_inicio').val(empleado.fecha_inicio);
                 $('#puesto').val(empleado.puesto);
                 $('#sueldo_ordinario').val(empleado.sueldo_ordinario);
                 $('#bon_incentivo').val(empleado.bon_incentivo);
-                
+
                 // Selects dinámicos (Empresa, Departamento, etc.)
                 // Nota: Asegúrate de que los selects ya estén cargados antes de asignar el valor
                 $('#centro_de_costo').val(empleado.centro_de_costo);
                 $('#departamento_laboral').val(empleado.departamento_laboral);
-                
+
                 // Empresa Principal (Del JOIN que hicimos)
                 // Si tienes un select de empresa, usa el ID de la empresa
-                $('#id_empresa').val(empleado.id_empresa_principal); 
+                $('#id_empresa').val(empleado.id_empresa_principal);
 
                 // 3. Manejar modo "Solo Ver" vs "Editar"
                 if (es_vista_detalle) {
                     // Si es solo ver detalle, deshabilitamos todos los inputs
                     $('input, select, textarea').prop('disabled', true);
                     // Ocultar botón de guardar si existe
-                    $('#btn_guardar_empleado').hide(); 
+                    $('#btn_guardar_empleado').hide();
                 } else {
                     // Si es editar, habilitamos
                     $('input, select, textarea').prop('disabled', false);
@@ -206,7 +206,7 @@ function cargar_datos_empleado() {
                 Swal.fire('Error', 'Error al procesar los datos del empleado', 'error');
             }
         },
-        error: function() {
+        error: function () {
             Swal.close();
             Swal.fire('Error', 'Error de conexión con el servidor', 'error');
         }
@@ -221,8 +221,8 @@ function cargar_select_empresa_reporte() {
             try {
                 let lista = (typeof res === 'string') ? JSON.parse(res) : res;
                 let template = '<option value="">Todas las empresas</option>';
-                
-                if(Array.isArray(lista)) {
+
+                if (Array.isArray(lista)) {
                     lista.forEach(empresa => {
                         template += `<option value="${empresa.id}">${empresa.nombre_comercial}</option>`;
                     });
@@ -261,7 +261,7 @@ function descargar_reporte_completo() {
     // Llamamos al servidor solicitando el reporte excel
     // Usamos un timeout pequeño para cerrar el Swal, ya que el navegador manejará la descarga
     window.location.href = 'php/servidor.php?quest=reporte_completo_excel';
-    
+
     setTimeout(() => {
         Swal.close();
     }, 3000);
@@ -344,21 +344,21 @@ function listado_empleados_baja() {
                 },
                 success: function (resp) {
                     let lista;
-                if (typeof resp === 'string') {
-                    let lista;
-
                     if (typeof resp === 'string') {
+                        let lista;
 
-                        lista = JSON.parse(resp);
+                        if (typeof resp === 'string') {
 
+                            lista = JSON.parse(resp);
+
+                        } else {
+
+                            lista = resp; // jQuery ya parseó el JSON
+
+                        }
                     } else {
-
                         lista = resp; // jQuery ya parseó el JSON
-
                     }
-                } else {
-                    lista = resp; // jQuery ya parseó el JSON
-                }
                     let template = '';
                     lista.forEach(lista => {
                         template += `
@@ -553,21 +553,21 @@ function listado_empleados_empresa(id_empresa) {
                         console.log(resp);
                     } else {
                         let lista;
-                if (typeof resp === 'string') {
-                    let lista;
+                        if (typeof resp === 'string') {
+                            let lista;
 
-                    if (typeof resp === 'string') {
+                            if (typeof resp === 'string') {
 
-                        lista = JSON.parse(resp);
+                                lista = JSON.parse(resp);
 
-                    } else {
+                            } else {
 
-                        lista = resp; // jQuery ya parseó el JSON
+                                lista = resp; // jQuery ya parseó el JSON
 
-                    }
-                } else {
-                    lista = resp; // jQuery ya parseó el JSON
-                }
+                            }
+                        } else {
+                            lista = resp; // jQuery ya parseó el JSON
+                        }
                         let template = '';
                         lista.forEach(lista => {
                             template += `
@@ -656,21 +656,21 @@ function listado_empleados_empresa_baja(id_empresa) {
                         console.log(resp);
                     } else {
                         let lista;
-                if (typeof resp === 'string') {
-                    let lista;
+                        if (typeof resp === 'string') {
+                            let lista;
 
-                    if (typeof resp === 'string') {
+                            if (typeof resp === 'string') {
 
-                        lista = JSON.parse(resp);
+                                lista = JSON.parse(resp);
 
-                    } else {
+                            } else {
 
-                        lista = resp; // jQuery ya parseó el JSON
+                                lista = resp; // jQuery ya parseó el JSON
 
-                    }
-                } else {
-                    lista = resp; // jQuery ya parseó el JSON
-                }
+                            }
+                        } else {
+                            lista = resp; // jQuery ya parseó el JSON
+                        }
                         let template = '';
                         lista.forEach(lista => {
                             template += `
@@ -860,7 +860,7 @@ function corregir_todos_empleados_sin_empresa() {
     }).then((result) => {
         if (result.isConfirmed) {
             cargando();
-            
+
             // Agregar timeout para evitar carga infinita
             const timeout = setTimeout(() => {
                 Swal.close();
@@ -870,7 +870,7 @@ function corregir_todos_empleados_sin_empresa() {
                     icon: 'warning'
                 });
             }, 30000); // 30 segundos timeout
-            
+
             $.ajax({
                 url: 'php/servidor.php',
                 type: 'GET',
@@ -881,7 +881,7 @@ function corregir_todos_empleados_sin_empresa() {
                 success: function (resp) {
                     clearTimeout(timeout);
                     Swal.close();
-                    
+
                     try {
                         const response = JSON.parse(resp);
                         if (response.success) {
@@ -910,14 +910,14 @@ function corregir_todos_empleados_sin_empresa() {
                 error: function (xhr, status, error) {
                     clearTimeout(timeout);
                     Swal.close();
-                    
+
                     let errorMessage = 'Hubo un error de conexión';
                     if (status === 'timeout') {
                         errorMessage = 'La operación tardó demasiado tiempo';
                     } else if (xhr.responseText) {
                         errorMessage = 'Error del servidor: ' + xhr.responseText;
                     }
-                    
+
                     Swal.fire({
                         title: 'Error',
                         text: errorMessage,
@@ -942,7 +942,7 @@ function corregir_empleados_simple() {
     }).then((result) => {
         if (result.isConfirmed) {
             cargando();
-            
+
             $.ajax({
                 url: 'php/servidor.php',
                 type: 'GET',
@@ -952,7 +952,7 @@ function corregir_empleados_simple() {
                 },
                 success: function (resp) {
                     Swal.close();
-                    
+
                     try {
                         const response = JSON.parse(resp);
                         if (response.success) {
@@ -980,12 +980,12 @@ function corregir_empleados_simple() {
                 },
                 error: function (xhr, status, error) {
                     Swal.close();
-                    
+
                     let errorMessage = 'Error de conexión';
                     if (status === 'timeout') {
                         errorMessage = 'La operación tardó demasiado tiempo';
                     }
-                    
+
                     Swal.fire({
                         title: 'Error',
                         text: errorMessage,
@@ -1104,7 +1104,7 @@ function modal_liquidacion(id_empleado, id_permiso) {
 
 function guardar_porcentaje_liquidacion() {
     var porcentaje = document.getElementById('porcentaje_liquidacion').value;
-    if(porcentaje < 0 || porcentaje > 100){
+    if (porcentaje < 0 || porcentaje > 100) {
         Swal.fire({
             icon: 'warning',
             title: 'Porcentaje Invalido',

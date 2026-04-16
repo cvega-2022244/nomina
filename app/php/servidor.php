@@ -3417,10 +3417,17 @@ if (isset($_GET)) {
 
         if ($_GET["quest"] == 'listado_empleados') {
             // Consulta corregida para mostrar solo la empresa principal de cada empleado
-            $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.dpi, 
-                           COALESCE(emp.nombre_comercial, 'Sin Empresa') as empresa, 
-                           COALESCE(emp.id, 0) as id_empresa, 
-                           e.id_permisos 
+            $sql = "SELECT 
+                        e.id, 
+                        e.primer_nombre, 
+                        e.segundo_nombre, 
+                        e.otro_nombre, 
+                        e.primer_apellido, 
+                        e.segundo_apellido, 
+                        e.dpi, 
+                        COALESCE(emp.nombre_comercial, 'Sin Empresa') as empresa, 
+                        COALESCE(emp.id, 0) as id_empresa, 
+                        e.id_permisos 
                     FROM empleado e 
                     LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
@@ -3446,7 +3453,10 @@ if (isset($_GET)) {
                     $json[] = array(
                         'id' => $row["id"],
                         'primer_nombre' => $row["primer_nombre"],
+                        'segundo_nombre' => $row["segundo_nombre"],
+                        'otro_nombre' => $row["otro_nombre"],
                         'primer_apellido' => $row["primer_apellido"],
+                        'segundo_apellido' => $row["segundo_apellido"],
                         'dpi' => $row["dpi"],
                         'empresa' => $row["empresa"],
                         'id_empresa' => $row["id_empresa"],
