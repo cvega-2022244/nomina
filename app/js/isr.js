@@ -1,4 +1,16 @@
+var id_empresa_nomina = sessionStorage.getItem('id_empresa_nomina');
+
 $(document).ready(function () {
+    if (!id_empresa_nomina) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Empresa no seleccionada',
+            text: 'Selecciona la empresa de nómina antes de continuar.'
+        }).then(() => {
+            window.location.href = './nomina.html';
+        });
+        return;
+    }
     cargando();
     listado_isr();
 })
@@ -9,7 +21,8 @@ function listado_isr() {
             url: 'php/servidor.php',
             type: 'GET',
             data: {
-                quest: 'listado_isr'
+                quest: 'listado_isr',
+                id_empresa: id_empresa_nomina
             },
             success: function (res) {
                 if (res.includes('Query Falló')) {
@@ -107,7 +120,8 @@ function guardar_isr(id) {
             data: {
                 quest: 'guardar_isr',
                 id: id,
-                isr: input.value
+                isr: input.value,
+                id_empresa: id_empresa_nomina
             },
             success: function (res) {
                 if (res.includes('Query Falló')) {

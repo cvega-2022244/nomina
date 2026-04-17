@@ -6,6 +6,16 @@ var id_lote_activo;
 var id_empresa_nomina = sessionStorage.getItem('id_empresa_nomina');
 
 $(document).ready(function () {
+    if (!id_empresa_nomina) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Empresa no seleccionada',
+            text: 'Selecciona la empresa de nómina antes de continuar.'
+        }).then(() => {
+            window.location.href = './nomina.html';
+        });
+        return;
+    }
     cargando();
     inicializar_select_centro_costo();
 })
@@ -862,6 +872,7 @@ async function listado_empleados_en_nomina() {
             type: 'GET',
             data: {
                 quest: 'listado_empleados_nomina',
+                id_empresa: id_empresa_nomina
             },
         });
         if (resp.includes('Query Falló')) {
@@ -901,6 +912,7 @@ async function listado_empleados_fuera_nomina() {
             type: 'GET',
             data: {
                 quest: 'listado_empleados_fuera_nomina',
+                id_empresa: id_empresa_nomina
             },
         });
 
@@ -941,6 +953,7 @@ async function listado_completo_empleados() {
             type: 'GET',
             data: {
                 quest: 'listado_empleados',
+                id_empresa: id_empresa_nomina
             },
         });
 
@@ -1030,7 +1043,8 @@ async function actualizar_pago_lote() {
                         quest: 'datos_empleados_pago_lote',
                         id_empleado: empleado.id_empleado,
                         nomina_activa: nomina_activa,
-                        id_lote: id_lote_activo
+                        id_lote: id_lote_activo,
+                        id_empresa: id_empresa_nomina
                     },
                     dataType: 'text',
                     success: function (resp) {
@@ -1154,7 +1168,8 @@ async function ingresar_pagos_lote_nuevos_empleados() {
                         quest: 'datos_empleados_pago_lote',
                         id_empleado: empleado.id_empleado,
                         nomina_activa: nomina_activa,
-                        id_lote: id_lote_activo
+                        id_lote: id_lote_activo,
+                        id_empresa: id_empresa_nomina
                     },
                     dataType: 'text',
                     success: function (resp) {

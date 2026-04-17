@@ -5,49 +5,176 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <title>Nómina</title>
+    <title>Nómina | Panel</title>
 
     <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
 
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
     <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
-    <!-- END GLOBAL MANDATORY STYLES -->
-    <!-- BEGIN THEME GLOBAL STYLES -->
     <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
-
     <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
-
     <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
 
-    <!-- SELECT BOX -->
     <link rel="stylesheet" type="text/css" href="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.css">
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/vanillaSelectBox/custom-vanillaSelectBox.css">
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/vanillaSelectBox/custom-vanillaSelectBox.css">
-    <!-- END -->
-
-    <!--  BEGIN CUSTOM STYLE FILE  -->
     <link href="../src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
     <link href="../src/assets/css/dark/elements/infobox.css" rel="stylesheet" type="text/css" />
-    <!--  END CUSTOM STYLE FILE  -->
-
-    <!-- BASE X -->
     <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
 
-    <!-- AJAX -->
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+
+    <style>
+        /* Restricciones lógicas */
+
+        /* Variables CSS para MODO CLARO (Default) */
+        :root {
+            --dash-card-bg: #ffffff;
+            --dash-border: #e0e6ed;
+            --dash-title: #3b3f5c;
+            --dash-text: #515365;
+            --dash-shadow-hover: rgba(0, 0, 0, 0.08);
+        }
+
+        /* Variables CSS para MODO OSCURO (Se activan con la clase de la plantilla) */
+        body.dark {
+            --dash-card-bg: #0e1726;
+            --dash-border: #1f2c4e;
+            --dash-title: #e0e6ed;
+            --dash-text: #888ea8;
+            --dash-shadow-hover: rgba(0, 0, 0, 0.4);
+        }
+
+        .dashboard-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--dash-border);
+        }
+
+        .dashboard-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dash-title);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-header p {
+            color: var(--dash-text);
+        }
+
+        /* Tarjetas adaptables blindadas contra la plantilla */
+        .info-box-3 {
+            background: var(--dash-card-bg) !important;
+            border: 1px solid var(--dash-border) !important;
+            border-radius: 14px !important;
+            padding: 24px !important;
+            margin-bottom: 24px !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            text-align: left !important;
+            position: relative;
+            overflow: hidden;
+            height: 100% !important;
+            box-shadow: none !important;
+        }
+
+        .info-box-3::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .info-box-3:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px var(--dash-shadow-hover) !important;
+            border-color: var(--dash-border) !important;
+        }
+
+        /* Colores de Hover específicos para estas 6 tarjetas */
+        .card-bonos:hover::before { background: #4361ee; } /* Azul */
+        .card-horas:hover::before { background: #8a2be2; } /* Morado */
+        .card-dias:hover::before { background: #e2a03f; } /* Naranja */
+        .card-descuentos:hover::before { background: #e7515a; } /* Rojo */
+        .card-pagos:hover::before { background: #10b981; } /* Verde */
+        .card-isr:hover::before { background: #2196f3; } /* Celeste */
+
+        /* Contenedor del ícono blindado */
+        .info-box-3-icon {
+            width: 50px !important;
+            height: 50px !important;
+            border-radius: 12px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin-bottom: 20px !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        /* Colores ESTÁTICOS de los íconos para estas 6 tarjetas */
+        .card-bonos .info-box-3-icon { background: rgba(67, 97, 238, 0.15) !important; color: #4361ee !important; }
+        .card-horas .info-box-3-icon { background: rgba(138, 43, 226, 0.15) !important; color: #8a2be2 !important; }
+        .card-dias .info-box-3-icon { background: rgba(226, 160, 63, 0.15) !important; color: #e2a03f !important; }
+        .card-descuentos .info-box-3-icon { background: rgba(231, 81, 90, 0.15) !important; color: #e7515a !important; }
+        .card-pagos .info-box-3-icon { background: rgba(16, 185, 129, 0.15) !important; color: #10b981 !important; }
+        .card-isr .info-box-3-icon { background: rgba(33, 150, 243, 0.15) !important; color: #2196f3 !important; }
+
+        /* Tipografía de las tarjetas */
+        .info-box-3-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dash-title) !important;
+            margin-bottom: 12px;
+        }
+
+        .info-box-3-content {
+            font-size: 14px;
+            color: var(--dash-text) !important;
+            line-height: 1.6;
+        }
+
+        .layout-top-spacing {
+            margin-top: 0 !important;
+            gap: 20px 0;
+        }
+
+        .footer-wrapper {
+            border-top: 1px solid var(--dash-border);
+            margin-top: 50px;
+            padding: 20px 0;
+            color: var(--dash-text);
+        }
+
+        /* Lógica para alternar el ícono Sol/Luna al cambiar de tema */
+        .theme-toggle .light-mode { display: none; }
+        body.dark .theme-toggle .dark-mode { display: none; }
+        body.dark .theme-toggle .light-mode { display: inline-block; }
+
+        /* Estilos para botón de cerrar sesión en Sidebar */
+        .sidebar-logout-btn {
+            transition: all 0.3s ease;
+        }
+        .sidebar-logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(231, 81, 90, 0.2);
+        }
+    </style>
 </head>
 
 <body class="layout-boxed">
-    <!-- BEGIN LOADER -->
     <div id="load_screen">
         <div class="loader">
             <div class="loader-content">
@@ -55,20 +182,73 @@
             </div>
         </div>
     </div>
-    <!--  END LOADER -->
+    <div class="header-container container-xxl">
+        <header class="header navbar navbar-expand-sm expand-header">
+            <a href="javascript:void(0);" class="sidebarCollapse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-menu">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </a>
 
-    <!--  BEGIN MAIN CONTAINER  -->
+            <div class="search-animated toggle-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-search">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <form class="form-inline search-full form-inline search" role="search">
+                    <div class="search-bar">
+                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-x search-close">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </div>
+                </form>
+                <span class="badge badge-secondary">Ctrl + /</span>
+            </div>
+
+            <ul class="navbar-item flex-row ms-lg-auto ms-0">
+                <li class="nav-item theme-toggle-item">
+                    <a href="javascript:void(0);" class="nav-link theme-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-moon dark-mode">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-sun light-mode">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </header>
+    </div>
     <div class="main-container" id="container">
 
         <div class="overlay"></div>
         <div class="search-overlay"></div>
 
-        <!--  BEGIN SIDEBAR  -->
         <div class="sidebar-wrapper sidebar-theme">
-
             <nav id="sidebar">
-
-                <div class="navbar-nav theme-brand flex-row  text-center">
+                <div class="navbar-nav theme-brand flex-row text-center">
                     <div class="nav-logo">
                         <div class="nav-item theme-logo">
                             <a href="./index.html">
@@ -124,36 +304,22 @@
                                 </svg>
                             </div>
                         </a>
-                        <ul class="collapse submenu list-unstyled show" id="dashboard"
-                            data-bs-parent="#accordionExample">
-                            <li class="active">
-                                <a href="./nomina.html"> Inicio </a>
-                            </li>
-                            <li class="menu-bonos">
-                                <a href="./seleccion_bonos.html"> Bonos </a>
-                            </li>
-                            <li class="menu-horas-extra">
-                                <a href="./horas_extra.html"> Horas Extra </a>
-                            </li>
-                            <li class="menu-item-restricted">
-                                <a href="./dias_laborados.html"> Dias Laborados </a>
-                            </li>
-                            <li class="menu-item-restricted">
-                                <a href="./descuentos.html"> Descuentos </a>
-                            </li>
-                            <li class="menu-item-restricted">
-                                <a href="./isr.html"> ISR </a>
-                            </li>
+                        <ul class="collapse submenu list-unstyled show" id="dashboard" data-bs-parent="#accordionExample">
+                            <li class="active"><a href="./nomina.html"> Inicio </a></li>
+                            <li class="menu-bonos"><a href="./seleccion_bonos.html"> Bonos </a></li>
+                            <li class="menu-horas-extra"><a href="./horas_extra.html"> Horas Extra </a></li>
+                            <li><a href="./dias_laborados.html"> Dias Laborados </a></li>
+                            <li><a href="./descuentos.html"> Descuentos </a></li>
+                            <li><a href="./isr.html"> ISR </a></li>
                         </ul>
                     </li>
                 </ul>
                 
-                <!-- Botón cerrar sesión en el sidebar -->
                 <div class="p-3 mt-4">
                     <div class="text-center mb-2">
                         <small class="text-muted" id="usuario_nombre_sidebar"></small>
                     </div>
-                    <button class="btn btn-outline-danger btn-sm w-100" onclick="cerrarSesion()">
+                    <button class="sidebar-logout-btn btn btn-outline-danger btn-sm w-100" onclick="cerrarSesion()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
@@ -162,138 +328,131 @@
                         Cerrar Sesión
                     </button>
                 </div>
-
             </nav>
-
         </div>
-        <!--  END SIDEBAR  -->
-
-        <!--  BEGIN CONTENT AREA  -->
         <div id="content" class="main-content">
             <div class="layout-px-spacing">
 
-                <div class="fq-header-wrapper">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12 align-self-center order-md-0 order-1">
-                                <div class="faq-header-content">
-                                    <h1 class="mb-4" id="nombre_lote">Nómina</h1>
-                                </div>
-                            </div>
-                        </div>
+                <div class="container-xxl p-4 mt-4">
+                    <div class="dashboard-header">
+                        <h1 class="mb-2" id="nombre_lote">Nómina</h1>
+                        <p class="mb-0">Administración de la nómina, deducciones y pagos de la organización</p>
                     </div>
-                </div>
 
-                <div class="middle-content container-xxl p-0">
-                    <div class="p-2">
-                        <div class="row layout-top-spacing">
-                            <div class="info-box-3 col nomina-bonos" style="cursor: pointer" onclick="bonos()">
-                                <div class="info-box-3-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up">
-                                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-                                        <polyline points="17 6 23 6 23 12"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">Bonos</h3>
-                                    <div class="info-box-3-content">Administración de los bonos de los empleados</div>
-                                </div>
-                            </div>
-                            <div class="info-box-3 col nomina-horas-extra" style="cursor: pointer" onclick="horas_extra()">
-                                <div class="info-box-3-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-watch">
-                                        <circle cx="12" cy="12" r="7"></circle>
-                                        <polyline points="12 9 12 12 13.5 13.5"></polyline>
-                                        <path
-                                            d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">Horas Extra</h3>
-                                    <div class="info-box-3-content">Administración de las horas extra de los empleados
+                    <div class="middle-content p-0">
+                        
+                        <div class="row layout-top-spacing g-4">
+                            <div class="col-12 col-md-4 nomina-bonos card-bonos" style="cursor: pointer" onclick="bonos()">
+                                <div class="info-box-3">
+                                    <div class="info-box-3-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-up">
+                                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                            <polyline points="17 6 23 6 23 12"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="info-box-3-content-wrapper">
+                                        <h3 class="info-box-3-title">Bonos</h3>
+                                        <div class="info-box-3-content">Administración de los bonos otorgados a los empleados.</div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="info-box-3 col nomina-dias-laborados" style="cursor: pointer" onclick="dias_laborados()">
-                                <div class="info-box-3-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">Días Laborados</h3>
-                                    <div class="info-box-3-content">Administración de los días laborados de los
-                                        empleados
+
+                            <div class="col-12 col-md-4 nomina-horas-extra card-horas" style="cursor: pointer" onclick="horas_extra()">
+                                <div class="info-box-3">
+                                    <div class="info-box-3-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-watch">
+                                            <circle cx="12" cy="12" r="7"></circle>
+                                            <polyline points="12 9 12 12 13.5 13.5"></polyline>
+                                            <path d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="info-box-3-content-wrapper">
+                                        <h3 class="info-box-3-title">Horas Extra</h3>
+                                        <div class="info-box-3-content">Cálculo y administración de las horas extra laboradas.</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row layout-top-spacing">
-                            <div class="info-box-3 col nomina-descuentos" style="cursor: pointer" onclick="descuentos()">
-                                <div class="info-box-3-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-down">
-                                        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
-                                        <polyline points="17 18 23 18 23 12"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">Descuentos</h3>
-                                    <div class="info-box-3-content">Administración de los descuentos de los empleados
+
+                            <div class="col-12 col-md-4 nomina-dias-laborados card-dias" style="cursor: pointer" onclick="dias_laborados()">
+                                <div class="info-box-3">
+                                    <div class="info-box-3-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="info-box-3 col nomina-pagos" style="cursor: pointer" data-toggle="modal"
-                                data-target="#modal_empresa">
-                                <div class="info-box-3-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
-                                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">Pagos</h3>
-                                    <div class="info-box-3-content">Administración de los pagos a los empleados
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="info-box-3 col nomina-isr" style="cursor: pointer" onclick="isr()">
-                                <div class="info-box-3-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-percent">
-                                        <line x1="19" y1="5" x2="5" y2="19"></line>
-                                        <circle cx="6.5" cy="6.5" r="2.5"></circle>
-                                        <circle cx="17.5" cy="17.5" r="2.5"></circle>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">ISR</h3>
-                                    <div class="info-box-3-content">Administración del ISR de los empleados
+                                    <div class="info-box-3-content-wrapper">
+                                        <h3 class="info-box-3-title">Días Laborados</h3>
+                                        <div class="info-box-3-content">Gestión del control de asistencia y días laborados.</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row layout-top-spacing g-4 mt-2 mb-5">
+                            <div class="col-12 col-md-4 nomina-descuentos card-descuentos" style="cursor: pointer" onclick="descuentos()">
+                                <div class="info-box-3">
+                                    <div class="info-box-3-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trending-down">
+                                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                                            <polyline points="17 18 23 18 23 12"></polyline>
+                                        </svg>
+                                    </div>
+                                    <div class="info-box-3-content-wrapper">
+                                        <h3 class="info-box-3-title">Descuentos</h3>
+                                        <div class="info-box-3-content">Administración de deducciones y descuentos aplicables.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-4 nomina-pagos card-pagos" style="cursor: pointer" onclick="pagos()">
+                                <div class="info-box-3">
+                                    <div class="info-box-3-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="info-box-3-content-wrapper">
+                                        <h3 class="info-box-3-title">Pagos</h3>
+                                        <div class="info-box-3-content">Gestión y generación de los pagos correspondientes.</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-4 nomina-isr card-isr" style="cursor: pointer" onclick="isr()">
+                                <div class="info-box-3">
+                                    <div class="info-box-3-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-percent">
+                                            <line x1="19" y1="5" x2="5" y2="19"></line>
+                                            <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                                            <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                                        </svg>
+                                    </div>
+                                    <div class="info-box-3-content-wrapper">
+                                        <h3 class="info-box-3-title">ISR</h3>
+                                        <div class="info-box-3-content">Cálculo y administración del Impuesto Sobre la Renta.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
             </div>
-            <!--  BEGIN FOOTER  -->
-            <div class="footer-wrapper">
+            
+            <div class="footer-wrapper d-flex justify-content-between px-4 pb-4">
                 <div class="footer-section f-section-1">
-                    <p class="">Departamento de Informática 2022</p>
+                    <p class="">Departamento de Informática <span id="year-dinamico"></span></p>
+                    <script>document.getElementById('year-dinamico').textContent = new Date().getFullYear();</script>
                 </div>
                 <div class="footer-section f-section-2">
-                    <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu">
+                    <p class="">Informática 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu">
                             <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
                             <rect x="9" y="9" width="6" height="6"></rect>
                             <line x1="9" y1="1" x2="9" y2="4"></line>
@@ -304,18 +463,16 @@
                             <line x1="20" y1="14" x2="23" y2="14"></line>
                             <line x1="1" y1="9" x2="4" y2="9"></line>
                             <line x1="1" y1="14" x2="4" y2="14"></line>
-                        </svg></p>
+                        </svg>
+                    </p>
                 </div>
             </div>
-            <!--  END FOOTER  -->
-        </div>
-        <!--  END CONTENT AREA  -->
-
+            </div>
         <div class="modal fade" id="modal_empresa" tabindex="-1" role="dialog" aria-labelledby="modal_empresa"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header border-0">
                         <h5 class="modal-title" id="modal_empresaLabel">
                             Empresa Nómina
                         </h5>
@@ -323,18 +480,15 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <div class="info-box-3-content" style="text-align: center;">Seleccione la empresa en la cual
-                            desee trabajar:</div>
-                        <br>
-                        <div style="text-align: center;">
-                            <select name="" id="slc_empresa" onchange="seleccionar_empresa()"></select>
+                    <div class="modal-body pt-0">
+                        <div class="text-muted mb-3" style="font-size: 14px;">Seleccione la empresa en la cual desee trabajar:</div>
+                        <div>
+                            <select class="form-select w-100" id="slc_empresa" onchange="seleccionar_empresa()"></select>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-success" id="btn_modal"
-                            onclick="pagos()">Continuar</button>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-success" id="btn_modal" onclick="continuarConEmpresaSeleccionada()">Continuar</button>
                     </div>
                 </div>
             </div>
@@ -342,23 +496,17 @@
 
     </div>
 
-    <!-- SWEET ALERT -->
     <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
     <script src="../src/plugins/src/sweetalerts2/custom-sweetalert-safe.js"></script>
 
-    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
     <script src="../layouts/vertical-dark-menu/app.js"></script>
-    <!-- END GLOBAL MANDATORY SCRIPTS -->
-
-    <!-- SELECT BOX -->
     <script src="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.js"></script>
     <script src="../src/plugins/src/vanillaSelectBox/custom-vanillaSelectBox.js"></script>
 
     <script src="js/validacion_usuario.js"></script>
-    <script src="js/role_manager.js"></script>
     <script src="js/nomina.js"></script>
 
     <script>
@@ -380,65 +528,14 @@
             });
         }
         
-        // Sistema de restricciones por rol para la página de nómina
         $(document).ready(function() {
             // Mostrar nombre de usuario en el sidebar
             const userData = JSON.parse(sessionStorage.getItem('usuario_principal'));
             if (userData && userData.nombre) {
                 $('#usuario_nombre_sidebar').text('Hola, ' + userData.nombre);
             }
-            
-            // Verificar si hay un mensaje de acceso denegado pendiente
-            const accessDeniedMsg = sessionStorage.getItem('access_denied');
-            if (accessDeniedMsg) {
-                sessionStorage.removeItem('access_denied');
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Acceso Denegado',
-                    text: accessDeniedMsg,
-                    confirmButtonText: 'Entendido'
-                });
-            }
-            
-            const rol = roleManager.getCurrentRole();
-            console.log('📋 Aplicando restricciones en nomina.html para rol:', rol);
-            
-            if (rol === 'admin') {
-                // Admin: mostrar todo
-                console.log('✅ Admin - Acceso completo a nómina');
-            } else if (rol === 'operaciones') {
-                // Operaciones: solo ver inicio, sin acceso directo a bonos/horas extra desde menú
-                console.log('🔧 Operaciones - Vista simplificada');
-                $('.nomina-dias-laborados').hide();
-                $('.nomina-descuentos').hide();
-                $('.nomina-pagos').hide();
-                $('.nomina-isr').hide();
-                // Ocultar items del menú lateral (solo dejar Inicio)
-                $('.menu-bonos').hide();
-                $('.menu-horas-extra').hide();
-                $('a[href="./dias_laborados.html"]').parent().hide();
-                $('a[href="./descuentos.html"]').parent().hide();
-                $('a[href="./isr.html"]').parent().hide();
-                
-                // Ocultar el enlace "Menú" del header para operaciones
-                $('a.nav-link[href="./index.html"]').hide();
-                
-                // Reorganizar layout para que se vean lado a lado
-                $('.nomina-bonos').removeClass('col').addClass('col-6');
-                $('.nomina-horas-extra').removeClass('col').addClass('col-6');
-            } else if (rol === 'capturador') {
-                // Capturador: redirigir (no tiene acceso a nómina)
-                console.log('⛔ Capturador - Sin acceso a nómina');
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Acceso Denegado',
-                    text: 'No tienes permisos para acceder a esta sección',
-                    confirmButtonText: 'Entendido'
-                }).then(() => {
-                    window.location.href = 'index.html';
-                });
-            }
         });
-    </script></body>
+    </script>
+</body>
 
 </html>

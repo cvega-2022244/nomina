@@ -1,4 +1,16 @@
+var id_empresa_nomina = sessionStorage.getItem('id_empresa_nomina');
+
 $(document).ready(function () {
+    if (!id_empresa_nomina) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Empresa no seleccionada',
+            text: 'Selecciona la empresa de nómina antes de continuar.'
+        }).then(() => {
+            window.location.href = './nomina.html';
+        });
+        return;
+    }
     listado_departamentos();
     traer_descuentos();
     selectBox = new vanillaSelectBox("#empleado", {
@@ -120,7 +132,8 @@ function listado_empleados() {
         type: 'GET',
         data: {
             quest: 'listado_empleados_dl',
-            departamento: depto
+            departamento: depto,
+            id_empresa: id_empresa_nomina
         },
         success: function (resp) {
             if (resp.includes('Query Falló')) {
@@ -186,7 +199,8 @@ function datos_empleado() {
         type: 'GET',
         data: {
             quest: 'datos_empleado_dias_laborados',
-            id: slc_empleado.value
+            id: slc_empleado.value,
+            id_empresa: id_empresa_nomina
         },
         success: function (resp) {
             if (resp.includes('Query Falló')) {

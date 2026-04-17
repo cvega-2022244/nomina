@@ -2188,7 +2188,10 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_isr') {
-            $sql = "SELECT e.id, CONCAT( e.primer_nombre, ' ', e.segundo_nombre, ' ', e.otro_nombre, ' ', e.primer_apellido, ' ', e.segundo_apellido, ' ', e.apellido_casada ) AS nombre, e.isr FROM empleado e where e.estado = 1";
+            $id_empresa = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+            $filtro_empresa = $id_empresa > 0 ? " AND ee.id_empresa = " . $id_empresa : "";
+
+            $sql = "SELECT e.id, CONCAT( e.primer_nombre, ' ', e.segundo_nombre, ' ', e.otro_nombre, ' ', e.primer_apellido, ' ', e.segundo_apellido, ' ', e.apellido_casada ) AS nombre, e.isr FROM empleado e LEFT JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.principal = 1 AND ee.activo = 1 WHERE e.estado = 1" . $filtro_empresa;
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
@@ -3416,6 +3419,9 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados') {
+            $id_empresa = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+            $filtro_empresa = $id_empresa > 0 ? " AND ee.id_empresa = " . $id_empresa : "";
+
             // Consulta corregida para mostrar solo la empresa principal de cada empleado
             $sql = "SELECT 
                         e.id, 
@@ -3431,7 +3437,7 @@ if (isset($_GET)) {
                     FROM empleado e 
                     LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
-                    WHERE e.estado = 1 
+                    WHERE e.estado = 1 " . $filtro_empresa . "
                     ORDER BY e.id DESC";
             
             // Debug logging
@@ -3760,22 +3766,29 @@ if (isset($_GET)) {
                 echo json_encode(['error' => 'Parámetros incompletos para datos_empleados_pago_lote']);
                 exit;
             }
+            $id_empleado = intval($_GET['id_empleado']);
+            $id_empresa_nomina = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+            $filtro_empresa_pago_lote = $id_empresa_nomina > 0 ? " AND id_empresa = " . $id_empresa_nomina : "";
+            $filtro_empresa_empleado = $id_empresa_nomina > 0 ? " AND ee.id_empresa = " . $id_empresa_nomina : "";
+            $filtro_horas_extra = $id_empresa_nomina > 0 ? " AND empresa_labor = " . $id_empresa_nomina : "";
+            $filtro_comision_empresa = $id_empresa_nomina > 0 ? " AND empresa_trabajo = " . $id_empresa_nomina : "";
+
             if ($_GET['nomina_activa'] == 'true') {
                 $id_lote = $_GET['id_lote'];
             } else {
                 $id_lote = $_SESSION['ultimo_id_lote'];
             }
             // Primero verificar si el empleado ya está en pago_lote
-            $check_sql = "SELECT COUNT(*) as existe FROM pago_lote WHERE id_empleado = " . $_GET['id_empleado'] . " AND id_lote = " . $id_lote;
+            $check_sql = "SELECT COUNT(*) as existe FROM pago_lote WHERE id_empleado = " . $id_empleado . " AND id_lote = " . $id_lote . $filtro_empresa_pago_lote;
             $check_result = mysqli_query($con, $check_sql);
             $check_row = mysqli_fetch_array($check_result);
             
             if ($check_row['existe'] > 0) {
                 // Si ya está en pago_lote, leer directamente de ahí
-                $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, COALESCE(pl.id_centro, e.centro_de_costo) AS centro_costo, COALESCE(pl.id_departamento, e.departamento_laboral) AS departamento, COALESCE(pl.puesto, e.puesto) AS puesto, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.banco, pl.bon_tot AS bon_incentivo, pl.bon_dec_tot AS bon_decreto, 0 AS cantidad_horas_dia, pl.horas_dia, 0 AS cantidad_horas_noche, pl.horas_noche, pl.sueldo_quincenal, pl.otros_ingresos, pl.vacaciones, pl.bonos, pl.desc_variables AS descuentos_variables, pl.boleta_ornato AS boleto_de_ornato, pl.igss AS igss_laboral, pl.isr, pl.otros_egresos AS otro_descuentos, 0 AS judiciales, 0 AS seguro, 0 AS parqueo, pl.ingresos_tot AS total_ingresos, pl.egresos_tot AS total_egresos, pl.liquido, pl.total_reporte_bono, pl.condicion_laboral, pl.cheque, e.banco, pl.no_cuenta, pl.id_tipo_cuenta AS tipo_cuenta, " . $id_lote . " AS id_lote, pl.fecha_pago_lote, pl.igss_patronal, pl.intecap, pl.irtra, pl.dias_laborados, pl.dias_bono FROM pago_lote pl INNER JOIN empleado e ON pl.id_empleado = e.id INNER JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE pl.id_empleado = " . $_GET['id_empleado'] . " AND pl.id_lote = " . $id_lote;
+                $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, COALESCE(pl.id_centro, e.centro_de_costo) AS centro_costo, COALESCE(pl.id_departamento, e.departamento_laboral) AS departamento, COALESCE(pl.puesto, e.puesto) AS puesto, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.banco, pl.bon_tot AS bon_incentivo, pl.bon_dec_tot AS bon_decreto, 0 AS cantidad_horas_dia, pl.horas_dia, 0 AS cantidad_horas_noche, pl.horas_noche, pl.sueldo_quincenal, pl.otros_ingresos, pl.vacaciones, pl.bonos, pl.desc_variables AS descuentos_variables, pl.boleta_ornato AS boleto_de_ornato, pl.igss AS igss_laboral, pl.isr, pl.otros_egresos AS otro_descuentos, 0 AS judiciales, 0 AS seguro, 0 AS parqueo, pl.ingresos_tot AS total_ingresos, pl.egresos_tot AS total_egresos, pl.liquido, pl.total_reporte_bono, pl.condicion_laboral, pl.cheque, e.banco, pl.no_cuenta, pl.id_tipo_cuenta AS tipo_cuenta, " . $id_lote . " AS id_lote, pl.fecha_pago_lote, pl.igss_patronal, pl.intecap, pl.irtra, pl.dias_laborados, pl.dias_bono FROM pago_lote pl INNER JOIN empleado e ON pl.id_empleado = e.id INNER JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE pl.id_empleado = " . $id_empleado . " AND pl.id_lote = " . $id_lote . $filtro_empresa_pago_lote . $filtro_empresa_empleado;
             } else {
                 // Si no está en pago_lote, calcular (query original)
-                $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.centro_de_costo centro_costo, e.departamento_laboral departamento, e.puesto puesto, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.banco banco, ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) bon_incentivo, ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) bon_decreto, COALESCE(he_dia.horas, 0) cantidad_horas_dia, COALESCE(he_dia.monto, 0) horas_dia, COALESCE(he_noche.horas, 0) cantidad_horas_noche, COALESCE(he_noche.monto, 0) horas_noche, ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) sueldo_quincenal, ROUND( COALESCE(e.otro_ingresos, 0), 2 ) otros_ingresos, ROUND(COALESCE(e.vacaciones, 0), 2) vacaciones, ROUND(COALESCE(bono.monto, 0), 2) bonos, ROUND( COALESCE(dv.monto_total, 0), 2 ) descuentos_variables, ROUND(e.boleto_de_ornato / 2, 2) boleto_de_ornato, igss.igss igss_laboral, ROUND(e.isr / 2, 2) isr, ROUND(e.otro_descuentos / 2, 2) otro_descuentos, ROUND(e.judiciales / 2, 2) judiciales, ROUND(e.seguro / 2, 2) seguro, ROUND( (e.parqueo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) parqueo, ROUND( ( ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + e.otro_ingresos + COALESCE(bono.monto, 0) + COALESCE(he_dia.monto, 0) + COALESCE(he_noche.monto, 0) ), 2 ) AS total_ingresos, ROUND( ( CASE WHEN l.quincena = 0 THEN ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 ELSE ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 + e.boleto_de_ornato END ), 2 ) AS total_egresos, ROUND( ( ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + e.otro_ingresos + COALESCE(he_dia.monto, 0) + COALESCE(he_noche.monto, 0) + COALESCE(bono.monto, 0) ) - ROUND( ( CASE WHEN l.quincena = 0 THEN ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 ELSE ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 + e.boleto_de_ornato END ), 2 ), 2 ) AS liquido, ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(ddb.dias, 0) ), 2 ) total_reporte_bono, e.condicion_laboral, e.tipo_de_pago AS cheque, e.banco, e.no_cuenta, e.tipo_cuenta, l.id AS id_lote, DATE(NOW()) AS fecha_pago_lote, e.igss_patronal, ROUND(e.igss_patronal * 0.01, 2) AS intecap, ROUND(e.igss_patronal * 0.01, 2) AS irtra, ( e.dias_laborados - COALESCE(dd.dias, 0) ) dias_laborados, ( e.dias_laborados - COALESCE(ddb.dias, 0) ) dias_bono FROM empleado e INNER JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id INNER JOIN lote l ON l.id = " . $id_lote . " LEFT JOIN( SELECT id_empleado, SUM(monto) monto, SUM(horas) horas FROM ( SELECT id_empleado, monto, horas FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND jornada = 0 UNION ALL SELECT id_empleado, monto, horas FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND tipo_jornada = 1 ) combined_dia GROUP BY id_empleado ) he_dia ON he_dia.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto) monto, SUM(horas) horas FROM ( SELECT id_empleado, monto, horas FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND jornada = 1 UNION ALL SELECT id_empleado, monto, horas FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND tipo_jornada = 2 ) combined_noche GROUP BY id_empleado ) he_noche ON he_noche.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto) AS monto FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'bono' GROUP BY id_empleado ) bono ON bono.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto_total / cuotas) AS monto_total FROM descuento_variable WHERE estado = 1 AND seleccionado = 1 AND faltan >= 1 GROUP BY id_empleado ) dv ON dv.id_empleado = e.id LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $_GET['id_empleado'] . " AND id_incidencia IN(2, 3, 4, 5, 6) ) dd ON dd.id_empleado = e.id LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $_GET['id_empleado'] . " AND id_incidencia IN(2, 3, 5, 6) ) ddb ON ddb.id_empleado = e.id LEFT JOIN( SELECT e.id id_empleado, ( ( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ) ) + COALESCE( ( SELECT SUM(monto) FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto) FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND id_empleado = e.id ), 0 ) + e.otro_ingresos ) * 0.0483 igss FROM empleado e LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $_GET['id_empleado'] . " AND id_incidencia IN(2, 3, 4, 5) ) dd ON dd.id_empleado = e.id WHERE e.id = " . $_GET['id_empleado'] . " ) igss ON igss.id_empleado = e.id WHERE e.estado = 1 AND e.id = " . $_GET['id_empleado'] . "";
+                $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.centro_de_costo centro_costo, e.departamento_laboral departamento, e.puesto puesto, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.banco banco, ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) bon_incentivo, ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) bon_decreto, COALESCE(he_dia.horas, 0) cantidad_horas_dia, COALESCE(he_dia.monto, 0) horas_dia, COALESCE(he_noche.horas, 0) cantidad_horas_noche, COALESCE(he_noche.monto, 0) horas_noche, ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) sueldo_quincenal, ROUND( COALESCE(e.otro_ingresos, 0), 2 ) otros_ingresos, ROUND(COALESCE(e.vacaciones, 0), 2) vacaciones, ROUND(COALESCE(bono.monto, 0), 2) bonos, ROUND( COALESCE(dv.monto_total, 0), 2 ) descuentos_variables, ROUND(e.boleto_de_ornato / 2, 2) boleto_de_ornato, igss.igss igss_laboral, ROUND(e.isr / 2, 2) isr, ROUND(e.otro_descuentos / 2, 2) otro_descuentos, ROUND(e.judiciales / 2, 2) judiciales, ROUND(e.seguro / 2, 2) seguro, ROUND( (e.parqueo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) parqueo, ROUND( ( ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + e.otro_ingresos + COALESCE(bono.monto, 0) + COALESCE(he_dia.monto, 0) + COALESCE(he_noche.monto, 0) ), 2 ) AS total_ingresos, ROUND( ( CASE WHEN l.quincena = 0 THEN ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 ELSE ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 + e.boleto_de_ornato END ), 2 ) AS total_egresos, ROUND( ( ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + e.otro_ingresos + COALESCE(he_dia.monto, 0) + COALESCE(he_noche.monto, 0) + COALESCE(bono.monto, 0) ) - ROUND( ( CASE WHEN l.quincena = 0 THEN ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 ELSE ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 + e.boleto_de_ornato END ), 2 ), 2 ) AS liquido, ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(ddb.dias, 0) ), 2 ) total_reporte_bono, e.condicion_laboral, e.tipo_de_pago AS cheque, e.banco, e.no_cuenta, e.tipo_cuenta, l.id AS id_lote, DATE(NOW()) AS fecha_pago_lote, e.igss_patronal, ROUND(e.igss_patronal * 0.01, 2) AS intecap, ROUND(e.igss_patronal * 0.01, 2) AS irtra, ( e.dias_laborados - COALESCE(dd.dias, 0) ) dias_laborados, ( e.dias_laborados - COALESCE(ddb.dias, 0) ) dias_bono FROM empleado e INNER JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id INNER JOIN lote l ON l.id = " . $id_lote . " LEFT JOIN( SELECT id_empleado, SUM(monto) monto, SUM(horas) horas FROM ( SELECT id_empleado, monto, horas FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND jornada = 0" . $filtro_horas_extra . " UNION ALL SELECT id_empleado, monto, horas FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND tipo_jornada = 1" . $filtro_comision_empresa . " ) combined_dia GROUP BY id_empleado ) he_dia ON he_dia.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto) monto, SUM(horas) horas FROM ( SELECT id_empleado, monto, horas FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND jornada = 1" . $filtro_horas_extra . " UNION ALL SELECT id_empleado, monto, horas FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND tipo_jornada = 2" . $filtro_comision_empresa . " ) combined_noche GROUP BY id_empleado ) he_noche ON he_noche.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto) AS monto FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'bono'" . $filtro_comision_empresa . " GROUP BY id_empleado ) bono ON bono.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto_total / cuotas) AS monto_total FROM descuento_variable WHERE estado = 1 AND seleccionado = 1 AND faltan >= 1 GROUP BY id_empleado ) dv ON dv.id_empleado = e.id LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $id_empleado . " AND id_incidencia IN(2, 3, 4, 5, 6) ) dd ON dd.id_empleado = e.id LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $id_empleado . " AND id_incidencia IN(2, 3, 5, 6) ) ddb ON ddb.id_empleado = e.id LEFT JOIN( SELECT e.id id_empleado, ( ( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ) ) + COALESCE( ( SELECT SUM(monto) FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND id_empleado = e.id" . $filtro_horas_extra . " ), 0 ) + COALESCE( ( SELECT SUM(monto) FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND id_empleado = e.id" . $filtro_comision_empresa . " ), 0 ) + e.otro_ingresos ) * 0.0483 igss FROM empleado e LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $id_empleado . " AND id_incidencia IN(2, 3, 4, 5) ) dd ON dd.id_empleado = e.id WHERE e.id = " . $id_empleado . " ) igss ON igss.id_empleado = e.id WHERE e.estado = 1 AND e.id = " . $id_empleado . $filtro_empresa_empleado;
             }
 
 
@@ -3980,7 +3993,10 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados_dl') {
-            $sql = "SELECT id, primer_nombre, primer_apellido, dpi FROM empleado where estado = 1 and departamento_laboral = " . $_GET["departamento"];
+            $id_empresa = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+            $filtro_empresa = $id_empresa > 0 ? " AND ee.id_empresa = " . $id_empresa : "";
+
+            $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.dpi FROM empleado e LEFT JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.principal = 1 AND ee.activo = 1 WHERE e.estado = 1 AND e.departamento_laboral = " . intval($_GET["departamento"]) . $filtro_empresa;
 
             $result = mysqli_query($con, $sql);
 
@@ -4007,7 +4023,10 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'datos_empleado_dias_laborados') {
-            $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, concat(e.primer_nombre, ' ', e.segundo_nombre, ' ', e.otro_nombre, ' ', e.primer_apellido, ' ', e.segundo_apellido, ' ', e.apellido_casada) as nombre_completo, cc.nombre as centro FROM empleado e INNER JOIN centro_costo cc on e.centro_de_costo = cc.id WHERE e.id = " . $_GET["id"];
+            $id_empresa = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+            $filtro_empresa = $id_empresa > 0 ? " AND ee.id_empresa = " . $id_empresa : "";
+
+            $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, concat(e.primer_nombre, ' ', e.segundo_nombre, ' ', e.otro_nombre, ' ', e.primer_apellido, ' ', e.segundo_apellido, ' ', e.apellido_casada) as nombre_completo, cc.nombre as centro FROM empleado e INNER JOIN centro_costo cc on e.centro_de_costo = cc.id LEFT JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.principal = 1 AND ee.activo = 1 WHERE e.id = " . intval($_GET["id"]) . $filtro_empresa;
             "";
 
             $result = mysqli_query($con, $sql);
@@ -4680,7 +4699,13 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados_nomina') {
-            $sql = "SELECT * FROM empleado e WHERE e.id IN(SELECT id_empleado from pago_lote pl INNER JOIN lote l on pl.id_lote = l.id WHERE l.id_estado = 1) and e.estado = 1";
+            $id_empresa = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+
+            if ($id_empresa > 0) {
+                $sql = "SELECT e.* FROM empleado e INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.principal = 1 AND ee.activo = 1 WHERE e.id IN(SELECT pl.id_empleado FROM pago_lote pl INNER JOIN lote l ON pl.id_lote = l.id WHERE l.id_estado = 1 AND pl.id_empresa = " . $id_empresa . ") AND e.estado = 1 AND ee.id_empresa = " . $id_empresa;
+            } else {
+                $sql = "SELECT * FROM empleado e WHERE e.id IN(SELECT id_empleado from pago_lote pl INNER JOIN lote l on pl.id_lote = l.id WHERE l.id_estado = 1) and e.estado = 1";
+            }
 
             $result = mysqli_query($con, $sql);
 
@@ -4788,7 +4813,13 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados_fuera_nomina') {
-            $sql = "SELECT * FROM empleado e WHERE e.id NOT IN(SELECT id_empleado from pago_lote pl INNER JOIN lote l on pl.id_lote = l.id WHERE l.id_estado = 1) and e.estado = 1";
+            $id_empresa = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+
+            if ($id_empresa > 0) {
+                $sql = "SELECT e.* FROM empleado e INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.principal = 1 AND ee.activo = 1 WHERE e.id NOT IN(SELECT pl.id_empleado from pago_lote pl INNER JOIN lote l on pl.id_lote = l.id WHERE l.id_estado = 1 AND pl.id_empresa = " . $id_empresa . ") AND e.estado = 1 AND ee.id_empresa = " . $id_empresa;
+            } else {
+                $sql = "SELECT * FROM empleado e WHERE e.id NOT IN(SELECT id_empleado from pago_lote pl INNER JOIN lote l on pl.id_lote = l.id WHERE l.id_estado = 1) and e.estado = 1";
+            }
 
             $result = mysqli_query($con, $sql);
 
@@ -8029,8 +8060,9 @@ if (isset($_POST)) {
 
         if ($_POST["quest"] == 'actualizar_pago_lote') {
             $id_lote = $_POST["id_lote"];
+            $id_empresa = intval($_POST['id_empresa']);
 
-            $sql = "UPDATE pago_lote SET id_centro=" . $_POST['centro_costo'] . ", id_departamento = " . $_POST['departamento'] . ", puesto = '" . $_POST['puesto'] . "', id_empresa=" . $_POST['id_empresa'] . ",bon_tot='" . $_POST['bon_tot'] . "',bon_dec_tot='" . $_POST['bon_dec_tot'] . "',horas_dia='" . $_POST['horas_dia'] . "',horas_noche='" . $_POST['horas_noche'] . "',cantidad_horas_dia=" . $_POST['cantidad_horas_dia'] . ",cantidad_horas_noche=" . $_POST['cantidad_horas_noche'] . ",sueldo_quincenal='" . $_POST['sueldo_quincenal'] . "',otros_ingresos='" . $_POST['otros_ingresos'] . "',vacaciones='" . $_POST['vacaciones'] . "',bonos='" . $_POST['bonos'] . "',desc_variables='" . $_POST['desc_variables'] . "',boleta_ornato='" . $_POST['boleta_ornato'] . "',igss='" . $_POST['igss'] . "',isr='" . $_POST['isr'] . "',otros_egresos='" . $_POST['otros_egresos'] . "',judiciales='" . $_POST['judiciales'] . "',seguro='" . $_POST['seguro'] . "',parqueo='" . $_POST['parqueo'] . "',ingresos_tot='" . $_POST['ingresos_tot'] . "',egresos_tot='" . $_POST['egresos_tot'] . "',liquido='" . $_POST['liquido'] . "',total_reporte_bono='" . $_POST['total_reporte_bono'] . "',condicion_laboral=" . $_POST['condicion_laboral'] . ",cheque=" . $_POST['cheque'] . ",id_banco=" . $_POST['id_banco'] . ",no_cuenta='" . $_POST['no_cuenta'] . "',id_tipo_cuenta=" . $_POST['id_tipo_cuenta'] . ",igss_patronal='" . $_POST['igss_patronal'] . "',intecap='" . $_POST['intecap'] . "',irtra='" . $_POST['irtra'] . "',dias_laborados=" . $_POST['dias_laborados'] . ", dias_bono =" . $_POST['dias_bono'] . " WHERE id_empleado = " . $_POST['id_empleado'] . " and id_lote = " . $id_lote . "";
+            $sql = "UPDATE pago_lote SET id_centro=" . $_POST['centro_costo'] . ", id_departamento = " . $_POST['departamento'] . ", puesto = '" . $_POST['puesto'] . "', id_empresa=" . $_POST['id_empresa'] . ",bon_tot='" . $_POST['bon_tot'] . "',bon_dec_tot='" . $_POST['bon_dec_tot'] . "',horas_dia='" . $_POST['horas_dia'] . "',horas_noche='" . $_POST['horas_noche'] . "',cantidad_horas_dia=" . $_POST['cantidad_horas_dia'] . ",cantidad_horas_noche=" . $_POST['cantidad_horas_noche'] . ",sueldo_quincenal='" . $_POST['sueldo_quincenal'] . "',otros_ingresos='" . $_POST['otros_ingresos'] . "',vacaciones='" . $_POST['vacaciones'] . "',bonos='" . $_POST['bonos'] . "',desc_variables='" . $_POST['desc_variables'] . "',boleta_ornato='" . $_POST['boleta_ornato'] . "',igss='" . $_POST['igss'] . "',isr='" . $_POST['isr'] . "',otros_egresos='" . $_POST['otros_egresos'] . "',judiciales='" . $_POST['judiciales'] . "',seguro='" . $_POST['seguro'] . "',parqueo='" . $_POST['parqueo'] . "',ingresos_tot='" . $_POST['ingresos_tot'] . "',egresos_tot='" . $_POST['egresos_tot'] . "',liquido='" . $_POST['liquido'] . "',total_reporte_bono='" . $_POST['total_reporte_bono'] . "',condicion_laboral=" . $_POST['condicion_laboral'] . ",cheque=" . $_POST['cheque'] . ",id_banco=" . $_POST['id_banco'] . ",no_cuenta='" . $_POST['no_cuenta'] . "',id_tipo_cuenta=" . $_POST['id_tipo_cuenta'] . ",igss_patronal='" . $_POST['igss_patronal'] . "',intecap='" . $_POST['intecap'] . "',irtra='" . $_POST['irtra'] . "',dias_laborados=" . $_POST['dias_laborados'] . ", dias_bono =" . $_POST['dias_bono'] . " WHERE id_empleado = " . $_POST['id_empleado'] . " and id_lote = " . $id_lote . " AND id_empresa = " . $id_empresa;
 
             $result = mysqli_query($con, $sql);
 
@@ -8810,8 +8842,9 @@ if (isset($_POST)) {
         }
 
         if ($_POST["quest"] == 'guardar_isr') {
-
-            $sql = "UPDATE empleado set isr = " . $_POST['isr'] . " WHERE id = " . $_POST['id'] . "";
+            $id_empresa = isset($_POST['id_empresa']) ? intval($_POST['id_empresa']) : 0;
+            $filtro_empresa = $id_empresa > 0 ? " AND EXISTS (SELECT 1 FROM empresa_empleado ee WHERE ee.id_empleado = empleado.id AND ee.principal = 1 AND ee.activo = 1 AND ee.id_empresa = " . $id_empresa . ")" : "";
+            $sql = "UPDATE empleado set isr = " . $_POST['isr'] . " WHERE id = " . $_POST['id'] . $filtro_empresa;
 
             $result = mysqli_query($con, $sql);
 

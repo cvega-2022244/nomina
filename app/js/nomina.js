@@ -3,10 +3,14 @@ var empleados_fuera_nomina = [];
 var empleados = [];
 var nomina_activa = sessionStorage.getItem('nomina_activa');
 var id_lote_activo;
+var rutaPendienteNomina = null;
 
 $(document).ready(function () {
-    listado_empleados_en_nomina();
-})
+    inicializar_select().then(() => {
+        validarEmpresaSeleccionada(true);
+        listado_empleados_en_nomina();
+    });
+});
 
 function recargarUnaVez() {
     const recargada = localStorage.getItem('recargada');
@@ -20,31 +24,86 @@ localStorage.removeItem('recargada');
 window.addEventListener('focus', recargarUnaVez);
 
 function bonos() {
-    window.location.href = './seleccion_bonos.html';
+    navegarConEmpresa('./seleccion_bonos.html');
 }
 
 function horas_extra() {
-    window.location.href = './horas_extra.html';
+    navegarConEmpresa('./horas_extra.html');
 }
 
 function dias_laborados() {
-    window.location.href = './dias_laborados.html';
+    navegarConEmpresa('./dias_laborados.html');
 }
 
 function descuentos() {
-    window.location.href = './descuentos.html';
+    navegarConEmpresa('./descuentos.html');
 }
 
 function pagos() {
-    window.location.href = './pagos.html';
+    navegarConEmpresa('./pagos.html');
 }
 
 function isr() {
-    window.location.href = './isr.html';
+    navegarConEmpresa('./isr.html');
 }
 
 function comisiones() {
-    window.location.href = './seleccion_bonos.html';
+    navegarConEmpresa('./seleccion_bonos.html');
+}
+
+function obtenerIdEmpresaNomina() {
+    const idEmpresa = parseInt(sessionStorage.getItem('id_empresa_nomina'), 10);
+    return Number.isNaN(idEmpresa) ? 0 : idEmpresa;
+}
+
+function abrirModalEmpresa(ruta = null, forzarSeleccion = false) {
+    rutaPendienteNomina = ruta;
+    const modal = $('#modal_empresa');
+    modal.data('forzar-seleccion', forzarSeleccion);
+    modal.modal({
+        backdrop: forzarSeleccion ? 'static' : true,
+        keyboard: !forzarSeleccion
+    });
+    modal.modal('show');
+}
+
+function validarEmpresaSeleccionada(mostrarModal = false) {
+    const idEmpresa = obtenerIdEmpresaNomina();
+    if (idEmpresa > 0) {
+        return true;
+    }
+
+    if (mostrarModal) {
+        abrirModalEmpresa(null, true);
+    }
+
+    return false;
+}
+
+function navegarConEmpresa(ruta) {
+    if (!validarEmpresaSeleccionada(false)) {
+        abrirModalEmpresa(ruta, false);
+        return;
+    }
+    window.location.href = ruta;
+}
+
+function continuarConEmpresaSeleccionada() {
+    if (!validarEmpresaSeleccionada(false)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Empresa requerida',
+            text: 'Selecciona una empresa para continuar con la nómina.'
+        });
+        return;
+    }
+
+    $('#modal_empresa').modal('hide');
+    if (rutaPendienteNomina) {
+        const ruta = rutaPendienteNomina;
+        rutaPendienteNomina = null;
+        window.location.href = ruta;
+    }
 }
 
 async function listado_empleados_en_nomina() {
@@ -55,6 +114,7 @@ async function listado_empleados_en_nomina() {
             type: 'GET',
             data: {
                 quest: 'listado_empleados_nomina',
+                id_empresa: obtenerIdEmpresaNomina()
             },
             dataType: 'text',
         });
@@ -111,6 +171,7 @@ async function listado_empleados_fuera_nomina() {
             type: 'GET',
             data: {
                 quest: 'listado_empleados_fuera_nomina',
+                id_empresa: obtenerIdEmpresaNomina()
             },
             dataType: 'text',
         });
@@ -157,6 +218,7 @@ async function listado_completo_empleados() {
             type: 'GET',
             data: {
                 quest: 'listado_empleados',
+                id_empresa: obtenerIdEmpresaNomina()
             },
         });
 
@@ -248,7 +310,7 @@ async function obtener_lote_activo() {
     } catch (error) {
         
     } finally {
-        inicializar_select();
+        Swal.close();
     }
 }
 
@@ -296,6 +358,10 @@ function inicializar_select() {
                             template += `<option value="${empresa.id}">${empresa.nombre_comercial}</option>`
                         })
                         slc_empresa.innerHTML = template;
+                        const idEmpresaGuardada = obtenerIdEmpresaNomina();
+                        if (idEmpresaGuardada > 0) {
+                            slc_empresa.value = String(idEmpresaGuardada);
+                        }
                         selectBox = new vanillaSelectBox("#slc_empresa", {
                             "keepInlineStyles": true,
                             "maxHeight": 678,
@@ -317,10 +383,18 @@ function inicializar_select() {
 }
 
 function seleccionar_empresa() {
-    sessionStorage.setItem('id_empresa_nomina', slc_empresa.value);
+    const slcEmpresa = document.getElementById('slc_empresa');
+    if (!slcEmpresa || !slcEmpresa.value) {
+        sessionStorage.removeItem('id_empresa_nomina');
+        return;
+    }
+    sessionStorage.setItem('id_empresa_nomina', slcEmpresa.value);
 }
 
 async function ingresar_pagos_lote() {
+    if (!validarEmpresaSeleccionada(true)) {
+        return;
+    }
     try {
         cargando();
         const promesas = empleados.map(empleado => {
@@ -332,7 +406,8 @@ async function ingresar_pagos_lote() {
                         quest: 'datos_empleados_pago_lote',
                         id_empleado: empleado.id_empleado,
                         nomina_activa: nomina_activa,
-                        id_lote: id_lote_activo
+                        id_lote: id_lote_activo,
+                        id_empresa: obtenerIdEmpresaNomina()
                     },
                     success: function (resp) {
                         if (resp.includes('Query Falló')) {
@@ -446,6 +521,9 @@ async function ingresar_pagos_lote() {
 }
 
 async function actualizar_pago_lote() {
+    if (!validarEmpresaSeleccionada(true)) {
+        return;
+    }
     try {
         cargando();
         const promesas = empleados_en_nomina.map(empleado => {
@@ -457,7 +535,8 @@ async function actualizar_pago_lote() {
                         quest: 'datos_empleados_pago_lote',
                         id_empleado: empleado.id_empleado,
                         nomina_activa: nomina_activa,
-                        id_lote: id_lote_activo
+                        id_lote: id_lote_activo,
+                        id_empresa: obtenerIdEmpresaNomina()
                     },
                     success: function (resp) {
                         if (resp.includes('Query Falló')) {
@@ -568,6 +647,9 @@ async function actualizar_pago_lote() {
 }
 
 async function ingresar_pagos_lote_nuevos_empleados() {
+    if (!validarEmpresaSeleccionada(true)) {
+        return;
+    }
     try {
         const promesas = empleados_fuera_nomina.map(empleado => {
             return new Promise((resolve) => {
@@ -578,7 +660,8 @@ async function ingresar_pagos_lote_nuevos_empleados() {
                         quest: 'datos_empleados_pago_lote',
                         id_empleado: empleado.id_empleado,
                         nomina_activa: nomina_activa,
-                        id_lote: id_lote_activo
+                        id_lote: id_lote_activo,
+                        id_empresa: obtenerIdEmpresaNomina()
                     },
                     success: function (resp) {
                         if (resp.includes('Query Falló')) {
