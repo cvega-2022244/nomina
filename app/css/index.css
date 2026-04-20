@@ -230,3 +230,90 @@ body.dark .theme-toggle .dark-mode {
 body.dark .theme-toggle .light-mode {
     display: inline-block;
 }
+
+/* ========== ESTILOS PARA MODAL DE CREAR NÓMINA ========== */
+
+#modal_crear_nomina .modal-dialog {
+    max-width: 500px;
+}
+
+#modal_crear_nomina .form-check {
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+#modal_crear_nomina .form-check:hover {
+    background-color: var(--dash-shadow-hover);
+}
+
+#modal_crear_nomina .form-check-input {
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+#modal_crear_nomina .form-check-label {
+    cursor: pointer;
+    margin-bottom: 0;
+    margin-left: 8px;
+}
+
+#modal_crear_nomina .empresa-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    border: 2px solid var(--dash-border);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+#modal_crear_nomina .empresa-checkbox:checked {
+    background-color: #10b981;
+    border-color: #10b981;
+}
+
+#modal_crear_nomina .empresa-checkbox:hover {
+    border-color: #10b981;
+}
+
+#empresas_container {
+    background-color: var(--dash-card-bg);
+    border: 1px solid var(--dash-border);
+    border-radius: 8px;
+}
+
+#modal_crear_nomina .card {
+    border: 1px solid var(--dash-border);
+    background-color: rgba(16, 185, 129, 0.05);
+}
+
+#modal_crear_nomina .card-body p {
+    color: var(--dash-text);
+}
+
+#modal_crear_nomina .alert-warning {
+    background-color: rgba(226, 160, 63, 0.1);
+    border-color: #e2a03f;
+    color: var(--dash-text);
+}
+
+#modal_crear_nomina .alert-warning strong {
+    color: #e2a03f;
+}
+
+#modal_crear_nomina .modal-body {
+    color: var(--dash-text);
+}
+
+#modal_crear_nomina .form-label {
+    color: var(--dash-title);
+}
+
+#modal_crear_nomina .text-muted {
+    color: var(--dash-text) !important;
+    font-size: 12px;
+}
+
+body.dark #modal_crear_nomina .text-muted {
+    color: #888ea8 !important;
+}

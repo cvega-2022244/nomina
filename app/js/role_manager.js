@@ -47,7 +47,7 @@ class RoleManager {
 
     // Verificar si el usuario es admin (acceso completo)
     isAdmin() {
-        return this.rol === 'admin';
+        return this.rol === 'rh';
     }
 
     // Verificar si el usuario es operaciones (solo bonos y horas extra)

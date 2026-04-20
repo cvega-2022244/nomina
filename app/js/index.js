@@ -31,9 +31,9 @@ function manejar_click_nomina() {
         window.location.href = './nomina.html';
     } else {
         // Solo admin puede crear nuevo lote
-        if (rol === 'admin') {
-            console.log('Creando nuevo lote');
-            ingresar_lote();
+        if (rol === 'rh') {
+            console.log('Abriendo modal para crear nueva nómina');
+            abrirModalCrearNomina();
         } else {
             console.log('Usuario sin permisos para crear lote');
             Swal.fire({
@@ -70,7 +70,7 @@ function validar_nomina_activa() {
                         // Verificar el rol del usuario
                         const rol = sessionStorage.getItem('rol') || '';
                         
-                        if (rol === 'admin') {
+                        if (rol === 'rh') {
                             // Solo admin puede ver "Crear Nómina"
                             titulo_nomina.innerHTML = "Crear Nómina";
                             btn_nomina.style.display = 'block';
@@ -580,4 +580,156 @@ function facturacion_intercompany() {
         });
     }
 }
+
+// ========== NUEVAS FUNCIONES PARA CREAR NÓMINA CON SELECCIÓN DE EMPRESAS ==========
+
+function abrirModalCrearNomina() {
+    // Actualizar información de período
+    const fecha_actual = new Date();
+    const dia_actual = fecha_actual.getDate();
+    const mes_actual = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fecha_actual);
+    const anio_actual = fecha_actual.getFullYear();
+    
+    let tipo_quincena = dia_actual <= 15 ? 'Primera Quincena' : 'Segunda Quincena';
+    
+    document.getElementById('info_periodo').textContent = `${mes_actual} ${anio_actual}`;
+    document.getElementById('info_quincena').textContent = tipo_quincena;
+    
+    // Limpiar selecciones previas
+    document.getElementById('chk_seleccionar_todas').checked = false;
+    
+    // Cargar empresas
+    cargarEmpresasEnModal();
+    
+    // Mostrar modal
+    $('#modal_crear_nomina').modal({
+        backdrop: 'static',
+        keyboard: false
+    });
+    $('#modal_crear_nomina').modal('show');
+}
+
+function cargarEmpresasEnModal() {
+    $.ajax({
+        url: 'php/servidor.php',
+        type: 'GET',
+        dataType: 'text',
+        data: {
+            quest: 'listado_empresas',
+        },
+        success: function (res) {
+            if (res.includes('Query Falló') || res.includes('No hay datos')) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Hay Empresas',
+                    text: 'No se encontraron empresas registradas'
+                });
+                return;
+            }
+            
+            try {
+                let empresas = [];
+                if (typeof res === 'string') {
+                    empresas = JSON.parse(res);
+                } else {
+                    empresas = res;
+                }
+                
+                const container = document.getElementById('empresas_container');
+                let html = '';
+                
+                empresas.forEach((empresa, index) => {
+                    html += `
+                        <div class="form-check mb-3">
+                            <input class="form-check-input empresa-checkbox" type="checkbox" 
+                                id="empresa_${empresa.id}" value="${empresa.id}" data-nombre="${empresa.nombre_comercial}">
+                            <label class="form-check-label" for="empresa_${empresa.id}">
+                                <strong>${empresa.nombre_comercial}</strong>
+                                <br>
+                                <small class="text-muted">NIT: ${empresa.nit}</small>
+                            </label>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Agregar event listeners a los checkboxes
+                document.querySelectorAll('.empresa-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', validarSeleccionEmpresas);
+                });
+                
+            } catch (error) {
+                console.error('Error cargando empresas:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar las empresas'
+                });
+            }
+        },
+        error: function(error) {
+            console.error('Error AJAX:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de Conexión',
+                text: 'No se pudo conectar al servidor'
+            });
+        }
+    });
+}
+
+function toggleTodoasEmpresas() {
+    const chkTodas = document.getElementById('chk_seleccionar_todas');
+    const checkboxes = document.querySelectorAll('.empresa-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = chkTodas.checked;
+    });
+}
+
+function validarSeleccionEmpresas() {
+    const checkboxes = document.querySelectorAll('.empresa-checkbox');
+    const checkedBoxes = document.querySelectorAll('.empresa-checkbox:checked');
+    const chkTodas = document.getElementById('chk_seleccionar_todas');
+    
+    // Si todos están seleccionados, marcar "seleccionar todas"
+    if (checkboxes.length > 0 && checkedBoxes.length === checkboxes.length) {
+        chkTodas.checked = true;
+    } else {
+        chkTodas.checked = false;
+    }
+}
+
+function crearNominaConEmpresas() {
+    const checkboxes = document.querySelectorAll('.empresa-checkbox:checked');
+    
+    if (checkboxes.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Selecciona al menos una empresa',
+            text: 'Debes seleccionar al menos una empresa para crear la nómina'
+        });
+        return;
+    }
+    
+    // Obtener empresas seleccionadas
+    const empresasSeleccionadas = [];
+    checkboxes.forEach(checkbox => {
+        empresasSeleccionadas.push({
+            id: checkbox.value,
+            nombre: checkbox.dataset.nombre
+        });
+    });
+    
+    // Guardar empresas seleccionadas en sessionStorage
+    sessionStorage.setItem('empresas_nomina', JSON.stringify(empresasSeleccionadas));
+    
+    // Cerrar modal y proceder a crear lote
+    $('#modal_crear_nomina').modal('hide');
+    
+    // Crear la nómina
+    ingresar_lote();
+}
+
 
