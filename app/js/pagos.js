@@ -68,7 +68,7 @@ function inicializar_select_centro_costo() {
                         resolve();
                         return;
                     }
-                    
+
                     try {
                         let lista;
                         if (typeof res === 'string') {
@@ -82,7 +82,7 @@ function inicializar_select_centro_costo() {
                         } else {
                             lista = res; // jQuery ya parseó el JSON
                         }
-                        
+
                         var slc_centro = document.getElementById('slc_centro_costo');
                         if (slc_centro) {
                             var template = '';
@@ -147,7 +147,7 @@ function inicializar_select_departamento() {
                         resolve();
                         return;
                     }
-                    
+
                     try {
                         let lista;
                         if (typeof res === 'string') {
@@ -161,7 +161,7 @@ function inicializar_select_departamento() {
                         } else {
                             lista = res; // jQuery ya parseó el JSON
                         }
-                        
+
                         var slc_departamento = document.getElementById('slc_departamento');
                         if (slc_departamento) {
                             var template = '';
@@ -227,7 +227,7 @@ function listado_pagos() {
                         resolve();
                         return;
                     }
-                    
+
                     try {
                         let lista;
                         if (typeof res === 'string') {
@@ -241,7 +241,7 @@ function listado_pagos() {
                         } else {
                             lista = res; // jQuery ya parseó el JSON
                         }
-                        
+
                         let template = '';
                         lista.forEach(lista => {
                             template += `
@@ -374,13 +374,13 @@ function listado_pagos_centro_costo(id_centro) {
                 } else {
                     try {
                         let lista;
-                    // Verificar si la respuesta es JSON válido antes de parsear
-                    if (res.trim().startsWith('<') || res.includes('<br') || res.includes('Query Falló') || res.includes('Successfully') || res.trim() === 'No') {
-                        console.log('Respuesta no válida para listado_centros_costo:', res);
-                        Swal.close();
-                        resolve();
-                        return;
-                    }
+                        // Verificar si la respuesta es JSON válido antes de parsear
+                        if (res.trim().startsWith('<') || res.includes('<br') || res.includes('Query Falló') || res.includes('Successfully') || res.trim() === 'No') {
+                            console.log('Respuesta no válida para listado_centros_costo:', res);
+                            Swal.close();
+                            resolve();
+                            return;
+                        }
                         if (typeof res === 'string') {
                             try {
                                 lista = JSON.parse(res);
@@ -524,13 +524,13 @@ function listado_pagos_departamento(id_departamento) {
                 } else {
                     try {
                         let lista;
-                    // Verificar si la respuesta es JSON válido antes de parsear
-                    if (res.trim().startsWith('<') || res.includes('<br') || res.includes('Query Falló') || res.includes('Successfully') || res.trim() === 'No') {
-                        console.log('Respuesta no válida para listado_centros_costo:', res);
-                        Swal.close();
-                        resolve();
-                        return;
-                    }
+                        // Verificar si la respuesta es JSON válido antes de parsear
+                        if (res.trim().startsWith('<') || res.includes('<br') || res.includes('Query Falló') || res.includes('Successfully') || res.trim() === 'No') {
+                            console.log('Respuesta no válida para listado_centros_costo:', res);
+                            Swal.close();
+                            resolve();
+                            return;
+                        }
                         if (typeof res === 'string') {
                             try {
                                 lista = JSON.parse(res);
@@ -1071,13 +1071,13 @@ async function actualizar_pago_lote() {
                             } else {
                                 lista = resp;
                             }
-                            
+
                             if (!lista || lista.length === 0) {
                                 console.error('❌ Sin datos para empleado:', empleado.id_empleado);
                                 resolve();
                                 return;
                             }
-                            
+
                             $.ajax({
                                 url: 'php/servidor.php',
                                 type: 'POST',
@@ -1196,13 +1196,13 @@ async function ingresar_pagos_lote_nuevos_empleados() {
                             } else {
                                 lista = resp;
                             }
-                            
+
                             if (!lista || lista.length === 0) {
                                 console.error('❌ Sin datos para ingresar pago, empleado:', empleado.id_empleado);
                                 resolve();
                                 return;
                             }
-                            
+
                             $.ajax({
                                 url: 'php/servidor.php',
                                 type: 'POST',
