@@ -193,11 +193,29 @@ function cargarTiposBono() {
 
 function cargarEmpleados() {
 
+    // Obtener datos del usuario logueado para filtrar por departamento
+    let id_departamento = 0;
+    try {
+        const usuarioData = JSON.parse(sessionStorage.getItem('usuario_principal'));
+        console.log('🔍 Usuario logueado:', usuarioData);
+        // Filtrar siempre que el usuario tenga un departamento asignado
+        // Si id_departamento es NULL o 0 en la tabla usuario, se muestran TODOS los empleados
+        if (usuarioData && usuarioData.id_departamento) {
+            id_departamento = usuarioData.id_departamento;
+            console.log('✅ Filtrando empleados por departamento:', id_departamento);
+        } else {
+            console.log('ℹ️ Sin filtro de departamento - se muestran todos los empleados');
+        }
+    } catch (e) {
+        console.warn('No se pudo obtener departamento del usuario:', e);
+    }
+
     $.ajax({
         url: 'servidor-bonos.php',
         type: 'GET',
         data: {
-            quest: 'listado_empleados_activos'
+            quest: 'listado_empleados_activos',
+            id_departamento: id_departamento
         },
         dataType: 'json',
         beforeSend: function() {

@@ -205,7 +205,7 @@ if (isset($_GET)) {
                 }
 
                 // Usar prepared statements para evitar SQL injection
-                $stmt = mysqli_prepare($con, "SELECT id, nombre, rol FROM usuario WHERE usuario = ? AND contrasena = ?");
+                $stmt = mysqli_prepare($con, "SELECT id, nombre, rol, id_departamento FROM usuario WHERE usuario = ? AND contrasena = ?");
                 if (!$stmt) {
                     echo json_encode(['error' => 'Error en la preparación de la consulta: ' . mysqli_error($con)]);
                     exit;
@@ -226,7 +226,8 @@ if (isset($_GET)) {
                     $json[] = array(
                         'id' => $row["id"],
                             'nombre' => $row["nombre"],
-                            'rol' => $row["rol"]
+                            'rol' => $row["rol"],
+                            'id_departamento' => $row["id_departamento"]
                     );
                 }
                     echo json_encode($json);

@@ -42,7 +42,17 @@ if (isset($_GET["quest"]) && $_GET["quest"] == 'listado_empresas') {
 }
 
 if (isset($_GET["quest"]) && $_GET["quest"] == 'listado_empleados_activos') {
-    $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido, e.sueldo_ordinario, d.nombre as departamento_laboral, emp.nombre_comercial as empresa, emp.id as id_empresa FROM empleado e LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE e.estado = 1 ORDER BY e.primer_nombre, e.primer_apellido";
+    // Filtro opcional por departamento del usuario logueado
+    $id_departamento = isset($_GET['id_departamento']) ? intval($_GET['id_departamento']) : 0;
+    
+    $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido, e.sueldo_ordinario, e.departamento_laboral, e.centro_de_costo, d.nombre as departamento_laboral_nombre, emp.nombre_comercial as empresa, emp.id as id_empresa FROM empleado e LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE e.estado = 1";
+    
+    // Si se envía id_departamento > 0, filtrar por ese departamento
+    if ($id_departamento > 0) {
+        $sql .= " AND e.departamento_laboral = $id_departamento";
+    }
+    
+    $sql .= " ORDER BY e.primer_nombre, e.primer_apellido";
     $result = mysqli_query($con, $sql);
     
     if (!$result) {
@@ -56,7 +66,7 @@ if (isset($_GET["quest"]) && $_GET["quest"] == 'listado_empleados_activos') {
                 'segundo_nombre' => $row["segundo_nombre"],
                 'primer_apellido' => $row["primer_apellido"],
                 'segundo_apellido' => $row["segundo_apellido"],
-                'departamento_laboral' => $row["departamento_laboral"],
+                'departamento_laboral' => $row["departamento_laboral_nombre"],
                 'empresa' => $row["empresa"],
                 'id_empresa' => $row["id_empresa"],
                 'sueldo_ordinario' => floatval($row["sueldo_ordinario"])
