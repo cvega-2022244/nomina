@@ -5,38 +5,28 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <title>Nómina</title>
+    <title>Nómina | Iniciar Sesión</title>
 
     <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-
-    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
-    <link href="../src/assets/css/light/authentication/auth-cover.css" rel="stylesheet" type="text/css" />
-
-    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
-    <link href="../src/assets/css/dark/authentication/auth-cover.css" rel="stylesheet" type="text/css" />
-    <!-- END GLOBAL MANDATORY STYLES -->
-    <!-- BEGIN THEME GLOBAL STYLES -->
     <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
-
-    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
-
-    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
-    <!-- END THEME GLOBAL STYLES -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link href="css/login.css" rel="stylesheet" type="text/css" />
+
 
 </head>
 
-<body class="form">
+<body>
 
-    <!-- BEGIN LOADER -->
     <div id="load_screen">
         <div class="loader">
             <div class="loader-content">
@@ -44,80 +34,41 @@
             </div>
         </div>
     </div>
-    <!--  END LOADER -->
+    <div class="auth-wrapper">
+        <div class="saas-card">
 
-    <div class="auth-container d-flex">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M11.996 2.042c-2.316.59-4.884 1.135-7.796 1.636-.78.134-1.2.983-1.2 1.776v6.52c0 6.643 4.607 10.155 8.653 11.966.216.096.47.096.686 0 4.046-1.81 8.653-5.323 8.653-11.966v-6.52c0-.793-.42-1.642-1.2-1.776-2.912-.501-5.48-1.046-7.796-1.636z"
+                        fill-rule="nonzero" />
+                </svg>
+            </div>
 
-        <div class="container mx-auto align-self-center">
+            <div class="saas-header">
+                <h2>Plataforma Nómina</h2>
+                <p>Sistema para administrar la nómina de los colaboradores de forma rápida y segura.</p>
+            </div>
 
-            <div class="row">
-
-                <div
-                    class="col-6 d-lg-flex d-none h-100 my-auto top-0 start-0 text-center justify-content-center flex-column">
-                    <div class="auth-cover-bg-image"></div>
-                    <div class="auth-overlay"></div>
-
-                    <div class="auth-cover">
-
-                        <div class="position-relative">
-
-                            <img src="../src/assets/img/auth-cover.svg" alt="auth-img">
-
-                            <h2 class="mt-5 text-white font-weight-bolder px-2">¡Registrate!</h2>
-                            <p class="text-white px-2">Utiliza las credenciales que normalmente usarías para solicitar
-                                permisos en la app de Boletas</p>
-                        </div>
-
-                    </div>
-
+            <div class="saas-form">
+                <div class="form-group">
+                    <label class="saas-label" for="user_name">Usuario</label>
+                    <input class="saas-input" id="user_name" type="text" placeholder="Ingresa tu usuario" required
+                        autocomplete="username" />
                 </div>
 
-                <div
-                    class="col-xxl-4 col-xl-5 col-lg-5 col-md-8 col-12 d-flex flex-column align-self-center ms-lg-auto me-lg-0 mx-auto">
-                    <div class="card">
-                        <div class="card-body">
-
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-
-                                    <h2>Inicio de Sesión</h2>
-                                    <p>Ingresa tu usuario y contraseña</p>
-
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label class="form-label">Usuario</label>
-                                        <input class="form-control" id="user_name" type="text"
-                                            placeholder="Ingresa tu nombre de usuario" value="" required />
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="mb-4">
-                                        <label class="form-label">Contraseña</label>
-                                        <input class="form-control" id="password" type="password"
-                                            placeholder="Ingresa tu contraseña" value="" required />
-
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="mb-4">
-                                        <button class="btn btn-secondary w-100" onclick="login()">Ingresar</button>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label class="saas-label" for="password">Contraseña</label>
+                    <input class="saas-input" id="password" type="password" placeholder="••••••••" required
+                        autocomplete="current-password" />
                 </div>
 
+                <button class="saas-btn" onclick="login()">Iniciar Sesión</button>
             </div>
 
         </div>
-
     </div>
-    <!-- SWEET ALERT -->
+
     <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
     <script src="../src/plugins/src/sweetalerts2/custom-sweetalert-safe.js"></script>
 
@@ -125,7 +76,6 @@
     <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/clear-storage.js"></script>
     <script src="js/login.js"></script>
-
 
 </body>
 

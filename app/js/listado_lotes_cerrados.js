@@ -119,7 +119,6 @@ function libro_salarios() {
     var febrero = document.getElementById("febrero").value;
     var marzo = document.getElementById("marzo").value;
     var abril = document.getElementById("abril").value;
-    var marzo = document.getElementById("marzo").value;
     var mayo = document.getElementById("mayo").value;
     var junio = document.getElementById("junio").value;
     var julio = document.getElementById("julio").value;
@@ -224,4 +223,46 @@ function cargando() {
             Swal.showLoading()
         }
     });
+}
+
+function generar_reporte_ejecutivo() {
+    var fecha_inicio = document.getElementById("fecha_inicio").value;
+    var fecha_final = document.getElementById("fecha_final").value;
+    var enero = document.getElementById("enero").value;
+    var febrero = document.getElementById("febrero").value;
+    var marzo = document.getElementById("marzo").value;
+    var abril = document.getElementById("abril").value;
+    var mayo = document.getElementById("mayo").value;
+    var junio = document.getElementById("junio").value;
+    var julio = document.getElementById("julio").value;
+    var agosto = document.getElementById("agosto").value;
+    var septiembre = document.getElementById("septiembre").value;
+    var octubre = document.getElementById("octubre").value;
+    var noviembre = document.getElementById("noviembre").value;
+    var diciembre = document.getElementById("diciembre").value;
+
+    if (fecha_inicio == '' || fecha_final == '') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Fechas requeridas',
+            text: 'Para el reporte ejecutivo, al menos debes ingresar el rango de fechas.'
+        });
+    } else {
+        sessionStorage.setItem('fecha_inicio', fecha_inicio);
+        sessionStorage.setItem('fecha_final', fecha_final);
+        sessionStorage.setItem('enero', enero);
+        sessionStorage.setItem('febrero', febrero);
+        sessionStorage.setItem('marzo', marzo);
+        sessionStorage.setItem('abril', abril);
+        sessionStorage.setItem('mayo', mayo);
+        sessionStorage.setItem('junio', junio);
+        sessionStorage.setItem('julio', julio);
+        sessionStorage.setItem('agosto', agosto);
+        sessionStorage.setItem('septiembre', septiembre);
+        sessionStorage.setItem('octubre', octubre);
+        sessionStorage.setItem('noviembre', noviembre);
+        sessionStorage.setItem('diciembre', diciembre);
+
+        window.location.href = './reporte_ejecutivo.html';
+    }
 }

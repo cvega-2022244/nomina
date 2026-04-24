@@ -20,7 +20,7 @@ $hoy = date("Y") . "-" . date("m") . "-" . date("d");
 
 // ---------------- SQL SERVER -------------------- //
 // Comentado temporalmente hasta que se habilite la extensión ODBC
-/*
+
 $dsn = "Driver={SQL Server};Server=192.168.1.7;Port=1433;Database=Permisos";
 $data_source = 'zzzz';
 $user = 'sa';
@@ -32,7 +32,7 @@ if (!$conn) {
     echo json_encode(['error' => 'Error de conexión SQL Server: ' . odbc_errormsg()]);
     exit;
 }
-*/
+
 // ---------------- MYSQL SISTEMAS -------------------- //
 
 $con = mysqli_connect("localhost", "root", "", null, 3306);

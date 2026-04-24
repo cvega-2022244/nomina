@@ -497,9 +497,9 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'lista_libros') {
-            $sql = "SELECT '' no_orden, CONCAT( MONTH(pl.fecha_pago_lote), '/', YEAR(pl.fecha_pago_lote) ) periodo_trabajo, SUM(pl.sueldo_quincenal) salario, SUM(pl.dias_laborados) dias_trabajados, SUM((pl.dias_laborados * 8)) horas_ordinarias, SUM( ( pl.cantidad_horas_dia + pl.cantidad_horas_noche ) ) horas_extraordinarias, SUM(pl.sueldo_quincenal) salario_ordinario, SUM(pl.horas_dia + pl.horas_noche) salario_extraordinario, CASE WHEN MONTH(pl.fecha_pago_lote) = 1 THEN ((e.sueldo_ordinario / 30) * " . $_GET["enero"] . ") WHEN MONTH(pl.fecha_pago_lote) = 2 THEN ((e.sueldo_ordinario / 30) * " . $_GET["febrero"] . ") WHEN MONTH(pl.fecha_pago_lote) = 3 THEN ((e.sueldo_ordinario / 30) * " . $_GET["marzo"] . ") WHEN MONTH(pl.fecha_pago_lote) = 4 THEN ((e.sueldo_ordinario / 30) * " . $_GET["abril"] . ") WHEN MONTH(pl.fecha_pago_lote) = 5 THEN ((e.sueldo_ordinario / 30) * " . $_GET["mayo"] . ") WHEN MONTH(pl.fecha_pago_lote) = 6 THEN ((e.sueldo_ordinario / 30) * " . $_GET["junio"] . ") WHEN MONTH(pl.fecha_pago_lote) = 7 THEN ((e.sueldo_ordinario / 30) * " . $_GET["julio"] . ") WHEN MONTH(pl.fecha_pago_lote) = 8 THEN ((e.sueldo_ordinario / 30) * " . $_GET["agosto"] . ") WHEN MONTH(pl.fecha_pago_lote) = 9 THEN ((e.sueldo_ordinario / 30) * " . $_GET["septiembre"] . ") WHEN MONTH(pl.fecha_pago_lote) = 10 THEN ((e.sueldo_ordinario / 30) * " . $_GET["octubre"] . ") WHEN MONTH(pl.fecha_pago_lote) = 11 THEN ((e.sueldo_ordinario / 30) * " . $_GET["noviembre"] . ") WHEN MONTH(pl.fecha_pago_lote) = 12 THEN ((e.sueldo_ordinario / 30) * " . $_GET["diciembre"] . ") END septimo_asuesto, '' vacaciones, ( SUM(pl.sueldo_quincenal) + SUM(pl.horas_dia) + SUM(pl.horas_noche) ) salario_total, SUM(pl.igss) igss, ( SUM(pl.egresos_tot) - SUM(pl.igss) ) otras_deducciones, SUM(pl.egresos_tot) total_deducciones, CASE WHEN MONTH(pl.fecha_pago_lote) = 1 THEN COALESCE( ( SELECT SUM(primer_pago) FROM aguinaldo_real WHERE id_empleado = 1 AND YEAR(al) =(YEAR(pl.fecha_pago_lote) -1) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 7 THEN COALESCE( ( SELECT SUM(primer_pago) + SUM(segundo_pago) FROM bono_real WHERE id_empleado = 1 AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 12 THEN COALESCE( ( SELECT SUM(segundo_pago) FROM aguinaldo_real WHERE id_empleado = 1 AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) ELSE '0' END aguinaldo_otros, ( SUM(pl.bon_tot) + SUM(pl.bon_dec_tot) ) bon_incentivo, SUM(pl.liquido) +( CASE WHEN MONTH(pl.fecha_pago_lote) = 1 THEN COALESCE( ( SELECT SUM(primer_pago) FROM aguinaldo_real WHERE id_empleado = 1 AND YEAR(al) =(YEAR(pl.fecha_pago_lote) -1) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 7 THEN COALESCE( ( SELECT SUM(primer_pago) + SUM(segundo_pago) FROM bono_real WHERE id_empleado = 1 AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 12 THEN COALESCE( ( SELECT SUM(segundo_pago) FROM aguinaldo_real WHERE id_empleado = 1 AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) ELSE 0 END ) liquido FROM pago_lote pl LEFT JOIN empleado e ON e.id = pl.id_empleado WHERE pl.id_empleado = " . $_GET["id_empleado"] . " AND pl.fecha_pago_lote BETWEEN '" . $_GET["fecha_inicio"] . "' AND '" . $_GET["fecha_final"] . "' GROUP BY MONTH(pl.fecha_pago_lote)";
+            $id_empleado = intval($_GET["id_empleado"]);
+            $sql = "SELECT '' no_orden, CONCAT( MONTH(pl.fecha_pago_lote), '/', YEAR(pl.fecha_pago_lote) ) periodo_trabajo, SUM(pl.sueldo_quincenal) salario, SUM(pl.dias_laborados) dias_trabajados, SUM((pl.dias_laborados * 8)) horas_ordinarias, SUM( ( pl.cantidad_horas_dia + pl.cantidad_horas_noche ) ) horas_extraordinarias, SUM(pl.sueldo_quincenal) salario_ordinario, SUM(pl.horas_dia + pl.horas_noche) salario_extraordinario, CASE WHEN MONTH(pl.fecha_pago_lote) = 1 THEN ((e.sueldo_ordinario / 30) * " . $_GET["enero"] . ") WHEN MONTH(pl.fecha_pago_lote) = 2 THEN ((e.sueldo_ordinario / 30) * " . $_GET["febrero"] . ") WHEN MONTH(pl.fecha_pago_lote) = 3 THEN ((e.sueldo_ordinario / 30) * " . $_GET["marzo"] . ") WHEN MONTH(pl.fecha_pago_lote) = 4 THEN ((e.sueldo_ordinario / 30) * " . $_GET["abril"] . ") WHEN MONTH(pl.fecha_pago_lote) = 5 THEN ((e.sueldo_ordinario / 30) * " . $_GET["mayo"] . ") WHEN MONTH(pl.fecha_pago_lote) = 6 THEN ((e.sueldo_ordinario / 30) * " . $_GET["junio"] . ") WHEN MONTH(pl.fecha_pago_lote) = 7 THEN ((e.sueldo_ordinario / 30) * " . $_GET["julio"] . ") WHEN MONTH(pl.fecha_pago_lote) = 8 THEN ((e.sueldo_ordinario / 30) * " . $_GET["agosto"] . ") WHEN MONTH(pl.fecha_pago_lote) = 9 THEN ((e.sueldo_ordinario / 30) * " . $_GET["septiembre"] . ") WHEN MONTH(pl.fecha_pago_lote) = 10 THEN ((e.sueldo_ordinario / 30) * " . $_GET["octubre"] . ") WHEN MONTH(pl.fecha_pago_lote) = 11 THEN ((e.sueldo_ordinario / 30) * " . $_GET["noviembre"] . ") WHEN MONTH(pl.fecha_pago_lote) = 12 THEN ((e.sueldo_ordinario / 30) * " . $_GET["diciembre"] . ") END septimo_asuesto, '' vacaciones, ( SUM(pl.sueldo_quincenal) + SUM(pl.horas_dia) + SUM(pl.horas_noche) ) salario_total, SUM(pl.igss) igss, ( SUM(pl.egresos_tot) - SUM(pl.igss) ) otras_deducciones, SUM(pl.egresos_tot) total_deducciones, CASE WHEN MONTH(pl.fecha_pago_lote) = 1 THEN COALESCE( ( SELECT SUM(primer_pago) FROM aguinaldo_real WHERE id_empleado = $id_empleado AND YEAR(al) =(YEAR(pl.fecha_pago_lote) -1) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 7 THEN COALESCE( ( SELECT SUM(primer_pago) + SUM(segundo_pago) FROM bono_real WHERE id_empleado = $id_empleado AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 12 THEN COALESCE( ( SELECT SUM(segundo_pago) FROM aguinaldo_real WHERE id_empleado = $id_empleado AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) ELSE '0' END aguinaldo_otros, ( SUM(pl.bon_tot) + SUM(pl.bon_dec_tot) ) bon_incentivo, SUM(pl.liquido) +( CASE WHEN MONTH(pl.fecha_pago_lote) = 1 THEN COALESCE( ( SELECT SUM(primer_pago) FROM aguinaldo_real WHERE id_empleado = $id_empleado AND YEAR(al) =(YEAR(pl.fecha_pago_lote) -1) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 7 THEN COALESCE( ( SELECT SUM(primer_pago) + SUM(segundo_pago) FROM bono_real WHERE id_empleado = $id_empleado AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) WHEN MONTH(pl.fecha_pago_lote) = 12 THEN COALESCE( ( SELECT SUM(segundo_pago) FROM aguinaldo_real WHERE id_empleado = $id_empleado AND YEAR(al) = YEAR(pl.fecha_pago_lote) ), 0 ) ELSE 0 END ) liquido FROM pago_lote pl LEFT JOIN empleado e ON e.id = pl.id_empleado WHERE pl.id_empleado = $id_empleado AND pl.fecha_pago_lote BETWEEN '" . $_GET["fecha_inicio"] . "' AND '" . $_GET["fecha_final"] . "' GROUP BY MONTH(pl.fecha_pago_lote)";
 
-            // echo $sql;
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
@@ -507,33 +507,28 @@ if (isset($_GET)) {
                 exit;
             }
 
-            if (mysqli_num_rows($result) > 0) {
-                $json = array();
-                while ($row = mysqli_fetch_array($result)) {
-                    $json[] = array(
-                        'periodo_trabajo' => $row["periodo_trabajo"],
-                        'salario' => $row["salario"],
-                        'dias_trabajados' => $row["dias_trabajados"],
-                        'horas_ordinarias' => $row["horas_ordinarias"],
-                        'horas_extraordinarias' => $row["horas_extraordinarias"],
-                        'salario_ordinario' => $row["salario_ordinario"],
-                        'salario_extraordinario' => $row["salario_extraordinario"],
-                        'septimo_asuesto' => $row["septimo_asuesto"],
-                        'vacaciones' => $row["vacaciones"],
-                        'salario_total' => $row["salario_total"],
-                        'igss' => $row["igss"],
-                        'otras_deducciones' => $row["otras_deducciones"],
-                        'total_deducciones' => $row["total_deducciones"],
-                        'aguinaldo_otros' => $row["aguinaldo_otros"],
-                        'bon_incentivo' => $row["bon_incentivo"],
-                        'liquido' => $row["liquido"]
-                    );
-                }
-                $json_string = json_encode($json);
-                echo $json_string;
-            } else {
-                echo $sql;
+            $json = array();
+            while ($row = mysqli_fetch_array($result)) {
+                $json[] = array(
+                    'periodo_trabajo' => $row["periodo_trabajo"],
+                    'salario' => $row["salario"],
+                    'dias_trabajados' => $row["dias_trabajados"],
+                    'horas_ordinarias' => $row["horas_ordinarias"],
+                    'horas_extraordinarias' => $row["horas_extraordinarias"],
+                    'salario_ordinario' => $row["salario_ordinario"],
+                    'salario_extraordinario' => $row["salario_extraordinario"],
+                    'septimo_asuesto' => $row["septimo_asuesto"],
+                    'vacaciones' => $row["vacaciones"],
+                    'salario_total' => $row["salario_total"],
+                    'igss' => $row["igss"],
+                    'otras_deducciones' => $row["otras_deducciones"],
+                    'total_deducciones' => $row["total_deducciones"],
+                    'aguinaldo_otros' => $row["aguinaldo_otros"],
+                    'bon_incentivo' => $row["bon_incentivo"],
+                    'liquido' => $row["liquido"]
+                );
             }
+            echo json_encode($json);
         }
 
         if ($_GET["quest"] == 'usuarios_salario') {

@@ -17,7 +17,9 @@ $(document).ready(function () {
     }
     
     validar_nomina_activa();
-    inicializar_select();
+    if (document.getElementById('slc_empresa')) {
+        inicializar_select();
+    }
 })
 
 var hay_lote_activo = false;
@@ -730,6 +732,23 @@ function crearNominaConEmpresas() {
     
     // Crear la nómina
     ingresar_lote();
+}
+
+// Funciones de navegación del Dashboard
+function datos_maestros() {
+    window.location.href = 'empresas.html';
+}
+
+function historial() {
+    window.location.href = 'listado_lotes_cerrados.html';
+}
+
+function bono_14() {
+    window.location.href = 'bono.html';
+}
+
+function crear_bono_variable() {
+    window.location.href = 'crear-bono-variable.html';
 }
 
 

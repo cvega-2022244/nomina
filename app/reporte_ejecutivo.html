@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <title>Nómina | Reporte Ejecutivo</title>
+
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico" />
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Datatables -->
+    <link rel="stylesheet" type="text/css" href="../src/plugins/src/table/datatable/datatables.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/table/datatable/dt-global_style.css">
+    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f2f3;
+        }
+        .layout-boxed {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .report-header {
+            background: linear-gradient(135deg, #4361ee 0%, #160d6d 100%);
+            color: white;
+            padding: 40px 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+        }
+        .widget-content-area {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            background: #fff;
+        }
+        .table > border-top {
+            border-top: 1px solid #e0e6ed;
+        }
+        .badge-salary {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .badge-net {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .btn-logout-white {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #d32f2f;
+            border: 1px solid #d32f2f;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-logout-white:hover {
+            background: #fff5f5;
+            transform: translateY(-1px);
+        }
+        #usuario_nombre_reporte {
+            font-weight: 600;
+            opacity: 0.9;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .main-content { padding: 0 !important; }
+            .report-header { background: #eee !important; color: #000 !important; box-shadow: none; }
+        }
+    </style>
+</head>
+
+<body class="layout-boxed">
+    
+    <div class="main-container py-4" id="container">
+        <div class="container-fluid">
+            
+            <!-- Header -->
+            <div class="report-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1 fw-bold">Reporte Ejecutivo de Nómina</h2>
+                    <p class="mb-0 opacity-75" id="report-period">Cargando periodo...</p>
+                </div>
+                <div class="user-section no-print">
+                    <span id="usuario_nombre_reporte">Cargando...</span>
+                    <button class="btn-logout-white" onclick="cerrarSesion()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        Cerrar Sesión
+                    </button>
+                    <button class="btn btn-light fw-bold" onclick="window.print()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                        Imprimir / PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="widget-content-area">
+                <div class="table-responsive">
+                    <table id="tabla-ejecutiva" class="table table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Puesto</th>
+                                <th>Salario Base</th>
+                                <th>Días</th>
+                                <th>S. Ordinario</th>
+                                <th>S. Extra</th>
+                                <th>Séptimo/Asueto</th>
+                                <th>Bonif. Inc.</th>
+                                <th>IGSS</th>
+                                <th>Egresos</th>
+                                <th class="text-end">Total Líquido</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpo-reporte">
+                            <!-- Datos inyectados por JS -->
+                        </tbody>
+                        <tfoot id="pie-reporte">
+                            <!-- Totales -->
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/jquery.js"></script>
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="../src/plugins/src/table/datatable/datatables.js"></script>
+    <!-- Botones de exportación -->
+    <script src="../src/plugins/src/table/datatable/button-ext/dataTables.buttons.min.js"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/jszip.min.js"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/buttons.html5.min.js"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/buttons.print.min.js"></script>
+
+    <script src="js/reporte_ejecutivo.js"></script>
+</body>
+
+</html>

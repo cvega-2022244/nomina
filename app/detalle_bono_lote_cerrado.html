@@ -377,7 +377,8 @@
             <!--  BEGIN FOOTER  -->
             <div class="footer-wrapper">
                 <div class="footer-section f-section-1">
-                    <p class="">Departamento de Informática 2022</p>
+                    <p class="">Departamento de Informática <span id="year-dinamico"></span></p>
+                    <script>document.getElementById('year-dinamico').textContent = new Date().getFullYear();</script>
                 </div>
                 <div class="footer-section f-section-2">
                     <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"

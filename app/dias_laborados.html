@@ -25,11 +25,6 @@
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
     <!-- END DT -->
 
-    <!--  BEGIN CUSTOM STYLE FILE  -->
-    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <!--  END CUSTOM STYLE FILE  -->
-
     <!-- SWEET ALERT -->
     <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
     <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
@@ -60,7 +55,7 @@
     <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/dark/components/font-icons.css" rel="stylesheet" type="text/css">
     <!-- AJAX -->
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <script src="js/jquery.js"></script>
 </head>
 
 <body class="layout-boxed">
@@ -516,7 +511,8 @@
             <!--  BEGIN FOOTER  -->
             <div class="footer-wrapper">
                 <div class="footer-section f-section-1">
-                    <p class="">Departamento de Informática 2022</p>
+                    <p class="">Departamento de Informática <span id="year-dinamico"></span></p>
+                    <script>document.getElementById('year-dinamico').textContent = new Date().getFullYear();</script>
                 </div>
                 <div class="footer-section f-section-2">
                     <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -546,7 +542,6 @@
     <script src="../src/plugins/src/sweetalerts2/custom-sweetalert-safe.js"></script>
 
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-    <!-- <script src="./js/bootstrap.bundle.min.js"></script> -->
     <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../src/plugins/src/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>

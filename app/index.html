@@ -17,14 +17,10 @@
     <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../src/plugins/src/vanillaSelectBox/vanillaSelectBox.css">
-    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/vanillaSelectBox/custom-vanillaSelectBox.css">
-    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/vanillaSelectBox/custom-vanillaSelectBox.css">
     <link rel="stylesheet" href="../src/plugins/src/sweetalerts2/sweetalerts2.css">
-    <link href="../src/assets/css/light/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
-    <link href="../src/assets/css/dark/scrollspyNav.css" rel="stylesheet" type="text/css" />
     <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
 
     <link href="../src/assets/css/light/elements/infobox.css" rel="stylesheet" type="text/css" />
@@ -34,7 +30,8 @@
     <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="../app/css/index.css">
 
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/auth.js"></script>
 </head>
 
 <body class="layout-boxed">
@@ -46,7 +43,8 @@
         </div>
     </div>
     <div class="saas-topbar">
-        <a href="javascript:void(0);" class="nav-link theme-toggle" style="color: var(--dash-text);">
+        <!-- Theme Toggle -->
+        <a href="javascript:void(0);" class="nav-link theme-toggle ms-3" style="color: var(--dash-text);">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="feather feather-moon dark-mode">
@@ -67,17 +65,20 @@
             </svg>
         </a>
 
-        <span id="usuario_nombre_header" style="font-size: 14px; font-weight: 600; color: var(--dash-title);"></span>
-
-        <button class="btn btn-custom-danger btn-sm rounded-3" onclick="cerrarSesion()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-            Cerrar Sesión
-        </button>
+        <!-- User Section -->
+        <div class="user-info-wrapper d-flex align-items-center ms-auto me-3">
+            <span id="usuario_nombre_header" class="me-3" style="font-size: 14px; font-weight: 600; color: var(--dash-title);"></span>
+            
+            <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2" onclick="cerrarSesion()" style="border-radius: 8px; padding: 6px 15px; font-weight: 600;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
     </div>
 
     <div id="container">
@@ -146,218 +147,130 @@
                             </div>
                             <div class="info-box-3-content-wrapper">
                                 <h3 class="info-box-3-title">Historial</h3>
-                                <div class="info-box-3-content">Registro histórico de cambios y actualizaciones de la
-                                    nómina generada.</div>
+                                <div class="info-box-3-content">Consulta de lotes de nómina cerrados y reportes
+                                    históricos.</div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row layout-top-spacing g-4 mt-2">
-                    <div class="col-12 col-md-4 bono-14 role-restricted" style="cursor: pointer" data-toggle="modal"
-                        data-target="#modal_empresa" onclick="variable(0)">
+                    <div class="col-12 col-md-4 bono-14 role-restricted" style="cursor: pointer" onclick="bono_14()">
                         <div class="info-box-3">
                             <div class="info-box-3-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                 </svg>
                             </div>
                             <div class="info-box-3-content-wrapper">
                                 <h3 class="info-box-3-title">Bono 14</h3>
-                                <div class="info-box-3-content">Cálculo del bono anual otorgado por desempeño a lo largo
-                                    de 12 meses.</div>
+                                <div class="info-box-3-content">Generación y pago del beneficio de Bono 14 anual.</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-4 aguinaldo role-restricted" style="cursor: pointer" data-toggle="modal"
-                        data-target="#modal_empresa" onclick="variable(1)">
+                    <div class="col-12 col-md-4 aguinaldo role-restricted" style="cursor: pointer" onclick="aguinaldo()">
                         <div class="info-box-3">
                             <div class="info-box-3-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                                 </svg>
                             </div>
                             <div class="info-box-3-content-wrapper">
                                 <h3 class="info-box-3-title">Aguinaldo</h3>
-                                <div class="info-box-3-content">Gestión del aguinaldo navideño correspondiente al ciclo
-                                    laboral actual.</div>
+                                <div class="info-box-3-content">Cálculo y pago de la prestación de aguinaldo.</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-4 crear-bono-variable" style="cursor: pointer"
-                        onclick="window.location.href='./crear-bono-variable.html'">
+                    <div class="col-12 col-md-4 crear-bono-variable role-restricted" style="cursor: pointer"
+                        onclick="crear_bono_variable()">
                         <div class="info-box-3">
                             <div class="info-box-3-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="12" y1="8" x2="12" y2="16"></line>
-                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                    <path d="M12 5v14M5 12h14"></path>
                                 </svg>
                             </div>
                             <div class="info-box-3-content-wrapper">
-                                <h3 class="info-box-3-title">Crear Bono Variable</h3>
-                                <div class="info-box-3-content">Configuración de comisiones y bonos variables
-                                    personalizados para empleados.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="footer-wrapper d-flex justify-content-between">
-                <div class="footer-section f-section-1">
-                    <p class="">Departamento de Informática <span id="year-dinamico"></span></p>
-                    <script>document.getElementById('year-dinamico').textContent = new Date().getFullYear();</script>
-                </div>
-                <div class="footer-section f-section-2">
-                    <p class="">Informática <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu">
-                            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-                            <rect x="9" y="9" width="6" height="6"></rect>
-                            <line x1="9" y1="1" x2="9" y2="4"></line>
-                            <line x1="15" y1="1" x2="15" y2="4"></line>
-                            <line x1="9" y1="20" x2="9" y2="23"></line>
-                            <line x1="15" y1="20" x2="15" y2="23"></line>
-                            <line x1="20" y1="9" x2="23" y2="9"></line>
-                            <line x1="20" y1="14" x2="23" y2="14"></line>
-                            <line x1="1" y1="9" x2="4" y2="9"></line>
-                            <line x1="1" y1="14" x2="4" y2="14"></line>
-                        </svg></p>
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="modal_empresa" tabindex="-1" role="dialog" aria-labelledby="modal_empresa"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title" id="modal_empresaLabel">
-                            Empresa Nómina
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body pt-0">
-                        <div class="text-muted mb-3" style="font-size: 14px;">Seleccione la empresa en la cual desee
-                            trabajar:</div>
-                        <div>
-                            <select class="form-select w-100" id="slc_empresa"
-                                onchange="seleccionar_empresa()"></select>
-                        </div>
-                    </div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_fact">
-                            Facturación e Intercompany
-                        </button>
-                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-success" id="btn_modal"
-                            onclick="iniciar()">Continuar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="modal_fact" tabindex="-1" role="dialog" aria-labelledby="modal_factLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title" id="modal_factLabel">
-                            Facturación e Intercompany
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body pt-0">
-                        <div class="text-muted mb-3" style="font-size: 14px;">Seleccione el año del intercompany:</div>
-                        <input type="number" min="0" class="form-control" placeholder="Ingrese año..." id="anio_bono">
-                    </div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-success" id="btn_modal"
-                            onclick="facturacion_intercompany()">Continuar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal para crear nómina sin lote activo -->
-        <div class="modal fade" id="modal_crear_nomina" tabindex="-1" role="dialog" aria-labelledby="modal_crear_nominaLabel"
-            aria-hidden="true" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header border-0">
-                        <h5 class="modal-title" id="modal_crear_nominaLabel">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle" style="display: inline; margin-right: 10px; color: #ff9800;">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="8" x2="12" y2="12"></line>
-                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                            </svg>
-                            Crear Nueva Nómina
-                        </h5>
-                    </div>
-                    <div class="modal-body pt-0">
-                        <div class="alert alert-warning" role="alert">
-                            <strong>No hay nómina activa.</strong> Necesitas crear una nueva nómina para continuar.
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label fw-6">Información de la Nómina:</label>
-                            <div class="card bg-light">
-                                <div class="card-body p-3">
-                                    <p class="mb-2"><strong>Período:</strong> <span id="info_periodo">-</span></p>
-                                    <p class="mb-0"><strong>Quincena:</strong> <span id="info_quincena">-</span></p>
+                                <h3 class="info-box-3-title">Bono Variable</h3>
+                                <div class="info-box-3-content">Creación de bonos variables y carga masiva de horas extra.
                                 </div>
                             </div>
                         </div>
+                    </div>
 
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="footer-wrapper">
+            <div class="footer-section f-section-1">
+                <p class="">Departamento de Informática <span id="year-dinamico"></span></p>
+                <script>document.getElementById('year-dinamico').textContent = new Date().getFullYear();</script>
+            </div>
+            <div class="footer-section f-section-2">
+                <p class="">Coded with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-heart">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                        </path>
+                    </svg></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="modal_crear_nomina" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div class="modal-header" style="background: var(--dash-card-bg); border-bottom: 1px solid rgba(0,0,0,0.05);">
+                    <h5 class="modal-title fw-bold" style="color: var(--dash-title);">Crear Nueva Nómina</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-info d-flex justify-content-between align-items-center mb-4" style="border-radius: 12px; background: rgba(59, 130, 246, 0.1); border: none; color: #1e40af;">
                         <div>
-                            <label class="form-label fw-6 mb-3">Selecciona las empresas a incluir:</label>
-                            <div class="mb-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="chk_seleccionar_todas" 
-                                        onchange="toggleTodoasEmpresas()">
-                                    <label class="form-check-label fw-6" for="chk_seleccionar_todas">
-                                        Seleccionar todas las empresas
-                                    </label>
-                                </div>
-                            </div>
-                            <div id="empresas_container" class="border rounded p-3" style="max-height: 250px; overflow-y: auto;">
-                                <!-- Se llena dinámicamente con JavaScript -->
+                            <p class="mb-0 small text-uppercase fw-bold opacity-75">Periodo Actual</p>
+                            <h5 class="mb-0 fw-bold" id="info_periodo">---</h5>
+                        </div>
+                        <div class="text-end">
+                            <p class="mb-0 small text-uppercase fw-bold opacity-75">Quincena</p>
+                            <h5 class="mb-0 fw-bold" id="info_quincena">---</h5>
+                        </div>
+                    </div>
+                    
+                    <h6 class="fw-bold mb-3" style="color: var(--dash-title);">Selecciona las empresas a incluir:</h6>
+                    <div class="form-check mb-3 p-3" style="background: rgba(0,0,0,0.02); border-radius: 10px;">
+                        <input class="form-check-input ms-0 me-2" type="checkbox" id="chk_seleccionar_todas" onclick="toggleTodoasEmpresas()">
+                        <label class="form-check-label fw-bold" for="chk_seleccionar_todas" style="cursor: pointer;">
+                            Seleccionar Todas las Empresas
+                        </label>
+                    </div>
+                    
+                    <div id="empresas_container" class="p-2" style="max-height: 350px; overflow-y: auto; scrollbar-width: thin;">
+                        <!-- Las empresas se cargan dinámicamente -->
+                        <div class="text-center p-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-success" onclick="crearNominaConEmpresas()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check" style="display: inline; margin-right: 5px;">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Crear Nómina
-                        </button>
-                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid rgba(0,0,0,0.05); padding: 20px;">
+                    <button type="button" class="btn btn-light fw-bold" data-dismiss="modal" style="border-radius: 10px; padding: 10px 25px;">Cancelar</button>
+                    <button type="button" class="btn btn-primary fw-bold" onclick="crearNominaConEmpresas()" style="border-radius: 10px; padding: 10px 25px; background: #3b82f6; border: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
+                        Confirmar y Crear Nómina
+                    </button>
                 </div>
             </div>
         </div>
-
     </div>
 
     <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
@@ -372,32 +285,8 @@
     <script src="js/index.js"></script>
 
     <script>
-        // Función para cerrar sesión
-        function cerrarSesion() {
-            Swal.fire({
-                icon: 'question',
-                title: '¿Cerrar sesión?',
-                text: '¿Estás seguro de que deseas cerrar sesión?',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, cerrar sesión',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#dc3545'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    sessionStorage.clear();
-                    window.location.href = 'login.html';
-                }
-            });
-        }
-
         // Sistema de restricciones por rol para el menú principal
         $(document).ready(function () {
-            // Mostrar nombre de usuario en el header
-            const userData = JSON.parse(sessionStorage.getItem('usuario_principal'));
-            if (userData && userData.nombre) {
-                $('#usuario_nombre_header').text('Hola, ' + userData.nombre);
-            }
-
             // Verificar si hay un mensaje de acceso denegado pendiente
             const accessDeniedMsg = sessionStorage.getItem('access_denied');
             if (accessDeniedMsg) {
