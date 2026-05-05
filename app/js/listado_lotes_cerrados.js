@@ -4,7 +4,30 @@ var quincena = sessionStorage.getItem('quincena');
 $(document).ready(function () {
     cargando();
     listado_lotes();
+    cargar_empresas();
 })
+
+function cargar_empresas() {
+    $.ajax({
+        url: 'php/servidor.php',
+        type: 'GET',
+        data: { quest: 'listado_empresas' },
+        success: function(res) {
+            if (!res.includes('Query Falló') && !res.includes('No hay datos')) {
+                try {
+                    let empresas = JSON.parse(res);
+                    let template = '<option value="">Seleccione una empresa...</option>';
+                    empresas.forEach(e => {
+                        template += `<option value="${e.id}">${e.nombre_comercial}</option>`;
+                    });
+                    $('#slc_empresa_reporte').html(template);
+                } catch (e) {
+                    console.log('Error parseando empresas', e);
+                }
+            }
+        }
+    });
+}
 
 async function listado_lotes() {
     try {
@@ -43,17 +66,26 @@ async function listado_lotes() {
                 } else {
                     lista = resp; // jQuery ya parseó el JSON
                 }
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
             template = '';
             lista.forEach(lista => {
+                let fechaObj = new Date(lista.fecha + 'T00:00:00');
+                let mesNombre = isNaN(fechaObj.getTime()) ? '-' : meses[fechaObj.getMonth()];
+                let anio = isNaN(fechaObj.getTime()) ? '-' : fechaObj.getFullYear();
+                let txtQuincena = lista.quincena == 0 ? 'Primera' : 'Segunda';
 
-                template += `</tr>
+                template += `<tr>
                             <td>${lista.id}</td>
+                            <td>${lista.nombre_empresa}</td>
                             <td>${lista.nombre}</td>
+                            <td>${txtQuincena}</td>
+                            <td>${mesNombre}</td>
+                            <td>${anio}</td>
                             `;
                 template += `
                             <td class="text-center">
                                 <div class="action-btns">
-                                    <a onclick="detalle(${lista.id}, '${lista.nombre}', ${lista.quincena})" class="action-btn btn-view bs-tooltip me-2"
+                                    <a onclick="detalle(${lista.id}, '${lista.nombre}', ${lista.quincena}, ${lista.id_empresa})" class="action-btn btn-view bs-tooltip me-2"
                                         data-toggle="tooltip" data-placement="top" title="Detalle">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -105,14 +137,16 @@ async function listado_lotes() {
     }
 }
 
-function detalle(id, nombre, quincena) {
+function detalle(id, nombre, quincena, id_empresa) {
     sessionStorage.setItem("id_lote_detalle", id);
     sessionStorage.setItem("nombre_lote_detalle", nombre);
     sessionStorage.setItem("quincena_detalle", quincena);
+    sessionStorage.setItem("id_empresa_nomina", id_empresa);
     window.location.href = './detalle_lote_cerrado.html';
 }
 
 function libro_salarios() {
+    var id_empresa = document.getElementById("slc_empresa_reporte").value;
     var fecha_inicio = document.getElementById("fecha_inicio").value;
     var fecha_final = document.getElementById("fecha_final").value;
     var enero = document.getElementById("enero").value;
@@ -128,7 +162,7 @@ function libro_salarios() {
     var noviembre = document.getElementById("noviembre").value;
     var diciembre = document.getElementById("diciembre").value;
 
-    if (fecha_inicio == '' || fecha_final == '' ||
+    if (id_empresa == '' || fecha_inicio == '' || fecha_final == '' ||
         enero == '' || febrero == '' || marzo == '' || abril == ''
         || mayo == '' || junio == '' || julio == '' || agosto == ''
         || septiembre == '' || octubre == '' || noviembre == ''
@@ -136,9 +170,10 @@ function libro_salarios() {
         Swal.fire({
             icon: 'warning',
             title: 'Faltan datos',
-            text: 'Asegurese que todos los datos estén llenos correctamente.'
+            text: 'Asegurese que todos los datos estén llenos correctamente y haya seleccionado una empresa.'
         });
     } else {
+        sessionStorage.setItem('id_empresa_nomina', id_empresa);
         sessionStorage.setItem('fecha_inicio', fecha_inicio);
         sessionStorage.setItem('fecha_final', fecha_final);
         sessionStorage.setItem('enero', enero);
@@ -226,6 +261,7 @@ function cargando() {
 }
 
 function generar_reporte_ejecutivo() {
+    var id_empresa = document.getElementById("slc_empresa_reporte").value;
     var fecha_inicio = document.getElementById("fecha_inicio").value;
     var fecha_final = document.getElementById("fecha_final").value;
     var enero = document.getElementById("enero").value;
@@ -241,13 +277,14 @@ function generar_reporte_ejecutivo() {
     var noviembre = document.getElementById("noviembre").value;
     var diciembre = document.getElementById("diciembre").value;
 
-    if (fecha_inicio == '' || fecha_final == '') {
+    if (id_empresa == '' || fecha_inicio == '' || fecha_final == '') {
         Swal.fire({
             icon: 'warning',
-            title: 'Fechas requeridas',
-            text: 'Para el reporte ejecutivo, al menos debes ingresar el rango de fechas.'
+            title: 'Datos requeridos',
+            text: 'Para el reporte ejecutivo, debes seleccionar una empresa e ingresar el rango de fechas.'
         });
     } else {
+        sessionStorage.setItem('id_empresa_nomina', id_empresa);
         sessionStorage.setItem('fecha_inicio', fecha_inicio);
         sessionStorage.setItem('fecha_final', fecha_final);
         sessionStorage.setItem('enero', enero);

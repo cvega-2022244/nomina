@@ -69,7 +69,7 @@
         <div class="user-info-wrapper d-flex align-items-center ms-auto me-3">
             <span id="usuario_nombre_header" class="me-3" style="font-size: 14px; font-weight: 600; color: var(--dash-title);"></span>
             
-            <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2" onclick="cerrarSesion()" style="border-radius: 8px; padding: 6px 15px; font-weight: 600;">
+            <button class="btn btn-custom-danger btn-sm d-flex align-items-center gap-2" onclick="cerrarSesion()" style="border-radius: 8px; padding: 6px 15px; font-weight: 600;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -246,19 +246,12 @@
                         </div>
                     </div>
                     
-                    <h6 class="fw-bold mb-3" style="color: var(--dash-title);">Selecciona las empresas a incluir:</h6>
-                    <div class="form-check mb-3 p-3" style="background: rgba(0,0,0,0.02); border-radius: 10px;">
-                        <input class="form-check-input ms-0 me-2" type="checkbox" id="chk_seleccionar_todas" onclick="toggleTodoasEmpresas()">
-                        <label class="form-check-label fw-bold" for="chk_seleccionar_todas" style="cursor: pointer;">
-                            Seleccionar Todas las Empresas
-                        </label>
-                    </div>
-                    
-                    <div id="empresas_container" class="p-2" style="max-height: 350px; overflow-y: auto; scrollbar-width: thin;">
-                        <!-- Las empresas se cargan dinámicamente -->
-                        <div class="text-center p-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
+                    <div class="alert alert-warning mb-4" style="border-radius: 12px;">
+                        <div class="d-flex align-items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info me-3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            <div>
+                                <strong>Nómina Global:</strong>
+                                <p class="mb-0 small">Este proceso creará el periodo general para todas las empresas. Podrás seleccionar en qué empresa específica trabajar directamente en el panel de nómina.</p>
                             </div>
                         </div>
                     </div>

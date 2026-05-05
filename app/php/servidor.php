@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-// Función para manejar errores fatales
+// Funci?n para manejar errores fatales
 register_shutdown_function(function() {
     $error = error_get_last();
     if ($error && $error['type'] === E_ERROR) {
@@ -19,7 +19,7 @@ session_start();
 $hoy = date("Y") . "-" . date("m") . "-" . date("d");
 
 // ---------------- SQL SERVER -------------------- //
-// Comentado temporalmente hasta que se habilite la extensión ODBC
+// Comentado temporalmente hasta que se habilite la extensi?n ODBC
 
 $dsn = "Driver={SQL Server};Server=192.168.1.7;Port=1433;Database=Permisos";
 $data_source = 'zzzz';
@@ -29,7 +29,7 @@ $password = 'Empres@s0425';
 $conn = odbc_connect($dsn, $user, $password);
 if (!$conn) {
     // En lugar de exit, devolver JSON de error
-    echo json_encode(['error' => 'Error de conexión SQL Server: ' . odbc_errormsg()]);
+    echo json_encode(['error' => 'Error de conexi?n SQL Server: ' . odbc_errormsg()]);
     exit;
 }
 
@@ -37,7 +37,7 @@ if (!$conn) {
 
 $con = mysqli_connect("localhost", "root", "", null, 3306);
 if (!$con) {
-    echo json_encode(['error' => 'Error de conexión MySQL: ' . mysqli_connect_error()]);
+    echo json_encode(['error' => 'Error de conexi?n MySQL: ' . mysqli_connect_error()]);
     exit;
 }
 mysqli_select_db($con, "nomina");
@@ -49,7 +49,7 @@ $con->set_charset("utf8");
 // --------------------- GET -------------------------- //
 error_log("DEBUG: Iniciando servidor");
 if (isset($_GET)) {
-    error_log("DEBUG: GET está definido");
+    error_log("DEBUG: GET est? definido");
     if (isset($_GET["quest"])) {
         error_log("DEBUG: Quest recibido: " . $_GET["quest"]);
         if ($_GET["quest"] == 'lista_comisiones_rechazadas') {
@@ -60,10 +60,10 @@ if (isset($_GET)) {
                 // Si es empleado, mostrar solo sus bonos rechazados
                 $sql = "SELECT c.id, c.id_empleado, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, COALESCE(d.nombre, 'Sin Departamento') as departamento, COALESCE(u.nombre, 'Sin Usuario') as solicitante, c.fecha_generado, c.monto, 'Rechazada' as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN usuario u ON c.id_solicitante = u.id WHERE c.id_estado = 3 AND c.tipo_registro = 'bono' AND c.id_solicitante = " . $user_id . " ORDER BY c.fecha_generado DESC";
             } else if ($user_id && $user_role == 'operaciones') {
-                // Si es operaciones, mostrar solo los bonos rechazados que creó
+                // Si es operaciones, mostrar solo los bonos rechazados que cre?
                 $sql = "SELECT c.id, c.id_empleado, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, COALESCE(d.nombre, 'Sin Departamento') as departamento, COALESCE(u.nombre, 'Sin Usuario') as solicitante, c.fecha_generado, c.monto, 'Rechazada' as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN usuario u ON c.id_solicitante = u.id WHERE c.id_estado = 3 AND c.tipo_registro = 'bono' AND c.id_solicitante = " . $user_id . " ORDER BY c.fecha_generado DESC";
             } else if ($user_id && ($user_role == 'jefe' || $user_role == 'gerente')) {
-                // Si es jefe o gerente, mostrar todos los bonos rechazados (sin jerarquía)
+                // Si es jefe o gerente, mostrar todos los bonos rechazados (sin jerarqu?a)
                 $sql = "SELECT c.id, c.id_empleado, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, COALESCE(d.nombre, 'Sin Departamento') as departamento, COALESCE(u.nombre, 'Sin Usuario') as solicitante, c.fecha_generado, c.monto, 'Rechazada' as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN usuario u ON c.id_solicitante = u.id WHERE c.id_estado = 3 AND c.tipo_registro = 'bono' ORDER BY c.fecha_generado DESC";
             } else if ($user_role == 'rh' || $user_role == 'admin') {
                 // Si es RH o Admin, mostrar todos los bonos rechazados
@@ -76,7 +76,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
                 $data = array();
                 $num_rows = mysqli_num_rows($result);
@@ -94,16 +94,16 @@ if (isset($_GET)) {
         
         // ========== ENDPOINTS PARA HORAS EXTRA ==========
         
-        // Listar horas extra pendientes de aprobación
+        // Listar horas extra pendientes de aprobaci?n
         if ($_GET["quest"] == 'lista_horas_pendientes') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
             
             if ($user_id && $user_role == 'operaciones') {
-                // Si es operaciones, mostrar solo las horas extra que creó con estado 1 (Solicitado/Pendiente)
+                // Si es operaciones, mostrar solo las horas extra que cre? con estado 1 (Solicitado/Pendiente)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 1 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
             } else if ($user_role == 'admin') {
-                // Si es Admin, mostrar todas las horas extra pendientes de aprobación
+                // Si es Admin, mostrar todas las horas extra pendientes de aprobaci?n
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_estado = 1 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
             } else {
                 // Por defecto, no mostrar nada
@@ -114,7 +114,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
                 $data = array();
                 while ($row = mysqli_fetch_assoc($result)) {
@@ -131,7 +131,7 @@ if (isset($_GET)) {
             $user_role = $_GET['user_role'] ?? null;
             
             if ($user_id && $user_role == 'operaciones') {
-                // Si es operaciones, mostrar solo las horas extra que creó con estado 2 (Aprobado RH)
+                // Si es operaciones, mostrar solo las horas extra que cre? con estado 2 (Aprobado RH)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 2 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
             } else if ($user_role == 'admin') {
                 // Si es Admin, mostrar todas las horas extra autorizadas
@@ -145,7 +145,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
                 $data = array();
                 while ($row = mysqli_fetch_assoc($result)) {
@@ -162,7 +162,7 @@ if (isset($_GET)) {
             $user_role = $_GET['user_role'] ?? null;
             
             if ($user_id && $user_role == 'operaciones') {
-                // Si es operaciones, mostrar solo las horas extra que creó con estado 3 (Rechazado)
+                // Si es operaciones, mostrar solo las horas extra que cre? con estado 3 (Rechazado)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 3 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
             } else if ($user_role == 'admin') {
                 // Si es Admin, mostrar todas las horas extra rechazadas
@@ -176,7 +176,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
                 $data = array();
                 while ($row = mysqli_fetch_assoc($result)) {
@@ -189,25 +189,25 @@ if (isset($_GET)) {
         
         if ($_GET["quest"] == 'login') {
             try {
-                // Log para depuración
-                error_log('Login attempt - Usuario: ' . (isset($_GET["usuario"]) ? $_GET["usuario"] : 'NO_DEFINIDO') . ', Contraseña: ' . (isset($_GET["contrasena"]) ? 'DEFINIDA' : 'NO_DEFINIDA'));
+                // Log para depuraci?n
+                error_log('Login attempt - Usuario: ' . (isset($_GET["usuario"]) ? $_GET["usuario"] : 'NO_DEFINIDO') . ', Contrase?a: ' . (isset($_GET["contrasena"]) ? 'DEFINIDA' : 'NO_DEFINIDA'));
                 
-                // Validar que los parámetros existan
+                // Validar que los par?metros existan
                 if (!isset($_GET["usuario"]) || !isset($_GET["contrasena"])) {
-                    echo json_encode(['error' => 'Faltan parámetros de usuario o contraseña']);
+                    echo json_encode(['error' => 'Faltan par?metros de usuario o contrase?a']);
                     exit;
                 }
                 
-                // Validar que no estén vacíos
+                // Validar que no est?n vac?os
                 if (empty($_GET["usuario"]) || empty($_GET["contrasena"])) {
-                    echo json_encode(['error' => 'Usuario y contraseña son requeridos']);
+                    echo json_encode(['error' => 'Usuario y contrase?a son requeridos']);
                     exit;
                 }
 
                 // Usar prepared statements para evitar SQL injection
                 $stmt = mysqli_prepare($con, "SELECT id, nombre, rol, id_departamento FROM usuario WHERE usuario = ? AND contrasena = ?");
                 if (!$stmt) {
-                    echo json_encode(['error' => 'Error en la preparación de la consulta: ' . mysqli_error($con)]);
+                    echo json_encode(['error' => 'Error en la preparaci?n de la consulta: ' . mysqli_error($con)]);
                     exit;
                 }
 
@@ -241,13 +241,13 @@ if (isset($_GET)) {
             }
         }
 
-        if ($_GET["quest"] == 'cumpleañeros') {
+        if ($_GET["quest"] == 'cumplea?eros') {
             $sql = "SELECT e.id, primer_nombre, segundo_nombre, otro_nombre, primer_apellido, e.segundo_apellido, DATE_ADD( e.fecha_nacimiento, INTERVAL( ".$_GET["anio"]." - YEAR(e.fecha_nacimiento)) YEAR ) fecha_nacimiento, d.nombre FROM empleado e INNER JOIN departamento d ON e.departamento_laboral = d.id WHERE MONTH(fecha_nacimiento) = ".$_GET["mes"]." and e.estado = 1 ORDER BY fecha_nacimiento";
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -272,7 +272,7 @@ if (isset($_GET)) {
         }
 
         if ($quest == 'info_completa_empleado') {
-            $id_empleado = intval($_GET["id_empleado"]); // Sanitización básica para seguridad
+            $id_empleado = intval($_GET["id_empleado"]); // Sanitizaci?n b?sica para seguridad
     
             $sql = "SELECT 
                         e.*, 
@@ -311,7 +311,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
     
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
     
@@ -320,29 +320,29 @@ if (isset($_GET)) {
                 // Devolvemos array envuelto en [] porque tu JS espera data[0]
                 echo json_encode([$data]); 
             } else {
-                echo json_encode(['error' => 'No se encontró el empleado']);
+                echo json_encode(['error' => 'No se encontr? el empleado']);
             }
         }
     
-        // --- NUEVA LÓGICA PARA EL REPORTE (Excel simple) ---
+        // --- NUEVA L?GICA PARA EL REPORTE (Excel simple) ---
         elseif ($quest == 'generar_excel_empleados') {
             $id_empresa = isset($_GET['id_empresa']) ? $_GET['id_empresa'] : '';
             $estado = isset($_GET['estado']) ? $_GET['estado'] : 'todos';
     
-            // Construcción dinámica del Query
+            // Construcci?n din?mica del Query
             $whereClause = "WHERE 1=1";
             
             if (!empty($id_empresa)) {
                 $id_empresa = intval($id_empresa);
-                // Filtramos por la relación en empresa_empleado
+                // Filtramos por la relaci?n en empresa_empleado
                 $whereClause .= " AND e.id IN (SELECT id_empleado FROM empresa_empleado WHERE id_empresa = $id_empresa AND activo = 1)";
             }
     
             if ($estado !== 'todos') {
                 // Asumiendo que estado 1 es activo y 0 es baja/inactivo en tabla empleado
-                // Si usas una tabla de 'estado' donde 1 es activo, ajusta el ID aquí.
+                // Si usas una tabla de 'estado' donde 1 es activo, ajusta el ID aqu?.
                 // Generalmente: e.estado = 1 (Activo), e.estado = 2 (Baja), etc.
-                // Ajusta según tus IDs reales de la tabla 'estado'
+                // Ajusta seg?n tus IDs reales de la tabla 'estado'
                 if ($estado == '1') {
                     $whereClause .= " AND e.estado = 1"; // Ajustar ID de estado Activo
                 } else {
@@ -407,7 +407,7 @@ if (isset($_GET)) {
             header("Pragma: no-cache");
             header("Expires: 0");
         
-            // 3. ¡IMPORTANTE! BOM (Byte Order Mark) para que Excel reconozca tildes y ñ
+            // 3. ?IMPORTANTE! BOM (Byte Order Mark) para que Excel reconozca tildes y ?
             echo "\xEF\xBB\xBF"; 
         
             // Consulta SQL
@@ -452,7 +452,7 @@ if (isset($_GET)) {
             }
         
             // Estructura de la tabla (Excel interpreta esto como celdas)
-            echo "<table>"; // Quitamos el meta charset aquí porque ya usamos el BOM arriba
+            echo "<table>"; // Quitamos el meta charset aqu? porque ya usamos el BOM arriba
             
             echo "<tr style='background-color: #f2f2f2; font-weight: bold;'>
                     <th>ID</th>
@@ -465,7 +465,7 @@ if (isset($_GET)) {
                     <th>Puesto</th>
                     <th>Fecha Inicio</th>
                     <th>Sueldo Ordinario</th>
-                    <th>Bonificación</th>
+                    <th>Bonificaci?n</th>
                     <th>Estado</th>
                     <th>Centro de Costo</th>
                     <th>Banco</th>
@@ -503,7 +503,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -538,7 +538,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -572,7 +572,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -593,7 +593,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -624,7 +624,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -654,7 +654,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -679,7 +679,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $_GET["query2"]);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -725,7 +725,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $_GET["query2"]);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -772,7 +772,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -796,7 +796,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $_GET["query"]);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -841,7 +841,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -888,7 +888,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -911,7 +911,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -935,7 +935,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $_GET["query"]);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -963,7 +963,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1009,7 +1009,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1071,7 +1071,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1133,7 +1133,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1196,7 +1196,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1224,7 +1224,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1252,7 +1252,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1282,7 +1282,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1310,7 +1310,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1335,7 +1335,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1360,7 +1360,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1387,7 +1387,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1414,7 +1414,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1444,7 +1444,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1474,7 +1474,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1509,7 +1509,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1535,7 +1535,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1567,7 +1567,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1611,7 +1611,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1659,7 +1659,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1707,7 +1707,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1740,7 +1740,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1774,7 +1774,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1798,7 +1798,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1823,7 +1823,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1848,7 +1848,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1874,7 +1874,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1899,7 +1899,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1924,7 +1924,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1949,7 +1949,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1974,7 +1974,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -1999,7 +1999,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2024,7 +2024,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2049,7 +2049,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2077,7 +2077,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2155,7 +2155,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2191,7 +2191,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2244,7 +2244,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2279,7 +2279,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2305,7 +2305,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2330,7 +2330,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2361,7 +2361,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2386,7 +2386,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2417,7 +2417,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2449,7 +2449,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2480,7 +2480,7 @@ if (isset($_GET)) {
             $user_role = $_GET['user_role'] ?? null;
             
             if ($user_id && $user_role == 'operaciones') {
-                // Si es operaciones, mostrar solo los bonos que creó que ya están autorizados (estado 2)
+                // Si es operaciones, mostrar solo los bonos que cre? que ya est?n autorizados (estado 2)
                 $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . $user_id . " AND eb.id = 2 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
             } else if ($user_role == 'admin') {
                 // Si es Admin, mostrar todos los bonos autorizados (estado 2)
@@ -2493,7 +2493,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2524,10 +2524,10 @@ if (isset($_GET)) {
             $user_role = $_GET['user_role'] ?? null;
             
             if ($user_id && $user_role == 'operaciones') {
-                // Si es operaciones, mostrar solo los bonos que creó con estado 1 (Solicitado/Pendiente)
+                // Si es operaciones, mostrar solo los bonos que cre? con estado 1 (Solicitado/Pendiente)
                 $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . $user_id . " AND eb.id = 1 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
             } else if ($user_role == 'admin') {
-                // Si es Admin, mostrar todos los bonos pendientes de aprobación (estado 1 = Solicitado)
+                // Si es Admin, mostrar todos los bonos pendientes de aprobaci?n (estado 1 = Solicitado)
                 $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE eb.id = 1 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
             } else {
                 // Por defecto (capturador u otros), no mostrar pendientes
@@ -2537,7 +2537,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2568,7 +2568,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2601,7 +2601,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
             if (mysqli_num_rows($result) > 0) {
                 $json = array();
@@ -2634,7 +2634,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2659,7 +2659,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2685,7 +2685,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2710,7 +2710,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2734,7 +2734,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2759,7 +2759,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2784,7 +2784,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2809,7 +2809,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2834,7 +2834,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2859,7 +2859,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2883,7 +2883,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2908,7 +2908,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2945,7 +2945,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -2983,7 +2983,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3020,7 +3020,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3053,7 +3053,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3080,7 +3080,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3105,7 +3105,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3130,7 +3130,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3155,7 +3155,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3185,7 +3185,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3210,7 +3210,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3235,7 +3235,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3269,7 +3269,7 @@ if (isset($_GET)) {
             $result_centro = mysqli_query($con, $sql_centro);
             
             if (!$result_centro || mysqli_num_rows($result_centro) == 0) {
-                echo json_encode(['error' => 'No se encontró empleado 148']);
+                echo json_encode(['error' => 'No se encontr? empleado 148']);
                 exit;
             }
             
@@ -3281,23 +3281,23 @@ if (isset($_GET)) {
             $result_empresa = mysqli_query($con, $sql_empresa);
             
             if (!$result_empresa || mysqli_num_rows($result_empresa) == 0) {
-                echo json_encode(['error' => 'No se encontró empresa para centro de costo: ' . $id_centro]);
+                echo json_encode(['error' => 'No se encontr? empresa para centro de costo: ' . $id_centro]);
                 exit;
             }
             
             $row_empresa = mysqli_fetch_array($result_empresa);
             $id_empresa = $row_empresa['id_empresa'];
             
-            // Insertar la relación empresa-empleado
+            // Insertar la relaci?n empresa-empleado
             $sql = "INSERT INTO empresa_empleado(porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES (100, 1, 148, $id_empresa, 1, now())";
             
             $result = mysqli_query($con, $sql);
             
             if (!$result) {
-                echo json_encode(['error' => 'Error al insertar relación: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Error al insertar relaci?n: ' . mysqli_error($con)]);
                 exit;
             } else {
-                echo json_encode(['success' => 'Relación empresa-empleado creada para empleado 148']);
+                echo json_encode(['success' => 'Relaci?n empresa-empleado creada para empleado 148']);
             }
         }
 
@@ -3313,7 +3313,7 @@ if (isset($_GET)) {
             
             $result = mysqli_query($con, $sql);
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -3335,7 +3335,7 @@ if (isset($_GET)) {
             
             $result = mysqli_query($con, $sql);
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -3357,7 +3357,7 @@ if (isset($_GET)) {
             
             $result = mysqli_query($con, $sql);
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -3380,7 +3380,7 @@ if (isset($_GET)) {
             
             $result = mysqli_query($con, $sql);
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -3403,7 +3403,7 @@ if (isset($_GET)) {
             
             $result = mysqli_query($con, $sql);
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -3437,12 +3437,12 @@ if (isset($_GET)) {
                     ORDER BY e.id DESC";
             
             // Debug logging
-            error_log("DEBUG: Consulta listado_empleados ejecutándose");
+            error_log("DEBUG: Consulta listado_empleados ejecut?ndose");
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3473,7 +3473,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'limpiar_duplicados_empleados') {
-            // Función para limpiar duplicados y asegurar que cada empleado tenga solo una empresa principal
+            // Funci?n para limpiar duplicados y asegurar que cada empleado tenga solo una empresa principal
             $sql_limpiar = "UPDATE empresa_empleado ee1 
                            SET ee1.principal = 0 
                            WHERE ee1.id IN (
@@ -3526,7 +3526,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'corregir_empleados_sin_empresa') {
-            // Función mejorada para corregir TODOS los empleados que aparecen "Sin Empresa"
+            // Funci?n mejorada para corregir TODOS los empleados que aparecen "Sin Empresa"
             
             // 1. Identificar empleados activos que no tienen empresa principal
             $sql_empleados_sin_empresa = "SELECT e.id, e.primer_nombre, e.primer_apellido 
@@ -3582,7 +3582,7 @@ if (isset($_GET)) {
                         $errores[] = "Error al marcar empresa principal para empleado $id_empleado: " . mysqli_error($con);
                     }
                 } else {
-                    // Si no tiene empresas asociadas, crear una relación con la empresa por defecto (ID 1)
+                    // Si no tiene empresas asociadas, crear una relaci?n con la empresa por defecto (ID 1)
                     $sql_crear_empresa = "INSERT INTO empresa_empleado (porcentaje, principal, id_empleado, id_empresa, activo, fecha) 
                                         VALUES (100, 1, $id_empleado, 1, 1, NOW())";
                     
@@ -3597,7 +3597,7 @@ if (isset($_GET)) {
                 }
             }
             
-            // 3. Verificar si hay empleados que aún aparecen sin empresa después de la corrección
+            // 3. Verificar si hay empleados que a?n aparecen sin empresa despu?s de la correcci?n
             $sql_verificacion = "SELECT COUNT(*) as total_sin_empresa 
                                 FROM empleado e 
                                 LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1
@@ -3622,7 +3622,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'corregir_todos_empleados_sin_empresa') {
-            // Función simplificada para corregir empleados sin empresa
+            // Funci?n simplificada para corregir empleados sin empresa
             try {
                 $empleados_corregidos = 0;
                 $errores = array();
@@ -3674,18 +3674,18 @@ if (isset($_GET)) {
                 
                 // 3. Respuesta simple
                 echo json_encode([
-                    'success' => 'Corrección completada',
+                    'success' => 'Correcci?n completada',
                     'empleados_corregidos' => $empleados_corregidos,
                     'total_empleados_sin_empresa' => count($empleados_sin_empresa)
                 ]);
                 
             } catch (Exception $e) {
-                echo json_encode(['error' => 'Error en la corrección: ' . $e->getMessage()]);
+                echo json_encode(['error' => 'Error en la correcci?n: ' . $e->getMessage()]);
             }
         }
 
         if ($_GET["quest"] == 'corregir_empleados_simple') {
-            // Función muy simple para corregir empleados sin empresa
+            // Funci?n muy simple para corregir empleados sin empresa
             $empleados_corregidos = 0;
             
             // 1. Obtener empleados sin empresa principal
@@ -3718,7 +3718,7 @@ if (isset($_GET)) {
             }
             
             echo json_encode([
-                'success' => 'Corrección completada',
+                'success' => 'Correcci?n completada',
                 'empleados_corregidos' => $empleados_corregidos
             ]);
         }
@@ -3729,7 +3729,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3757,9 +3757,9 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'datos_empleados_pago_lote') {
-            // Validación de parámetros
+            // Validaci?n de par?metros
             if (empty($_GET['id_empleado']) || !isset($_GET['nomina_activa']) || (empty($_GET['id_lote']) && $_GET['nomina_activa'] == 'true')) {
-                echo json_encode(['error' => 'Parámetros incompletos para datos_empleados_pago_lote']);
+                echo json_encode(['error' => 'Par?metros incompletos para datos_empleados_pago_lote']);
                 exit;
             }
             $id_empleado = intval($_GET['id_empleado']);
@@ -3774,16 +3774,16 @@ if (isset($_GET)) {
             } else {
                 $id_lote = $_SESSION['ultimo_id_lote'];
             }
-            // Primero verificar si el empleado ya está en pago_lote
+            // Primero verificar si el empleado ya est? en pago_lote
             $check_sql = "SELECT COUNT(*) as existe FROM pago_lote WHERE id_empleado = " . $id_empleado . " AND id_lote = " . $id_lote . $filtro_empresa_pago_lote;
             $check_result = mysqli_query($con, $check_sql);
             $check_row = mysqli_fetch_array($check_result);
             
             if ($check_row['existe'] > 0) {
-                // Si ya está en pago_lote, leer directamente de ahí
+                // Si ya est? en pago_lote, leer directamente de ah?
                 $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, COALESCE(pl.id_centro, e.centro_de_costo) AS centro_costo, COALESCE(pl.id_departamento, e.departamento_laboral) AS departamento, COALESCE(pl.puesto, e.puesto) AS puesto, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.banco, pl.bon_tot AS bon_incentivo, pl.bon_dec_tot AS bon_decreto, 0 AS cantidad_horas_dia, pl.horas_dia, 0 AS cantidad_horas_noche, pl.horas_noche, pl.sueldo_quincenal, pl.otros_ingresos, pl.vacaciones, pl.bonos, pl.desc_variables AS descuentos_variables, pl.boleta_ornato AS boleto_de_ornato, pl.igss AS igss_laboral, pl.isr, pl.otros_egresos AS otro_descuentos, 0 AS judiciales, 0 AS seguro, 0 AS parqueo, pl.ingresos_tot AS total_ingresos, pl.egresos_tot AS total_egresos, pl.liquido, pl.total_reporte_bono, pl.condicion_laboral, pl.cheque, e.banco, pl.no_cuenta, pl.id_tipo_cuenta AS tipo_cuenta, " . $id_lote . " AS id_lote, pl.fecha_pago_lote, pl.igss_patronal, pl.intecap, pl.irtra, pl.dias_laborados, pl.dias_bono FROM pago_lote pl INNER JOIN empleado e ON pl.id_empleado = e.id INNER JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE pl.id_empleado = " . $id_empleado . " AND pl.id_lote = " . $id_lote . $filtro_empresa_pago_lote . $filtro_empresa_empleado;
             } else {
-                // Si no está en pago_lote, calcular (query original)
+                // Si no est? en pago_lote, calcular (query original)
                 $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, e.centro_de_costo centro_costo, e.departamento_laboral departamento, e.puesto puesto, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.banco banco, ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) bon_incentivo, ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) bon_decreto, COALESCE(he_dia.horas, 0) cantidad_horas_dia, COALESCE(he_dia.monto, 0) horas_dia, COALESCE(he_noche.horas, 0) cantidad_horas_noche, COALESCE(he_noche.monto, 0) horas_noche, ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) sueldo_quincenal, ROUND( COALESCE(e.otro_ingresos, 0), 2 ) otros_ingresos, ROUND(COALESCE(e.vacaciones, 0), 2) vacaciones, ROUND(COALESCE(bono.monto, 0), 2) bonos, ROUND( COALESCE(dv.monto_total, 0), 2 ) descuentos_variables, ROUND(e.boleto_de_ornato / 2, 2) boleto_de_ornato, igss.igss igss_laboral, ROUND(e.isr / 2, 2) isr, ROUND(e.otro_descuentos / 2, 2) otro_descuentos, ROUND(e.judiciales / 2, 2) judiciales, ROUND(e.seguro / 2, 2) seguro, ROUND( (e.parqueo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) parqueo, ROUND( ( ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + e.otro_ingresos + COALESCE(bono.monto, 0) + COALESCE(he_dia.monto, 0) + COALESCE(he_noche.monto, 0) ), 2 ) AS total_ingresos, ROUND( ( CASE WHEN l.quincena = 0 THEN ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 ELSE ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 + e.boleto_de_ornato END ), 2 ) AS total_egresos, ROUND( ( ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_dec_37_2001 / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + ROUND( (e.bon_incentivo / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ), 2 ) + e.otro_ingresos + COALESCE(he_dia.monto, 0) + COALESCE(he_noche.monto, 0) + COALESCE(bono.monto, 0) ) - ROUND( ( CASE WHEN l.quincena = 0 THEN ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 ELSE ROUND(igss.igss, 2) + e.isr / 2 + COALESCE(dv.monto_total, 0) + e.otro_descuentos + e.judiciales / 2 + e.seguro / 2 + e.parqueo / 2 + e.boleto_de_ornato END ), 2 ), 2 ) AS liquido, ROUND( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(ddb.dias, 0) ), 2 ) total_reporte_bono, e.condicion_laboral, e.tipo_de_pago AS cheque, e.banco, e.no_cuenta, e.tipo_cuenta, l.id AS id_lote, DATE(NOW()) AS fecha_pago_lote, e.igss_patronal, ROUND(e.igss_patronal * 0.01, 2) AS intecap, ROUND(e.igss_patronal * 0.01, 2) AS irtra, ( e.dias_laborados - COALESCE(dd.dias, 0) ) dias_laborados, ( e.dias_laborados - COALESCE(ddb.dias, 0) ) dias_bono FROM empleado e INNER JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id INNER JOIN lote l ON l.id = " . $id_lote . " LEFT JOIN( SELECT id_empleado, SUM(monto) monto, SUM(horas) horas FROM ( SELECT id_empleado, monto, horas FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND jornada = 0" . $filtro_horas_extra . " UNION ALL SELECT id_empleado, monto, horas FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND tipo_jornada = 1" . $filtro_comision_empresa . " ) combined_dia GROUP BY id_empleado ) he_dia ON he_dia.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto) monto, SUM(horas) horas FROM ( SELECT id_empleado, monto, horas FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND jornada = 1" . $filtro_horas_extra . " UNION ALL SELECT id_empleado, monto, horas FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND tipo_jornada = 2" . $filtro_comision_empresa . " ) combined_noche GROUP BY id_empleado ) he_noche ON he_noche.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto) AS monto FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'bono'" . $filtro_comision_empresa . " GROUP BY id_empleado ) bono ON bono.id_empleado = e.id LEFT JOIN( SELECT id_empleado, SUM(monto_total / cuotas) AS monto_total FROM descuento_variable WHERE estado = 1 AND seleccionado = 1 AND faltan >= 1 GROUP BY id_empleado ) dv ON dv.id_empleado = e.id LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $id_empleado . " AND id_incidencia IN(2, 3, 4, 5, 6) ) dd ON dd.id_empleado = e.id LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $id_empleado . " AND id_incidencia IN(2, 3, 5, 6) ) ddb ON ddb.id_empleado = e.id LEFT JOIN( SELECT e.id id_empleado, ( ( (e.sueldo_ordinario / 30) *( e.dias_laborados - COALESCE(dd.dias, 0) ) ) + COALESCE( ( SELECT SUM(monto) FROM horas_extra WHERE estado = 2 AND seleccionado = 1 AND id_empleado = e.id" . $filtro_horas_extra . " ), 0 ) + COALESCE( ( SELECT SUM(monto) FROM comision WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra' AND id_empleado = e.id" . $filtro_comision_empresa . " ), 0 ) + e.otro_ingresos ) * 0.0483 igss FROM empleado e LEFT JOIN( SELECT id_empleado, id_incidencia, CASE WHEN faltan_quincena > 0 THEN SUM(faltan_quincena) WHEN faltan > 0 AND faltan > 15 THEN 15 WHEN faltan > 0 AND faltan < 15 THEN SUM(faltan) ELSE 0 END dias FROM dias_laborados WHERE id_empleado = " . $id_empleado . " AND id_incidencia IN(2, 3, 4, 5) ) dd ON dd.id_empleado = e.id WHERE e.id = " . $id_empleado . " ) igss ON igss.id_empleado = e.id WHERE e.estado = 1 AND e.id = " . $id_empleado . $filtro_empresa_empleado;
             }
 
@@ -3791,7 +3791,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3860,7 +3860,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3894,7 +3894,7 @@ if (isset($_GET)) {
             $result = odbc_exec($conn, $sql);
 
             if (!$result) {
-                die('Query Falló - ODBC');
+                die('Query Fall? - ODBC');
             }
 
             if (odbc_num_rows($result) > 0) {
@@ -3924,7 +3924,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3952,7 +3952,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empresas_empleado') {
-            // Mostrar TODAS las empresas, con datos de empresa_empleado si existe la relación
+            // Mostrar TODAS las empresas, con datos de empresa_empleado si existe la relaci?n
             $sql = "SELECT 
                         COALESCE(ee.id, 0) as id_empresa_empleado, 
                         COALESCE(ee.porcentaje, 0) as porcentaje, 
@@ -3966,7 +3966,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -3997,7 +3997,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4028,7 +4028,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4056,7 +4056,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4081,7 +4081,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4110,7 +4110,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4154,7 +4154,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4197,7 +4197,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4240,7 +4240,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4283,7 +4283,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4321,7 +4321,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4348,7 +4348,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4391,7 +4391,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4434,7 +4434,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4477,7 +4477,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4515,7 +4515,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4543,7 +4543,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4568,7 +4568,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4706,7 +4706,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4820,7 +4820,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -4928,7 +4928,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5026,11 +5026,11 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'datos_empleado_comision') {
-            // Validar que id_empleado sea un número válido
+            // Validar que id_empleado sea un n?mero v?lido
             $id_empleado = isset($_GET['id_empleado']) && is_numeric($_GET['id_empleado']) ? intval($_GET['id_empleado']) : 0;
             
             if ($id_empleado <= 0) {
-                echo json_encode(['error' => 'ID de empleado no válido']);
+                echo json_encode(['error' => 'ID de empleado no v?lido']);
                 exit;
             }
             
@@ -5039,7 +5039,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5142,7 +5142,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5169,7 +5169,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5196,7 +5196,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5222,7 +5222,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5264,7 +5264,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5301,12 +5301,32 @@ if (isset($_GET)) {
             $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
                 CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
                 emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
-                ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) AS salario_ordinario,
-                @total_liq := ROUND( (e.sueldo_ordinario/30 * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END)) + e.bon_incentivo + e.bon_dec_37_2001, 2) AS total_liq_proyectado,
-                COALESCE(pla.liquido, ROUND(@total_liq / 2, 2)) AS liquido_primer_quincena,
-                CASE WHEN $quin_act = 0 THEN 0 ELSE @total_liq - COALESCE(pla.liquido, ROUND(@total_liq / 2, 2)) END AS liquido_segunda_quincena,
-                @total_liq AS liquido_recibir,
-                e.id AS correlativo, 15 AS dias_laborados, 0 AS bon_incentivo, 0 AS bon_decreto, 0 AS bonos, 0 AS total_devengado, 0 AS horas_simples, 0 AS valor_horas_simples, 0 AS horas_dobles, 0 AS valor_horas_dobles, 0 AS otros_ingresos, 0 AS salario_total, 0 AS igss, 0 AS isr, 0 AS cafeteria, 0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros, 0 AS boleta_ornato, 0 AS otros_egresos, 0 AS judiciales, 0 AS seguro, 0 AS parqueo, 0 AS total_egresos
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
+                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
+                COALESCE(pl.id, e.id) AS correlativo,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
+                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
                 FROM empleado e 
                 INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
                 INNER JOIN empresa emp ON emp.id = ee.id_empresa 
@@ -5346,12 +5366,32 @@ if (isset($_GET)) {
             $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
                 CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
                 emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
-                ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) AS salario_ordinario,
-                @total_liq := ROUND( (e.sueldo_ordinario/30 * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END)) + e.bon_incentivo + e.bon_dec_37_2001, 2) AS total_liq_proyectado,
-                COALESCE(pla.liquido, ROUND(@total_liq / 2, 2)) AS liquido_primer_quincena,
-                CASE WHEN $quin_act = 0 THEN 0 ELSE @total_liq - COALESCE(pla.liquido, ROUND(@total_liq / 2, 2)) END AS liquido_segunda_quincena,
-                @total_liq AS liquido_recibir,
-                e.id AS correlativo, 15 AS dias_laborados, 0 AS bon_incentivo, 0 AS bon_decreto, 0 AS bonos, 0 AS total_devengado, 0 AS horas_simples, 0 AS valor_horas_simples, 0 AS horas_dobles, 0 AS valor_horas_dobles, 0 AS otros_ingresos, 0 AS salario_total, 0 AS igss, 0 AS isr, 0 AS cafeteria, 0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros, 0 AS boleta_ornato, 0 AS otros_egresos, 0 AS judiciales, 0 AS seguro, 0 AS parqueo, 0 AS total_egresos
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
+                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
+                COALESCE(pl.id, e.id) AS correlativo,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
+                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
                 FROM empleado e 
                 INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
                 INNER JOIN empresa emp ON emp.id = ee.id_empresa 
@@ -5391,12 +5431,32 @@ if (isset($_GET)) {
             $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
                 CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
                 emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
-                ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) AS salario_ordinario,
-                @total_liq := ROUND( (e.sueldo_ordinario/30 * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END)) + e.bon_incentivo + e.bon_dec_37_2001, 2) AS total_liq_proyectado,
-                COALESCE(pla.liquido, ROUND(@total_liq / 2, 2)) AS liquido_primer_quincena,
-                CASE WHEN $quin_act = 0 THEN 0 ELSE @total_liq - COALESCE(pla.liquido, ROUND(@total_liq / 2, 2)) END AS liquido_segunda_quincena,
-                @total_liq AS liquido_recibir,
-                e.id AS correlativo, 15 AS dias_laborados, 0 AS bon_incentivo, 0 AS bon_decreto, 0 AS bonos, 0 AS total_devengado, 0 AS horas_simples, 0 AS valor_horas_simples, 0 AS horas_dobles, 0 AS valor_horas_dobles, 0 AS otros_ingresos, 0 AS salario_total, 0 AS igss, 0 AS isr, 0 AS cafeteria, 0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros, 0 AS boleta_ornato, 0 AS otros_egresos, 0 AS judiciales, 0 AS seguro, 0 AS parqueo, 0 AS total_egresos
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
+                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
+                COALESCE(pl.id, e.id) AS correlativo,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
+                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
                 FROM empleado e 
                 INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
                 INNER JOIN empresa emp ON emp.id = ee.id_empresa 
@@ -5434,7 +5494,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5501,7 +5561,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5567,7 +5627,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5592,12 +5652,23 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_lotes_cerrados') {
-            $sql = "SELECT * FROM lote WHERE id_estado = 2";
+            $sql = "SELECT DISTINCT
+                        l.id as id_lote,
+                        l.nombre as nombre_lote,
+                        l.quincena,
+                        l.fecha,
+                        e.id as id_empresa,
+                        e.nombre_comercial as nombre_empresa
+                    FROM lote l
+                    JOIN pago_lote p ON l.id = p.id_lote
+                    JOIN empresa e ON p.id_empresa = e.id
+                    WHERE l.id_estado = 2
+                    ORDER BY l.fecha DESC, e.nombre_comercial ASC";
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5605,9 +5676,12 @@ if (isset($_GET)) {
                 $json = array();
                 while ($row = mysqli_fetch_array($result)) {
                     $json[] = array(
-                        'id' => $row["id"],
-                        'nombre' => $row["nombre"],
+                        'id' => $row["id_lote"],
+                        'nombre' => $row["nombre_lote"],
                         'quincena' => $row["quincena"],
+                        'fecha' => $row["fecha"],
+                        'id_empresa' => $row["id_empresa"],
+                        'nombre_empresa' => $row["nombre_empresa"]
                     );
                 }
                 $json_string = json_encode($json);
@@ -5641,7 +5715,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
                 exit;
@@ -5654,7 +5728,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5710,7 +5784,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5759,7 +5833,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5791,7 +5865,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5821,7 +5895,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5846,12 +5920,12 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_descuentos_cerrados_cafeteria') {
-            $sql = "SELECT dv.id id_descuento, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) nombre_empleado, d.nombre departamento, dv.tipo_egreso egreso, dv.monto_total monto_total, (dv.monto_total / dv.cuotas) monto_pagar, DATE(dv.fecha_generado) fecha_generado FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id LEFT JOIN empleado e ON e.id = dv.id_empleado LEFT JOIN departamento d ON d.id = e.departamento_laboral LEFT JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON emp.id = ee.id_empresa WHERE emp.id = " . $_GET['id_empresa'] . " AND dl.id_pago_lote = " . $_GET['id_lote'] . " and dv.tipo_egreso = 'Cafetería'";
+            $sql = "SELECT dv.id id_descuento, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) nombre_empleado, d.nombre departamento, dv.tipo_egreso egreso, dv.monto_total monto_total, (dv.monto_total / dv.cuotas) monto_pagar, DATE(dv.fecha_generado) fecha_generado FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id LEFT JOIN empleado e ON e.id = dv.id_empleado LEFT JOIN departamento d ON d.id = e.departamento_laboral LEFT JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON emp.id = ee.id_empresa WHERE emp.id = " . $_GET['id_empresa'] . " AND dl.id_pago_lote = " . $_GET['id_lote'] . " and dv.tipo_egreso = 'Cafeter?a'";
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5881,7 +5955,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5911,7 +5985,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5941,7 +6015,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -5971,7 +6045,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6001,7 +6075,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6031,7 +6105,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6056,12 +6130,12 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_descuentos_cerrados_otros') {
-            $sql = "SELECT dv.id id_descuento, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) nombre_empleado, d.nombre departamento, dv.tipo_egreso egreso, dv.monto_total monto_total, (dv.monto_total / dv.cuotas) monto_pagar, DATE(dv.fecha_generado) fecha_generado FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id LEFT JOIN empleado e ON e.id = dv.id_empleado LEFT JOIN departamento d ON d.id = e.departamento_laboral LEFT JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON emp.id = ee.id_empresa WHERE emp.id = " . $_GET['id_empresa'] . " AND dl.id_pago_lote = " . $_GET['id_lote'] . " and dv.tipo_egreso not in('Cafetería', 'Celular','Uniforme','Calzado','Equipo','Producto','Bancos')";
+            $sql = "SELECT dv.id id_descuento, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) nombre_empleado, d.nombre departamento, dv.tipo_egreso egreso, dv.monto_total monto_total, (dv.monto_total / dv.cuotas) monto_pagar, DATE(dv.fecha_generado) fecha_generado FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id LEFT JOIN empleado e ON e.id = dv.id_empleado LEFT JOIN departamento d ON d.id = e.departamento_laboral LEFT JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON emp.id = ee.id_empresa WHERE emp.id = " . $_GET['id_empresa'] . " AND dl.id_pago_lote = " . $_GET['id_lote'] . " and dv.tipo_egreso not in('Cafeter?a', 'Celular','Uniforme','Calzado','Equipo','Producto','Bancos')";
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6091,7 +6165,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6118,7 +6192,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6145,7 +6219,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6158,7 +6232,7 @@ if (isset($_GET)) {
                         'numero' => $row["numero"],
                         'fecha_inicio' => $row["fecha_inicio"],
                         'fecha_final' => $row["fecha_final"],
-                        'año' => $row["año"],
+                        'a?o' => $row["a?o"],
                         'mes' => $row["mes"],
                         'dia' => $row["dia"],
                         'hora' => $row["hora"],
@@ -6182,7 +6256,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6208,7 +6282,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6235,7 +6309,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6260,7 +6334,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6287,7 +6361,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6314,7 +6388,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6341,7 +6415,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6366,7 +6440,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6391,7 +6465,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6416,7 +6490,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6441,7 +6515,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6467,7 +6541,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6493,7 +6567,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6519,7 +6593,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6545,7 +6619,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6571,7 +6645,7 @@ if (isset($_GET)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
 
@@ -6625,7 +6699,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6661,7 +6735,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6676,7 +6750,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6695,7 +6769,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 $ultimo_id = mysqli_insert_id($con);
@@ -6714,7 +6788,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 $ultimo_id = mysqli_insert_id($con);
@@ -6733,7 +6807,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 $ultimo_id = mysqli_insert_id($con);
@@ -6752,7 +6826,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 $ultimo_id = mysqli_insert_id($con);
@@ -6771,7 +6845,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 $ultimo_id = mysqli_insert_id($con);
@@ -6792,7 +6866,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6811,7 +6885,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6831,7 +6905,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6851,7 +6925,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6864,7 +6938,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6882,7 +6956,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6896,7 +6970,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 $ultimo_id_centro = mysqli_insert_id($con);
@@ -6914,7 +6988,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6931,7 +7005,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6948,7 +7022,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6965,7 +7039,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -6980,7 +7054,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -6994,7 +7068,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7007,7 +7081,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7022,7 +7096,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7038,7 +7112,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7056,7 +7130,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7070,7 +7144,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7084,7 +7158,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7099,7 +7173,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7114,7 +7188,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7129,7 +7203,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7189,7 +7263,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 $ultimo_id_empleado = mysqli_insert_id($con);
@@ -7234,7 +7308,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7250,7 +7324,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7266,7 +7340,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7280,7 +7354,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7296,7 +7370,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7310,7 +7384,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7321,13 +7395,13 @@ if (isset($_POST)) {
             $ultimo_id_empleado = $_SESSION["ultimo_id_empleado"];
             $observaciones = $con->zscape_string($_POST["observaciones"]);
 
-            $sql = "INSERT INTO evento(tipo, numero, fecha_inicio, fecha_final, año, mes, dia, hora, minuto, procesar, planilla, estado, observaciones, id_empleado) VALUES ('" . $_POST['tipo'] . "','" . $_POST['numero'] . "','" . $_POST['fecha_inicio'] . "','" . $_POST['fecha_final'] . "'," . $_POST['año'] . "," . $_POST['mes'] . "," . $_POST['dia'] . "," . $_POST['hora'] . "," . $_POST['minuto'] . ",'" . $_POST['procesar'] . "','" . $_POST['planilla'] . "','" . $_POST['estado'] . "','" . $observaciones . "'," . $ultimo_id_empleado . ")";
+            $sql = "INSERT INTO evento(tipo, numero, fecha_inicio, fecha_final, a?o, mes, dia, hora, minuto, procesar, planilla, estado, observaciones, id_empleado) VALUES ('" . $_POST['tipo'] . "','" . $_POST['numero'] . "','" . $_POST['fecha_inicio'] . "','" . $_POST['fecha_final'] . "'," . $_POST['a?o'] . "," . $_POST['mes'] . "," . $_POST['dia'] . "," . $_POST['hora'] . "," . $_POST['minuto'] . ",'" . $_POST['procesar'] . "','" . $_POST['planilla'] . "','" . $_POST['estado'] . "','" . $observaciones . "'," . $ultimo_id_empleado . ")";
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7337,13 +7411,13 @@ if (isset($_POST)) {
 
             $observaciones = $con->real_escape_string($_POST["observaciones"]);
 
-            $sql = "INSERT INTO evento(tipo, numero, fecha_inicio, fecha_final, año, mes, dia, hora, minuto, procesar, planilla, estado, observaciones, id_empleado) VALUES ('" . $_POST['tipo'] . "','" . $_POST['numero'] . "','" . $_POST['fecha_inicio'] . "','" . $_POST['fecha_final'] . "'," . $_POST['año'] . "," . $_POST['mes'] . "," . $_POST['dia'] . "," . $_POST['hora'] . "," . $_POST['minuto'] . ",'" . $_POST['procesar'] . "','" . $_POST['planilla'] . "','" . $_POST['estado'] . "','" . $observaciones . "'," . $_POST['id_empleado'] . ")";
+            $sql = "INSERT INTO evento(tipo, numero, fecha_inicio, fecha_final, a?o, mes, dia, hora, minuto, procesar, planilla, estado, observaciones, id_empleado) VALUES ('" . $_POST['tipo'] . "','" . $_POST['numero'] . "','" . $_POST['fecha_inicio'] . "','" . $_POST['fecha_final'] . "'," . $_POST['a?o'] . "," . $_POST['mes'] . "," . $_POST['dia'] . "," . $_POST['hora'] . "," . $_POST['minuto'] . ",'" . $_POST['procesar'] . "','" . $_POST['planilla'] . "','" . $_POST['estado'] . "','" . $observaciones . "'," . $_POST['id_empleado'] . ")";
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7360,7 +7434,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7376,7 +7450,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7393,7 +7467,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7404,13 +7478,13 @@ if (isset($_POST)) {
             $result = odbc_exec($conn, $_POST["template"]);
 
             if (!$result) {
-                die('Query Falló - OBDC');
+                die('Query Fall? - OBDC');
             }
 
             if (odbc_num_rows($result) > 0) {
                 echo 'Successfully';
             } else {
-                echo 'ODBC salió mal';
+                echo 'ODBC sali? mal';
             }
         }
 
@@ -7424,7 +7498,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7440,7 +7514,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7454,7 +7528,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7470,7 +7544,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7484,7 +7558,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7498,7 +7572,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
                 exit;
@@ -7514,7 +7588,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
                 exit;
@@ -7528,7 +7602,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
                 exit;
@@ -7543,7 +7617,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
                 exit;
@@ -7559,7 +7633,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
                 exit;
@@ -7573,7 +7647,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
                 exit;
@@ -7587,7 +7661,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7601,7 +7675,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7616,7 +7690,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7631,7 +7705,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7646,7 +7720,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7660,7 +7734,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7674,7 +7748,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7688,7 +7762,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7698,13 +7772,13 @@ if (isset($_POST)) {
 
             $observaciones = $con->real_escape_string($_POST["observaciones"]);
 
-            $sql = "UPDATE evento SET tipo ='" . $_POST['tipo'] . "', numero ='" . $_POST['numero'] . "', fecha_inicio ='" . $_POST['fecha_inicio'] . "', fecha_final ='" . $_POST['fecha_final'] . "', año =" . $_POST['año'] . ", mes =" . $_POST['mes'] . ", dia =" . $_POST['dia'] . ", hora =" . $_POST['hora'] . ", minuto =" . $_POST['minuto'] . ", procesar ='" . $_POST['procesar'] . "', planilla ='" . $_POST['planilla'] . "', estado ='" . $_POST['estado'] . "', observaciones = '" . $observaciones . "' WHERE id = " . $_POST['id_evento'] . "";
+            $sql = "UPDATE evento SET tipo ='" . $_POST['tipo'] . "', numero ='" . $_POST['numero'] . "', fecha_inicio ='" . $_POST['fecha_inicio'] . "', fecha_final ='" . $_POST['fecha_final'] . "', a?o =" . $_POST['a?o'] . ", mes =" . $_POST['mes'] . ", dia =" . $_POST['dia'] . ", hora =" . $_POST['hora'] . ", minuto =" . $_POST['minuto'] . ", procesar ='" . $_POST['procesar'] . "', planilla ='" . $_POST['planilla'] . "', estado ='" . $_POST['estado'] . "', observaciones = '" . $observaciones . "' WHERE id = " . $_POST['id_evento'] . "";
 
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7718,7 +7792,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7734,7 +7808,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7748,7 +7822,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7764,7 +7838,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7778,7 +7852,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7792,7 +7866,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7806,7 +7880,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7820,7 +7894,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7843,8 +7917,8 @@ if (isset($_POST)) {
             }
             
             if (mysqli_num_rows($result_empresa) == 0) {
-                error_log("DEBUG: No se encontró empresa para centro de costo: $id_centro");
-                echo json_encode(['error' => 'No se encontró empresa para el centro de costo: ' . $id_centro]);
+                error_log("DEBUG: No se encontr? empresa para centro de costo: $id_centro");
+                echo json_encode(['error' => 'No se encontr? empresa para el centro de costo: ' . $id_centro]);
                 exit;
             }
             
@@ -7853,7 +7927,7 @@ if (isset($_POST)) {
             
             error_log("DEBUG: Empresa encontrada - ID Empresa: $id_empresa");
             
-            // Insertar la relación empresa-empleado como principal
+            // Insertar la relaci?n empresa-empleado como principal
             $sql = "INSERT INTO empresa_empleado(porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES (100, 1, $id_empleado, $id_empresa, 1, now())";
             
             error_log("DEBUG: Ejecutando INSERT empresa_empleado: $sql");
@@ -7862,7 +7936,7 @@ if (isset($_POST)) {
             
             if (!$result) {
                 error_log("DEBUG: Error en INSERT empresa_empleado: " . mysqli_error($con));
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 error_log("DEBUG: Empresa principal insertada exitosamente");
@@ -7882,7 +7956,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7897,7 +7971,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7911,7 +7985,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7925,7 +7999,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             } else {
                 echo 'Successfully';
@@ -7940,7 +8014,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7954,7 +8028,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 $ultimo_id_lote = mysqli_insert_id($con);
                 $_SESSION["ultimo_id_lote"] = $ultimo_id_lote;
@@ -7970,7 +8044,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló ' . mysqli_error($con));
+                die('Query Fall? ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
@@ -7984,7 +8058,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 $ultimo_id_pago_lote = mysqli_insert_id($con);
                 echo 'Successfully';
@@ -7999,7 +8073,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 $ultimo_id_pago_lote = mysqli_insert_id($con);
                 echo 'Successfully';
@@ -8015,7 +8089,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 $ultimo_id_pago_lote = mysqli_insert_id($con);
                 echo 'Successfully';
@@ -8030,7 +8104,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8044,7 +8118,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8080,7 +8154,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8108,7 +8182,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8117,12 +8191,12 @@ if (isset($_POST)) {
         if ($_POST["quest"] == 'confirmar_comision') {
             $comision_id = intval($_POST['id']);
             
-            // Primero obtener los datos de la comisión (empleado, monto, horas, tipo_registro, tipo_jornada y estado actual de seleccionado)
+            // Primero obtener los datos de la comisi?n (empleado, monto, horas, tipo_registro, tipo_jornada y estado actual de seleccionado)
             $sql_datos = "SELECT id_empleado, monto, horas, seleccionado, tipo_registro, tipo_jornada FROM comision WHERE id = $comision_id";
             $result_datos = mysqli_query($con, $sql_datos);
             
             if (!$result_datos) {
-                die('Query Falló al obtener datos de comisión');
+                die('Query Fall? al obtener datos de comisi?n');
             }
             
             $comision_data = mysqli_fetch_assoc($result_datos);
@@ -8133,7 +8207,7 @@ if (isset($_POST)) {
             $tipo_registro = $comision_data['tipo_registro'];
             $tipo_jornada = intval($comision_data['tipo_jornada']); // 1=Diurna, 2=Nocturna
             
-            // Solo proceder si no estaba ya seleccionado (evitar duplicación)
+            // Solo proceder si no estaba ya seleccionado (evitar duplicaci?n)
             if ($ya_seleccionado == 1) {
                 // Ya estaba confirmado, no hacer nada
                 echo 'Successfully';
@@ -8149,12 +8223,12 @@ if (isset($_POST)) {
                 $id_lote_activo = $lote_row['id'];
             }
             
-            // Marcar la comisión como seleccionada y asociar al lote activo
+            // Marcar la comisi?n como seleccionada y asociar al lote activo
             $sql = "UPDATE comision SET seleccionado = 1, id_lote_pago = " . ($id_lote_activo ? $id_lote_activo : "NULL") . " WHERE id = $comision_id";
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             }
             
             // Buscar registro en pago_lote para el lote activo
@@ -8164,11 +8238,11 @@ if (isset($_POST)) {
             $result_check = mysqli_query($con, $sql_check);
             
             if ($result_check && mysqli_num_rows($result_check) > 0) {
-                // Existe registro en lote activo - actualizar según tipo de registro
+                // Existe registro en lote activo - actualizar seg?n tipo de registro
                 $pago_lote = mysqli_fetch_assoc($result_check);
                 
                 if ($tipo_registro == 'hora_extra') {
-                    // Es hora extra - actualizar horas_dia o horas_noche según tipo_jornada
+                    // Es hora extra - actualizar horas_dia o horas_noche seg?n tipo_jornada
                     if ($tipo_jornada == 1) {
                         // Jornada Diurna
                         $horas_dia_actuales = floatval($pago_lote['horas_dia']);
@@ -8273,16 +8347,16 @@ if (isset($_POST)) {
             echo 'Successfully';
         }
 
-        // Endpoint para desconfirmar una comisión (quitar seleccionado y restar del pago_lote)
+        // Endpoint para desconfirmar una comisi?n (quitar seleccionado y restar del pago_lote)
         if ($_POST["quest"] == 'desconfirmar_comision') {
             $comision_id = intval($_POST['id']);
             
-            // Primero obtener los datos de la comisión (empleado, monto, horas, tipo_registro, tipo_jornada)
+            // Primero obtener los datos de la comisi?n (empleado, monto, horas, tipo_registro, tipo_jornada)
             $sql_datos = "SELECT id_empleado, monto, horas, seleccionado, tipo_registro, tipo_jornada FROM comision WHERE id = $comision_id";
             $result_datos = mysqli_query($con, $sql_datos);
             
             if (!$result_datos) {
-                die('Query Falló al obtener datos de comisión');
+                die('Query Fall? al obtener datos de comisi?n');
             }
             
             $comision_data = mysqli_fetch_assoc($result_datos);
@@ -8293,12 +8367,12 @@ if (isset($_POST)) {
             $tipo_registro = $comision_data['tipo_registro'];
             $tipo_jornada = intval($comision_data['tipo_jornada']); // 1=Diurna, 2=Nocturna
             
-            // Marcar la comisión como NO seleccionada
+            // Marcar la comisi?n como NO seleccionada
             $sql = "UPDATE comision SET seleccionado = 0 WHERE id = $comision_id";
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             }
             
             // Si estaba seleccionada, restar el monto del campo correspondiente en pago_lote
@@ -8310,7 +8384,7 @@ if (isset($_POST)) {
                     $pago_lote = mysqli_fetch_assoc($result_check);
                     
                     if ($tipo_registro == 'hora_extra') {
-                        // Es hora extra - restar de horas_dia o horas_noche según tipo_jornada
+                        // Es hora extra - restar de horas_dia o horas_noche seg?n tipo_jornada
                         if ($tipo_jornada == 1) {
                             // Jornada Diurna
                             $horas_dia_actuales = floatval($pago_lote['horas_dia']);
@@ -8349,7 +8423,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8363,7 +8437,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8375,7 +8449,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
                 echo 'Successfully';
             }
@@ -8386,12 +8460,12 @@ if (isset($_POST)) {
             $aprobador_id = $_POST['aprobador_id'] ?? 1; // ID del usuario que aprueba
             $rol_aprobador = $_POST['rol_aprobador'] ?? 'rh'; // Rol del aprobador
             
-            // Obtener datos de la comisión
+            // Obtener datos de la comisi?n
             $sql_comision = "SELECT id_empleado, monto, id_estado FROM comision WHERE id = " . $comision_id;
             $result_comision = mysqli_query($con, $sql_comision);
             
             if (!$result_comision) {
-                echo json_encode(['error' => 'Query Falló al obtener comisión: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall? al obtener comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -8400,36 +8474,36 @@ if (isset($_POST)) {
             $monto_comision = $comision_data['monto'];
             $estado_actual = $comision_data['id_estado'];
             
-            // Determinar el nuevo estado según el rol del aprobador
+            // Determinar el nuevo estado seg?n el rol del aprobador
             $nuevo_estado = 0;
             if ($rol_aprobador == 'jefe' || $rol_aprobador == 'gerente') {
                 $nuevo_estado = 6; // Aprobado Jefe (aparece en autorizadas para jefe y empleado)
             } else if ($rol_aprobador == 'rh' || $rol_aprobador == 'admin') {
-                $nuevo_estado = 2; // Autorizado (estado final, se agrega a nómina)
+                $nuevo_estado = 2; // Autorizado (estado final, se agrega a n?mina)
             }
             
-            // Actualizar el estado de la comisión
+            // Actualizar el estado de la comisi?n
             $sql_update_comision = "UPDATE comision SET id_estado = " . $nuevo_estado . " WHERE id = " . $comision_id;
             $result_update_comision = mysqli_query($con, $sql_update_comision);
 
             if (!$result_update_comision) {
-                echo json_encode(['error' => 'Query Falló al actualizar comisión: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall? al actualizar comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
             
-            // Admin y RH pueden actualizar la bonificación en pago_lote
+            // Admin y RH pueden actualizar la bonificaci?n en pago_lote
             if ($rol_aprobador == 'rh' || $rol_aprobador == 'admin') {
-                // Buscar el registro más reciente de pago_lote para este empleado
+                // Buscar el registro m?s reciente de pago_lote para este empleado
                 $sql_check_pago = "SELECT id, bon_tot as bonos, id_lote FROM pago_lote WHERE id_empleado = " . $id_empleado . " ORDER BY id DESC LIMIT 1";
                 $result_check_pago = mysqli_query($con, $sql_check_pago);
                 
                 if (!$result_check_pago) {
-                    echo json_encode(['error' => 'Query Falló al verificar pago: ' . mysqli_error($con)]);
+                    echo json_encode(['error' => 'Query Fall? al verificar pago: ' . mysqli_error($con)]);
                     exit;
                 }
                 
                 if (mysqli_num_rows($result_check_pago) > 0) {
-                    // Si existe registro, actualizar la bonificación
+                    // Si existe registro, actualizar la bonificaci?n
                     $pago_data = mysqli_fetch_array($result_check_pago);
                     $nueva_bonificacion = $pago_data['bonos'] + $monto_comision;
                     
@@ -8437,36 +8511,36 @@ if (isset($_POST)) {
                     $result_update_bonificacion = mysqli_query($con, $sql_update_bonificacion);
                     
                     if (!$result_update_bonificacion) {
-                        echo json_encode(['error' => 'Query Falló al actualizar bonificación: ' . mysqli_error($con)]);
+                        echo json_encode(['error' => 'Query Fall? al actualizar bonificaci?n: ' . mysqli_error($con)]);
                         exit;
                     }
                 } else {
-                    // Si no existe registro, crear uno nuevo con la bonificación
+                    // Si no existe registro, crear uno nuevo con la bonificaci?n
                     $sql_insert_pago = "INSERT INTO pago_lote (id_empleado, bon_tot, id_lote, fecha_pago_lote, sueldo_quincenal, otros_ingresos, vacaciones, desc_variables, boleta_ornato, igss, isr, prestamo_empresa, otros_egresos, dias_laborados, dias_bono) VALUES (" . $id_empleado . ", " . $monto_comision . ", 1, CURDATE(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0)";
                     $result_insert_pago = mysqli_query($con, $sql_insert_pago);
                     
                     if (!$result_insert_pago) {
-                        echo json_encode(['error' => 'Query Falló al crear registro de pago: ' . mysqli_error($con)]);
+                        echo json_encode(['error' => 'Query Fall? al crear registro de pago: ' . mysqli_error($con)]);
                         exit;
                     }
                 }
             }
             
-            echo json_encode(['success' => 'Comisión aprobada por ' . $rol_aprobador]);
+            echo json_encode(['success' => 'Comisi?n aprobada por ' . $rol_aprobador]);
         }
 
-        // NOTA: El endpoint 'confirmar_comision' ya está definido arriba (línea ~7936)
+        // NOTA: El endpoint 'confirmar_comision' ya est? definido arriba (l?nea ~7936)
         // Este bloque duplicado fue eliminado porque causaba que los bonos se marcaran como rechazados
 
         if ($_POST["quest"] == 'desaprobar_comision') {
             $comision_id = $_POST['id'];
             
-            // Primero obtener los datos de la comisión
+            // Primero obtener los datos de la comisi?n
             $sql_comision = "SELECT id_empleado, monto FROM comision WHERE id = " . $comision_id;
             $result_comision = mysqli_query($con, $sql_comision);
             
             if (!$result_comision) {
-                echo json_encode(['error' => 'Query Falló al obtener comisión: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall? al obtener comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -8474,26 +8548,26 @@ if (isset($_POST)) {
             $id_empleado = $comision_data['id_empleado'];
             $monto_comision = $comision_data['monto'];
             
-            // Actualizar el estado de la comisión
+            // Actualizar el estado de la comisi?n
             $sql_update_comision = "UPDATE comision SET id_estado = 1 WHERE id = " . $comision_id;
             $result_update_comision = mysqli_query($con, $sql_update_comision);
 
             if (!$result_update_comision) {
-                echo json_encode(['error' => 'Query Falló al actualizar comisión: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall? al actualizar comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
             
-            // Buscar el registro más reciente de pago_lote para este empleado
+            // Buscar el registro m?s reciente de pago_lote para este empleado
             $sql_check_pago = "SELECT id, bon_tot as bonos FROM pago_lote WHERE id_empleado = " . $id_empleado . " ORDER BY id DESC LIMIT 1";
             $result_check_pago = mysqli_query($con, $sql_check_pago);
             
             if (!$result_check_pago) {
-                echo json_encode(['error' => 'Query Falló al verificar pago: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall? al verificar pago: ' . mysqli_error($con)]);
                 exit;
             }
             
             if (mysqli_num_rows($result_check_pago) > 0) {
-                // Si existe registro, restar la bonificación
+                // Si existe registro, restar la bonificaci?n
                 $pago_data = mysqli_fetch_array($result_check_pago);
                 $nueva_bonificacion = max(0, $pago_data['bonos'] - $monto_comision); // No permitir valores negativos
                 
@@ -8501,11 +8575,11 @@ if (isset($_POST)) {
                 $result_update_bonificacion = mysqli_query($con, $sql_update_bonificacion);
                 
                 if (!$result_update_bonificacion) {
-                    echo json_encode(['error' => 'Query Falló al actualizar bonificación: ' . mysqli_error($con)]);
+                    echo json_encode(['error' => 'Query Fall? al actualizar bonificaci?n: ' . mysqli_error($con)]);
                     exit;
                 }
             }
-            // Si no existe registro, no hacer nada (no hay bonificación que restar)
+            // Si no existe registro, no hacer nada (no hay bonificaci?n que restar)
             
             echo 'Successfully';
         }
@@ -8516,7 +8590,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
                 echo 'Successfully';
             }
@@ -8529,7 +8603,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8541,7 +8615,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8556,7 +8630,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8570,7 +8644,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8584,7 +8658,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8598,7 +8672,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8617,7 +8691,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8636,7 +8710,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8661,7 +8735,7 @@ if (isset($_POST)) {
 
             // Anular la hora extra
             if ($origen == 'comision') {
-                // Para comision, estado 3 = Rechazado/Anulado, también quitar seleccionado
+                // Para comision, estado 3 = Rechazado/Anulado, tambi?n quitar seleccionado
                 $sql = "UPDATE comision SET id_estado = 3, seleccionado = 0 WHERE id = $id AND tipo_registro = 'hora_extra'";
             } else {
                 $sql = "UPDATE horas_extra SET estado = 3, seleccionado = 0 WHERE id = $id";
@@ -8670,9 +8744,9 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
-                // Actualizar el IGSS del empleado después de anular
+                // Actualizar el IGSS del empleado despu?s de anular
                 if ($id_empleado) {
                     $sql_igss = "UPDATE empleado SET igss_laboral = (
                         SELECT ( 
@@ -8706,7 +8780,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8721,7 +8795,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
                 exit;
@@ -8737,7 +8811,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
                 exit;
@@ -8751,7 +8825,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8766,7 +8840,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
                 exit;
@@ -8782,7 +8856,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
                 exit;
@@ -8798,7 +8872,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8812,7 +8886,7 @@ if (isset($_POST)) {
 
             if (!$result) {
 
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8828,7 +8902,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8842,7 +8916,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8856,7 +8930,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8870,7 +8944,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8884,7 +8958,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8898,7 +8972,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8912,7 +8986,7 @@ if (isset($_POST)) {
                 mysqli_query($con, "ALTER TABLE comision ADD COLUMN id_lote_pago INT DEFAULT NULL");
             }
             
-            // Guardar el id_lote en las comisiones que serán pagadas
+            // Guardar el id_lote en las comisiones que ser?n pagadas
             $id_lote = intval($_POST['id_lote']);
             $sql = "UPDATE comision SET id_lote_pago = $id_lote WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'bono'";
 
@@ -8920,7 +8994,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8934,7 +9008,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -8949,7 +9023,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             }
             
             // Verificar si la columna id_lote_pago existe en comision, si no, crearla
@@ -8972,7 +9046,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             }
             
             // Pagar horas extra de tabla comision (estado 4 = Pagado)
@@ -8990,7 +9064,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -9004,7 +9078,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -9018,7 +9092,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -9032,7 +9106,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -9046,7 +9120,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
                 // echo $sql;
@@ -9059,7 +9133,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -9073,7 +9147,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
                 // echo $sql;
@@ -9086,7 +9160,7 @@ if (isset($_POST)) {
 
             if (!$result) {
                 echo $sql;
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 echo 'Successfully';
             }
@@ -9099,7 +9173,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 $data = array();
                 while ($row = mysqli_fetch_array($result)) {
@@ -9115,7 +9189,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló');
+                die('Query Fall?');
             } else {
                 $data = array();
                 while ($row = mysqli_fetch_array($result)) {
@@ -9136,7 +9210,7 @@ if (isset($_POST)) {
                 $rol_data = mysqli_fetch_array($result_rol);
                 $rol_solicitante = $rol_data['rol'];
                 
-                // Determinar estado inicial según el rol
+                // Determinar estado inicial seg?n el rol
                 if ($rol_solicitante == 'empleado') {
                     $estado_inicial = 5; // Pendiente Jefe
                 } else if ($rol_solicitante == 'jefe' || $rol_solicitante == 'gerente') {
@@ -9161,20 +9235,20 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
-                die('Query Falló: ' . mysqli_error($con));
+                die('Query Fall?: ' . mysqli_error($con));
             } else {
                 echo 'Successfully';
             }
         }
 
-        // Lista de usuarios para gestión
+        // Lista de usuarios para gesti?n
         if ($_GET["quest"] == 'lista_usuarios') {
             error_log("DEBUG: Ejecutando lista_usuarios");
             $sql = "SELECT id, usuario, nombre, rol FROM usuario ORDER BY nombre";
             $result = mysqli_query($con, $sql);
             
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -9197,7 +9271,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
             
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -9215,7 +9289,7 @@ if (isset($_POST)) {
             $nuevo_rol = $_POST['nuevo_rol'] ?? null;
             
             if (!$user_id || !$nuevo_rol) {
-                echo json_encode(['error' => 'Parámetros requeridos']);
+                echo json_encode(['error' => 'Par?metros requeridos']);
                 exit;
             }
             
@@ -9223,7 +9297,7 @@ if (isset($_POST)) {
             $result = mysqli_query($con, $sql);
             
             if (!$result) {
-                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
             
@@ -9231,6 +9305,6 @@ if (isset($_POST)) {
         }
     }
 } else {
-    // Si no hay parámetros GET o POST, devolver error JSON
-    echo json_encode(['error' => 'No se proporcionaron parámetros válidos']);
+    // Si no hay par?metros GET o POST, devolver error JSON
+    echo json_encode(['error' => 'No se proporcionaron par?metros v?lidos']);
 }

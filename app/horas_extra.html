@@ -41,9 +41,10 @@
     <!-- BASE X -->
     <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="../app/css/index.css">
 
     <!-- AJAX -->
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <script src="js/jquery.js"></script>
 </head>
 
 <body class="layout-boxed">
@@ -58,196 +59,53 @@
     <!--  END LOADER -->
 
     <!--  BEGIN NAVBAR  -->
-    <div class="header-container container-xxl">
-        <header class="header navbar navbar-expand-sm expand-header">
+    <div class="saas-topbar">
+        <!-- Theme Toggle -->
+        <a href="javascript:void(0);" class="nav-link theme-toggle ms-3" style="color: var(--dash-text);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-moon dark-mode">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-sun light-mode">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+        </a>
 
-            <a href="javascript:void(0);" class="sidebarCollapse">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-menu">
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
+        <!-- User Section -->
+        <div class="user-info-wrapper d-flex align-items-center ms-auto me-3">
+            <span id="usuario_nombre_header" class="me-3" style="font-size: 14px; font-weight: 600; color: var(--dash-title);"></span>
+            
+            <button class="btn btn-custom-danger btn-sm d-flex align-items-center gap-2" onclick="cerrarSesion()" style="border-radius: 8px; padding: 6px 15px; font-weight: 600;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
-            </a>
-
-            <div class="search-animated toggle-search">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="feather feather-search">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <form class="form-inline search-full form-inline search" role="search">
-                    <div class="search-bar">
-                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-x search-close">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                        </svg>
-                    </div>
-                </form>
-                <span class="badge badge-secondary">Ctrl + /</span>
-            </div>
-
-            <ul class="navbar-item flex-row ms-lg-auto ms-0">
-
-                <li class="nav-item me-3">
-                    <span class="nav-link text-muted" id="usuario_nombre_navbar"></span>
-                </li>
-
-                <li class="nav-item theme-toggle-item">
-                    <a href="javascript:void(0);" class="nav-link theme-toggle">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-moon dark-mode">
-                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                        </svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                            class="feather feather-sun light-mode">
-                            <circle cx="12" cy="12" r="5"></circle>
-                            <line x1="12" y1="1" x2="12" y2="3"></line>
-                            <line x1="12" y1="21" x2="12" y2="23"></line>
-                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                            <line x1="1" y1="12" x2="3" y2="12"></line>
-                            <line x1="21" y1="12" x2="23" y2="12"></line>
-                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                        </svg>
-                    </a>
-                </li>
-
-                <li class="nav-item ms-2">
-                    <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
-                        Cerrar Sesión
-                    </button>
-                </li>
-
-            </ul>
-        </header>
+                <span>Cerrar Sesión</span>
+            </button>
+        </div>
     </div>
     <!--  END NAVBAR  -->
 
-    <!--  BEGIN MAIN CONTAINER  -->
-    <div class="main-container" id="container">
+    <div id="container">
 
-        <div class="overlay"></div>
-        <div class="search-overlay"></div>
+        <div class="container-xxl p-4">
 
-        <!--  BEGIN SIDEBAR  -->
-        <div class="sidebar-wrapper sidebar-theme">
-
-            <nav id="sidebar">
-
-                <div class="navbar-nav theme-brand flex-row  text-center">
-                    <div class="nav-logo">
-                        <div class="nav-item theme-logo">
-                            <a href="./index.html">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-cpu">
-                                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-                                    <rect x="9" y="9" width="6" height="6"></rect>
-                                    <line x1="9" y1="1" x2="9" y2="4"></line>
-                                    <line x1="15" y1="1" x2="15" y2="4"></line>
-                                    <line x1="9" y1="20" x2="9" y2="23"></line>
-                                    <line x1="15" y1="20" x2="15" y2="23"></line>
-                                    <line x1="20" y1="9" x2="23" y2="9"></line>
-                                    <line x1="20" y1="14" x2="23" y2="14"></line>
-                                    <line x1="1" y1="9" x2="4" y2="9"></line>
-                                    <line x1="1" y1="14" x2="4" y2="14"></line>
-                                </svg>
-                            </a>
-                        </div>
-                        <div class="nav-item theme-text">
-                            <a href="./index.html" class="nav-link"> Menú </a>
-                        </div>
-                    </div>
-                    <div class="nav-item sidebar-toggle">
-                        <div class="btn-toggle sidebarCollapse">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-chevrons-left">
-                                <polyline points="11 17 6 12 11 7"></polyline>
-                                <polyline points="18 17 13 12 18 7"></polyline>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="shadow-bottom"></div>
-                <ul class="list-unstyled menu-categories" id="accordionExample">
-                    <li class="menu active">
-                        <a href="#dashboard" data-bs-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-home">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>
-                                <span>Nómina</span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="feather feather-chevron-right">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled show" id="dashboard"
-                            data-bs-parent="#accordionExample">
-                            <li>
-                                <a href="./nomina.html"> Inicio </a>
-                            </li>
-                            <li>
-                                <a href="./seleccion_bonos.html"> Bonos </a>
-                            </li>
-                            <li class="active">
-                                <a href="./horas_extra.html"> Horas Extra </a>
-                            </li>
-                            <li class="menu-item-dias_laborados">
-                                <a href="./dias_laborados.html"> Dias Laborados </a>
-                            </li>
-                            <li class="menu-item-descuentos">
-                                <a href="./descuentos.html"> Descuentos </a>
-                            </li>
-                            <li class="menu-item-isr">
-                                <a href="./isr.html"> ISR </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-
-            </nav>
-
-        </div>
-        <!--  END SIDEBAR  -->
-
-        <!--  BEGIN CONTENT AREA  -->
-        <div id="content" class="main-content">
-            <div class="layout-px-spacing">
-
-                <div class="fq-header-wrapper">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12 align-self-center order-md-0 order-1">
-                                <div class="faq-header-content">
-                                    <h1 class="mb-4">Horas Extra</h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="dashboard-header">
+                <h1 class="mb-4">Horas Extra</h1>
+            </div>
 
                 <div class="middle-content container-xxl p-0">
                     <div class="p-2">
@@ -680,39 +538,13 @@
             // Mostrar nombre de usuario en navbar
             const userData = JSON.parse(sessionStorage.getItem('usuario_principal'));
             if (userData && userData.nombre) {
-                $('#usuario_nombre_navbar').text('Hola, ' + userData.nombre);
+                $('#usuario_nombre_header').text('Hola, ' + userData.nombre);
             }
             
-            const userRole = sessionStorage.getItem('rol') || '';
-            
-            if (userRole !== 'admin' && userRole !== 'operaciones') {
-                // Redirigir con mensaje de acceso denegado
-                sessionStorage.setItem('access_denied', 'No tienes permiso para acceder a Horas Extra');
-                window.location.href = 'nomina.html';
-                return;
-            }
-            
-            // Admin tiene acceso completo
-            if (userRole === 'admin') {
-                $('.role-restricted').removeClass('role-restricted');
-            }
-            
-            // Operaciones: ocultar items del menú y columnas de aprobación
-            if (userRole === 'operaciones') {
-                $('.menu-item-dias_laborados').hide();
-                $('.menu-item-descuentos').hide();
-                $('.menu-item-isr').hide();
-                // Cambiar enlace del Menú para que vaya a nomina.html en vez de index.html
-                $('a.nav-link:contains("Menú")').attr('href', './nomina.html');
-                $('a[href="./index.html"]').attr('href', './nomina.html');
-                
-                // Ocultar columnas de aprobar/confirmar/reactivar para operaciones
-                $('.admin-only-aprobar').hide();
-                $('.admin-only-confirmar').hide();
-                $('.admin-only-reactivar').hide();
-            }
-            
-            console.log('✅ Acceso permitido a Horas Extra - ' + userRole);
+            // Sistema sin roles activado - Todos los elementos visibles
+            $('.role-restricted').removeClass('role-restricted');
+            $('.menu-item-restricted').removeClass('menu-item-restricted');
+            console.log('✅ Acceso permitido sin restricciones');
         });
     </script></body>
 

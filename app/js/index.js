@@ -5,7 +5,7 @@ $(document).ready(function () {
     $('.role-restricted').removeClass('role-restricted');
     $('.menu-item-restricted').removeClass('menu-item-restricted');
     console.log('✅ Sistema sin roles activado - Todos los elementos visibles');
-    
+
     // Agregar event listener al botón de nómina de inmediato
     var btn_nomina = document.getElementById('btn_nomina');
     if (btn_nomina) {
@@ -15,7 +15,7 @@ $(document).ready(function () {
         }, false);
         console.log('✅ Event listener agregado');
     }
-    
+
     validar_nomina_activa();
     if (document.getElementById('slc_empresa')) {
         inicializar_select();
@@ -27,7 +27,7 @@ var hay_lote_activo = false;
 function manejar_click_nomina() {
     // Verificar el rol del usuario
     const rol = sessionStorage.getItem('rol') || '';
-    
+
     if (hay_lote_activo) {
         console.log('Redirigiendo a administrar nómina');
         window.location.href = './nomina.html';
@@ -71,7 +71,7 @@ function validar_nomina_activa() {
                     try {
                         // Verificar el rol del usuario
                         const rol = sessionStorage.getItem('rol') || '';
-                        
+
                         if (rol === 'rh') {
                             // Solo admin puede ver "Crear Nómina"
                             titulo_nomina.innerHTML = "Crear Nómina";
@@ -84,7 +84,7 @@ function validar_nomina_activa() {
                                 btn_nomina.style.display = 'none';
                             }
                         }
-                        
+
                         hay_lote_activo = false;
                         sessionStorage.setItem('nomina_activa', false);
                         console.log('✅ No hay lote activo - Rol: ' + rol);
@@ -105,20 +105,20 @@ function validar_nomina_activa() {
                             });
                             return;
                         }
-                        
+
                         let lista;
                         if (typeof resp === 'string') {
                             lista = JSON.parse(resp);
                         } else {
                             lista = resp; // jQuery ya parseó el JSON
                         }
-                        
+
                         // Asignar funcionalidad al botón de nómina cuando hay datos
                         titulo_nomina.innerHTML = "Administrar Nómina";
                         hay_lote_activo = true;
                         sessionStorage.setItem('nomina_activa', true);
                         console.log('✅ Lote activo encontrado - Botón configurado para administrar');
-                        
+
                     } catch (error) {
                         console.error('Error:', error);
                     } finally {
@@ -156,7 +156,7 @@ function ingresar_lote() {
             }
             var nombre_lote = `Pago nómina ${tipo_quincena} de ${mes_actual} ${anio_actual}`;
             console.log('Creando lote:', nombre_lote);
-            
+
             $.ajax({
                 url: 'php/servidor.php',
                 type: 'POST',
@@ -180,7 +180,7 @@ function ingresar_lote() {
                         resolve();
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error AJAX ingresar_lote:', error);
                     Swal.close();
                     Swal.fire({
@@ -229,7 +229,7 @@ function reiniciar_dias_laborados() {
                         resolve();
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error AJAX reiniciar_dias_laborados:', error);
                     Swal.close();
                     reject(error);
@@ -322,7 +322,7 @@ async function bono() {
                 window.location.href = './bono.html';
                 return;
             }
-            
+
             // Verificar si la respuesta es JSON válido antes de parsear
             if (secondResponse.trim() === 'No' || secondResponse.trim().startsWith('<') || secondResponse.includes('<br') || secondResponse.includes('Query Falló') || secondResponse.includes('Successfully')) {
                 console.log('No hay datos para procesar o respuesta no válida:', secondResponse);
@@ -330,7 +330,7 @@ async function bono() {
                 window.location.href = './bono.html';
                 return;
             }
-            
+
             let lista;
             if (typeof secondResponse === 'string') {
                 lista = JSON.parse(secondResponse);
@@ -361,9 +361,15 @@ async function bono() {
 
             Swal.close();
             window.location.href = './bono.html';
+        } else {
+            console.error('El primer paso de bono no fue exitoso:', firstResponse);
+            Swal.close();
+            window.location.href = './bono.html';
         }
     } catch (error) {
-        console.error(error);
+        console.error('Error en la función bono:', error);
+        Swal.close();
+        window.location.href = './bono.html';
     }
 }
 
@@ -419,7 +425,7 @@ async function aguinaldo() {
                 window.location.href = './aguinaldo.html';
                 return;
             }
-            
+
             let lista;
             if (typeof secondResponse === 'string') {
                 try {
@@ -452,9 +458,15 @@ async function aguinaldo() {
 
             Swal.close();
             window.location.href = './aguinaldo.html';
+        } else {
+            console.error('El primer paso de aguinaldo no fue exitoso:', firstResponse);
+            Swal.close();
+            window.location.href = './aguinaldo.html';
         }
     } catch (error) {
-        console.error(error);
+        console.error('Error en la función aguinaldo:', error);
+        Swal.close();
+        window.location.href = './aguinaldo.html';
     }
 }
 
@@ -591,18 +603,18 @@ function abrirModalCrearNomina() {
     const dia_actual = fecha_actual.getDate();
     const mes_actual = new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fecha_actual);
     const anio_actual = fecha_actual.getFullYear();
-    
+
     let tipo_quincena = dia_actual <= 15 ? 'Primera Quincena' : 'Segunda Quincena';
-    
+
     document.getElementById('info_periodo').textContent = `${mes_actual} ${anio_actual}`;
     document.getElementById('info_quincena').textContent = tipo_quincena;
-    
+
     // Limpiar selecciones previas
     document.getElementById('chk_seleccionar_todas').checked = false;
-    
+
     // Cargar empresas
     cargarEmpresasEnModal();
-    
+
     // Mostrar modal
     $('#modal_crear_nomina').modal({
         backdrop: 'static',
@@ -628,7 +640,7 @@ function cargarEmpresasEnModal() {
                 });
                 return;
             }
-            
+
             try {
                 let empresas = [];
                 if (typeof res === 'string') {
@@ -636,10 +648,10 @@ function cargarEmpresasEnModal() {
                 } else {
                     empresas = res;
                 }
-                
+
                 const container = document.getElementById('empresas_container');
                 let html = '';
-                
+
                 empresas.forEach((empresa, index) => {
                     html += `
                         <div class="form-check mb-3">
@@ -653,14 +665,14 @@ function cargarEmpresasEnModal() {
                         </div>
                     `;
                 });
-                
+
                 container.innerHTML = html;
-                
+
                 // Agregar event listeners a los checkboxes
                 document.querySelectorAll('.empresa-checkbox').forEach(checkbox => {
                     checkbox.addEventListener('change', validarSeleccionEmpresas);
                 });
-                
+
             } catch (error) {
                 console.error('Error cargando empresas:', error);
                 Swal.fire({
@@ -670,7 +682,7 @@ function cargarEmpresasEnModal() {
                 });
             }
         },
-        error: function(error) {
+        error: function (error) {
             console.error('Error AJAX:', error);
             Swal.fire({
                 icon: 'error',
@@ -684,7 +696,7 @@ function cargarEmpresasEnModal() {
 function toggleTodoasEmpresas() {
     const chkTodas = document.getElementById('chk_seleccionar_todas');
     const checkboxes = document.querySelectorAll('.empresa-checkbox');
-    
+
     checkboxes.forEach(checkbox => {
         checkbox.checked = chkTodas.checked;
     });
@@ -694,7 +706,7 @@ function validarSeleccionEmpresas() {
     const checkboxes = document.querySelectorAll('.empresa-checkbox');
     const checkedBoxes = document.querySelectorAll('.empresa-checkbox:checked');
     const chkTodas = document.getElementById('chk_seleccionar_todas');
-    
+
     // Si todos están seleccionados, marcar "seleccionar todas"
     if (checkboxes.length > 0 && checkedBoxes.length === checkboxes.length) {
         chkTodas.checked = true;
@@ -704,51 +716,20 @@ function validarSeleccionEmpresas() {
 }
 
 function crearNominaConEmpresas() {
-    const checkboxes = document.querySelectorAll('.empresa-checkbox:checked');
-    
-    if (checkboxes.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Selecciona al menos una empresa',
-            text: 'Debes seleccionar al menos una empresa para crear la nómina'
-        });
-        return;
-    }
-    
-    // Obtener empresas seleccionadas
-    const empresasSeleccionadas = [];
-    checkboxes.forEach(checkbox => {
-        empresasSeleccionadas.push({
-            id: checkbox.value,
-            nombre: checkbox.dataset.nombre
-        });
-    });
-    
-    // Guardar empresas seleccionadas en sessionStorage
-    sessionStorage.setItem('empresas_nomina', JSON.stringify(empresasSeleccionadas));
-    
-    // Cerrar modal y proceder a crear lote
+    // Cerrar modal y proceder a crear lote global
     $('#modal_crear_nomina').modal('hide');
-    
+
     // Crear la nómina
     ingresar_lote();
-}
-
-// Funciones de navegación del Dashboard
-function datos_maestros() {
-    window.location.href = 'empresas.html';
-}
-
-function historial() {
-    window.location.href = 'listado_lotes_cerrados.html';
-}
-
-function bono_14() {
-    window.location.href = 'bono.html';
 }
 
 function crear_bono_variable() {
     window.location.href = 'crear-bono-variable.html';
 }
+
+function bono_14() {
+    bono();
+}
+
 
 

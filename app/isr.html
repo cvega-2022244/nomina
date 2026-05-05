@@ -43,7 +43,7 @@
     <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
 
     <!-- AJAX -->
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.9.0.min.js"></script>
+    <script src="js/jquery.js"></script>
 </head>
 
 <body class="layout-boxed">
@@ -432,19 +432,10 @@
     <script>
         // Protección de página - Solo admin puede ver ISR
         $(document).ready(function() {
-            const userRole = sessionStorage.getItem('rol') || '';
-            
-            if (userRole !== 'admin') {
-                // Redirigir con mensaje de acceso denegado
-                sessionStorage.setItem('access_denied', 'No tienes permiso para acceder a ISR');
-                window.location.href = 'nomina.html';
-                return;
-            }
-            
-            // Admin tiene acceso completo
+            // Sistema sin roles activado - Todos los elementos visibles
             $('.role-restricted').removeClass('role-restricted');
             $('.menu-item-restricted').removeClass('menu-item-restricted');
-            console.log('✅ Acceso permitido - Admin');
+            console.log('✅ Acceso permitido sin restricciones');
         });
     </script></body>
 

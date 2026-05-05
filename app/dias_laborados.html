@@ -563,21 +563,11 @@
     <script src="js/dias_laborados.js"></script>
 
     <script>
-        // Protección de página - Solo admin puede ver Días Laborados
         $(document).ready(function() {
-            const userRole = sessionStorage.getItem('rol') || '';
-            
-            if (userRole !== 'admin') {
-                // Redirigir con mensaje de acceso denegado
-                sessionStorage.setItem('access_denied', 'No tienes permiso para acceder a Días Laborados');
-                window.location.href = 'nomina.html';
-                return;
-            }
-            
-            // Admin tiene acceso completo
+            // Sistema sin roles activado - Todos los elementos visibles
             $('.role-restricted').removeClass('role-restricted');
             $('.menu-item-restricted').removeClass('menu-item-restricted');
-            console.log('✅ Acceso permitido - Admin');
+            console.log('✅ Acceso permitido sin restricciones');
         });
     </script></body>
 

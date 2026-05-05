@@ -49,7 +49,7 @@ $(document).ready(function() {
     const currentPath = window.location.pathname;
     const isPublic = paginasPublicas.some(page => currentPath.includes(page));
 
-    if (!usuario && !isPublic) {
+    if (!usuarioRaw && !isPublic) {
         window.location.href = 'login.html';
     }
 });
