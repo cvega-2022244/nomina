@@ -11,19 +11,21 @@ function cargar_empresas() {
     $.ajax({
         url: 'php/servidor.php',
         type: 'GET',
+        dataType: 'text',
         data: { quest: 'listado_empresas' },
         success: function(res) {
-            if (!res.includes('Query Falló') && !res.includes('No hay datos')) {
-                try {
-                    let empresas = JSON.parse(res);
-                    let template = '<option value="">Seleccione una empresa...</option>';
-                    empresas.forEach(e => {
-                        template += `<option value="${e.id}">${e.nombre_comercial}</option>`;
-                    });
-                    $('#slc_empresa_reporte').html(template);
-                } catch (e) {
-                    console.log('Error parseando empresas', e);
-                }
+            if (typeof res === 'string' && (res.includes('Query Falló') || res.includes('No hay datos'))) {
+                return;
+            }
+            try {
+                let empresas = typeof res === 'string' ? JSON.parse(res) : res;
+                let template = '<option value="">Seleccione una empresa...</option>';
+                empresas.forEach(e => {
+                    template += `<option value="${e.id}">${e.nombre_comercial}</option>`;
+                });
+                $('#slc_empresa_reporte').html(template);
+            } catch (e) {
+                console.log('Error parseando empresas', e);
             }
         }
     });

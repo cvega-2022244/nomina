@@ -1,0 +1,88 @@
+        if ($_POST["quest"] == 'listado_pagos') {
+            $q_act = mysqli_query($con, "SELECT id, quincena FROM lote WHERE id_estado = 1 ORDER BY id DESC LIMIT 1");
+            $l_act = mysqli_fetch_all($q_act, MYSQLI_ASSOC);
+            $id_l_act = $l_act ? $l_act[0]['id'] : 0;
+            $quin_act = $l_act ? $l_act[0]['quincena'] : 0;
+
+            $id_l_ant = 0;
+            if ($quin_act == 1) {
+                $q_ant = mysqli_query($con, "SELECT id FROM lote WHERE quincena = 0 AND id < $id_l_act ORDER BY id DESC LIMIT 1");
+                $l_ant = mysqli_fetch_all($q_ant, MYSQLI_ASSOC);
+                $id_l_ant = $l_ant ? $l_ant[0]['id'] : 0;
+            }
+
+            $id_empresa = intval($_POST['id_empresa']);
+            $centros = isset($_POST['centros']) && is_array($_POST['centros']) ? $_POST['centros'] : [];
+            $departamentos = isset($_POST['departamentos']) && is_array($_POST['departamentos']) ? $_POST['departamentos'] : [];
+
+            $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
+                CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
+                emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
+                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
+                COALESCE(pl.id, e.id) AS correlativo,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
+                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
+                FROM empleado e 
+                INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
+                INNER JOIN empresa emp ON emp.id = ee.id_empresa 
+                LEFT JOIN pago_lote pl ON pl.id_empleado = e.id AND pl.id_lote = $id_l_act
+                LEFT JOIN pago_lote pla ON pla.id_empleado = e.id AND pla.id_lote = $id_l_ant
+                LEFT JOIN centro_costo cc ON cc.id = e.centro_de_costo 
+                LEFT JOIN departamento_centro dc ON dc.id_centro = cc.id 
+                LEFT JOIN departamento d ON d.id = dc.id_departamento 
+                LEFT JOIN tipo_pago tp ON tp.id = COALESCE(pl.cheque, e.tipo_de_pago) 
+                LEFT JOIN banco bnc ON bnc.id = COALESCE(pl.id_banco, e.banco) 
+                LEFT JOIN tipo_cuenta tc ON tc.id = COALESCE(pl.id_tipo_cuenta, e.tipo_cuenta) 
+                LEFT JOIN condicion_laboral cl ON cl.id = e.condicion_laboral 
+                WHERE e.estado = 1 AND emp.id = " . $id_empresa;
+
+            if (!empty($centros)) {
+                $centros_str = implode(',', array_map('intval', $centros));
+                $sql .= " AND e.centro_de_costo IN ($centros_str) ";
+            }
+            if (!empty($departamentos)) {
+                $dept_str = implode(',', array_map('intval', $departamentos));
+                $sql .= " AND dc.id_departamento IN ($dept_str) ";
+            }
+
+            $sql .= " GROUP BY e.id";
+
+            $result = mysqli_query($con, $sql);
+            if (!$result) {
+                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                exit;
+            }
+            $json = array();
+            while ($row = mysqli_fetch_assoc($result)) {
+                $json[] = $row;
+            }
+            if(count($json) > 0) {
+                echo json_encode($json);
+            } else {
+                echo 'No hay datos';
+            }
+            exit;
+        }
+

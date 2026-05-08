@@ -241,12 +241,19 @@
                         <br>
                         <h5 class="text-center">Listado Pagos</h5>
                         <br>
-                        <div class="row">
-                            <div class="col-2">
-                                <select name="" id="slc_centro_costo" onchange="seleccionar_centro_costo()"></select>
+                        <div class="row mb-3">
+                            <div class="col-3">
+                                <select name="" id="slc_empresa" multiple></select>
                             </div>
-                            <div class="col-2">
-                                <select name="" id="slc_departamento" onchange="seleccionar_departamento()"></select>
+                            <div class="col-3">
+                                <select name="" id="slc_centro_costo" multiple></select>
+                            </div>
+                            <div class="col-3">
+                                <select name="" id="slc_departamento" multiple></select>
+                            </div>
+                            <div class="col-3 d-flex align-items-end">
+                                <button class="btn btn-primary me-2" onclick="aplicar_filtros()">Generar Reporte</button>
+                                <button class="btn btn-secondary" onclick="limpiar_filtros()">Limpiar Filtros</button>
                             </div>
                         </div>
                         <br>

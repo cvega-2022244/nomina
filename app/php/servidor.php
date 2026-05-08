@@ -5,7 +5,7 @@ ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 // Funci?n para manejar errores fatales
-register_shutdown_function(function() {
+register_shutdown_function(function () {
     $error = error_get_last();
     if ($error && $error['type'] === E_ERROR) {
         echo json_encode(['error' => 'Error fatal: ' . $error['message']]);
@@ -55,7 +55,7 @@ if (isset($_GET)) {
         if ($_GET["quest"] == 'lista_comisiones_rechazadas') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
-            
+
             if ($user_id && $user_role == 'empleado') {
                 // Si es empleado, mostrar solo sus bonos rechazados
                 $sql = "SELECT c.id, c.id_empleado, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, COALESCE(d.nombre, 'Sin Departamento') as departamento, COALESCE(u.nombre, 'Sin Usuario') as solicitante, c.fecha_generado, c.monto, 'Rechazada' as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN usuario u ON c.id_solicitante = u.id WHERE c.id_estado = 3 AND c.tipo_registro = 'bono' AND c.id_solicitante = " . $user_id . " ORDER BY c.fecha_generado DESC";
@@ -80,25 +80,25 @@ if (isset($_GET)) {
             } else {
                 $data = array();
                 $num_rows = mysqli_num_rows($result);
-                
+
                 if ($num_rows > 0) {
                     while ($row = mysqli_fetch_array($result)) {
                         $data[] = $row;
                     }
                 }
-                
+
                 echo json_encode($data);
             }
             exit;
         }
-        
+
         // ========== ENDPOINTS PARA HORAS EXTRA ==========
-        
+
         // Listar horas extra pendientes de aprobaci?n
         if ($_GET["quest"] == 'lista_horas_pendientes') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
-            
+
             if ($user_id && $user_role == 'operaciones') {
                 // Si es operaciones, mostrar solo las horas extra que cre? con estado 1 (Solicitado/Pendiente)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 1 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
@@ -124,12 +124,12 @@ if (isset($_GET)) {
             }
             exit;
         }
-        
+
         // Listar horas extra autorizadas
         if ($_GET["quest"] == 'lista_horas_autorizadas') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
-            
+
             if ($user_id && $user_role == 'operaciones') {
                 // Si es operaciones, mostrar solo las horas extra que cre? con estado 2 (Aprobado RH)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 2 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
@@ -155,12 +155,12 @@ if (isset($_GET)) {
             }
             exit;
         }
-        
+
         // Listar horas extra rechazadas
         if ($_GET["quest"] == 'lista_horas_rechazadas') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
-            
+
             if ($user_id && $user_role == 'operaciones') {
                 // Si es operaciones, mostrar solo las horas extra que cre? con estado 3 (Rechazado)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 3 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
@@ -186,18 +186,18 @@ if (isset($_GET)) {
             }
             exit;
         }
-        
+
         if ($_GET["quest"] == 'login') {
             try {
                 // Log para depuraci?n
                 error_log('Login attempt - Usuario: ' . (isset($_GET["usuario"]) ? $_GET["usuario"] : 'NO_DEFINIDO') . ', Contrase?a: ' . (isset($_GET["contrasena"]) ? 'DEFINIDA' : 'NO_DEFINIDA'));
-                
+
                 // Validar que los par?metros existan
                 if (!isset($_GET["usuario"]) || !isset($_GET["contrasena"])) {
                     echo json_encode(['error' => 'Faltan par?metros de usuario o contrase?a']);
                     exit;
                 }
-                
+
                 // Validar que no est?n vac?os
                 if (empty($_GET["usuario"]) || empty($_GET["contrasena"])) {
                     echo json_encode(['error' => 'Usuario y contrase?a son requeridos']);
@@ -218,20 +218,20 @@ if (isset($_GET)) {
                 if (!$result) {
                     echo json_encode(['error' => 'Error en la consulta: ' . mysqli_error($con)]);
                     exit;
-            }
+                }
 
-            if (mysqli_num_rows($result) > 0) {
-                $json = array();
-                while ($row = mysqli_fetch_array($result)) {
-                    $json[] = array(
-                        'id' => $row["id"],
+                if (mysqli_num_rows($result) > 0) {
+                    $json = array();
+                    while ($row = mysqli_fetch_array($result)) {
+                        $json[] = array(
+                            'id' => $row["id"],
                             'nombre' => $row["nombre"],
                             'rol' => $row["rol"],
                             'id_departamento' => $row["id_departamento"]
-                    );
-                }
+                        );
+                    }
                     echo json_encode($json);
-            } else {
+                } else {
                     echo json_encode(['error' => 'credenciales incorrectas']);
                 }
 
@@ -242,7 +242,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'cumplea?eros') {
-            $sql = "SELECT e.id, primer_nombre, segundo_nombre, otro_nombre, primer_apellido, e.segundo_apellido, DATE_ADD( e.fecha_nacimiento, INTERVAL( ".$_GET["anio"]." - YEAR(e.fecha_nacimiento)) YEAR ) fecha_nacimiento, d.nombre FROM empleado e INNER JOIN departamento d ON e.departamento_laboral = d.id WHERE MONTH(fecha_nacimiento) = ".$_GET["mes"]." and e.estado = 1 ORDER BY fecha_nacimiento";
+            $sql = "SELECT e.id, primer_nombre, segundo_nombre, otro_nombre, primer_apellido, e.segundo_apellido, DATE_ADD( e.fecha_nacimiento, INTERVAL( " . $_GET["anio"] . " - YEAR(e.fecha_nacimiento)) YEAR ) fecha_nacimiento, d.nombre FROM empleado e INNER JOIN departamento d ON e.departamento_laboral = d.id WHERE MONTH(fecha_nacimiento) = " . $_GET["mes"] . " and e.estado = 1 ORDER BY fecha_nacimiento";
 
             $result = mysqli_query($con, $sql);
 
@@ -273,7 +273,7 @@ if (isset($_GET)) {
 
         if ($quest == 'info_completa_empleado') {
             $id_empleado = intval($_GET["id_empleado"]); // Sanitizaci?n b?sica para seguridad
-    
+
             $sql = "SELECT 
                         e.*, 
                         CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_completo,
@@ -307,37 +307,37 @@ if (isset($_GET)) {
                     LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id
                     WHERE e.id = $id_empleado";
-    
+
             $result = mysqli_query($con, $sql);
-    
+
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-    
+
             if (mysqli_num_rows($result) > 0) {
                 $data = mysqli_fetch_assoc($result);
                 // Devolvemos array envuelto en [] porque tu JS espera data[0]
-                echo json_encode([$data]); 
+                echo json_encode([$data]);
             } else {
                 echo json_encode(['error' => 'No se encontr? el empleado']);
             }
         }
-    
+
         // --- NUEVA L?GICA PARA EL REPORTE (Excel simple) ---
         elseif ($quest == 'generar_excel_empleados') {
             $id_empresa = isset($_GET['id_empresa']) ? $_GET['id_empresa'] : '';
             $estado = isset($_GET['estado']) ? $_GET['estado'] : 'todos';
-    
+
             // Construcci?n din?mica del Query
             $whereClause = "WHERE 1=1";
-            
+
             if (!empty($id_empresa)) {
                 $id_empresa = intval($id_empresa);
                 // Filtramos por la relaci?n en empresa_empleado
                 $whereClause .= " AND e.id IN (SELECT id_empleado FROM empresa_empleado WHERE id_empresa = $id_empresa AND activo = 1)";
             }
-    
+
             if ($estado !== 'todos') {
                 // Asumiendo que estado 1 es activo y 0 es baja/inactivo en tabla empleado
                 // Si usas una tabla de 'estado' donde 1 es activo, ajusta el ID aqu?.
@@ -349,7 +349,7 @@ if (isset($_GET)) {
                     $whereClause .= " AND e.estado != 1"; // Ajustar ID para inactivos
                 }
             }
-    
+
             $sql = "SELECT 
                         e.id, 
                         e.primer_nombre, e.primer_apellido, e.dpi, e.nit,
@@ -361,15 +361,15 @@ if (isset($_GET)) {
                     LEFT JOIN empresa p ON ee.id_empresa = p.id
                     $whereClause
                     ORDER BY e.primer_apellido ASC";
-    
+
             $result = mysqli_query($con, $sql);
-    
+
             // Cabeceras para forzar descarga de Excel (.xls)
             header("Content-Type: application/vnd.ms-excel; charset=utf-8");
             header("Content-Disposition: attachment; filename=reporte_empleados_" . date('Y-m-d') . ".xls");
             header("Pragma: no-cache");
             header("Expires: 0");
-    
+
             // Estructura de tabla HTML que Excel interpreta
             echo "<table border='1'>";
             echo "<tr>
@@ -381,7 +381,7 @@ if (isset($_GET)) {
                     <th>Departamento</th>
                     <th>Empresa Principal</th>
                   </tr>";
-    
+
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>";
                 echo "<td>" . $row['id'] . "</td>";
@@ -397,19 +397,20 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'reporte_completo_excel') {
-    
+
             // 1. Limpiamos cualquier salida previa (evita archivos corruptos o en blanco)
-            if (ob_get_length()) ob_end_clean();
-        
+            if (ob_get_length())
+                ob_end_clean();
+
             // 2. Definimos encabezados para Excel
             header("Content-Type: application/vnd.ms-excel; charset=utf-8");
             header("Content-Disposition: attachment; filename=Reporte_Completo_" . date('Y-m-d_H-i') . ".xls");
             header("Pragma: no-cache");
             header("Expires: 0");
-        
+
             // 3. ?IMPORTANTE! BOM (Byte Order Mark) para que Excel reconozca tildes y ?
-            echo "\xEF\xBB\xBF"; 
-        
+            echo "\xEF\xBB\xBF";
+
             // Consulta SQL
             $sql = "SELECT 
                         e.*, 
@@ -443,17 +444,17 @@ if (isset($_GET)) {
                     LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id
                     ORDER BY e.primer_apellido ASC";
-        
+
             $result = mysqli_query($con, $sql);
-        
+
             if (!$result) {
                 echo "Error en la consulta SQL: " . mysqli_error($con);
                 exit;
             }
-        
+
             // Estructura de la tabla (Excel interpreta esto como celdas)
             echo "<table>"; // Quitamos el meta charset aqu? porque ya usamos el BOM arriba
-            
+
             echo "<tr style='background-color: #f2f2f2; font-weight: bold;'>
                     <th>ID</th>
                     <th>Nombre Completo</th>
@@ -471,13 +472,13 @@ if (isset($_GET)) {
                     <th>Banco</th>
                     <th>No. Cuenta</th>
                 </tr>";
-        
+
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>";
                 // NO USAR utf8_decode SI USAMOS BOM
                 echo "<td>" . $row['id'] . "</td>";
-                echo "<td>" . $row['nombre_completo'] . "</td>"; 
-                echo "<td>'" . $row['dpi'] . "</td>"; 
+                echo "<td>" . $row['nombre_completo'] . "</td>";
+                echo "<td>'" . $row['dpi'] . "</td>";
                 echo "<td>" . $row['nit'] . "</td>";
                 echo "<td>" . $row['fecha_nacimiento'] . "</td>";
                 echo "<td>" . $row['nombre_empresa'] . "</td>";
@@ -579,7 +580,7 @@ if (isset($_GET)) {
             if (mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_array($result);
                 $json = array(
-                    'cantidad' => (int)$row["cantidad"]
+                    'cantidad' => (int) $row["cantidad"]
                 );
                 echo json_encode($json);
             } else {
@@ -1003,192 +1004,24 @@ if (isset($_GET)) {
             }
         }
 
-        if ($_GET["quest"] == 'listado_pagos_historial') {
-            $sql = "SELECT pl.id correlativo, pl.id_empleado id_empleado, pl.id_lote id_lote, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, emp.nombre_comercial, cc.nombre centro_costo, d.nombre departamento, pl.puesto puesto, pl.dias_laborados dias_laborados, pl.sueldo_quincenal salario_ordinario, pl.bon_tot bon_incentivo, pl.bon_dec_tot bon_decreto, pl.bonos bonos, (pl.sueldo_quincenal + pl.bon_tot + pl.bon_dec_tot + pl.bonos) total_devengado, pl.cantidad_horas_dia horas_simples, pl.horas_dia valor_horas_simples, pl.cantidad_horas_noche horas_dobles, pl.horas_noche valor_horas_dobles, pl.otros_ingresos otros_ingresos, pl.ingresos_tot salario_total, pl.vacaciones vacaciones, tp.nombre tipo_pago, tc.nombre tipo_cuenta, pl.no_cuenta no_cuenta, bnc.nombre banco, cl.nombre condicion_laboral, pl.igss igss, pl.isr isr, COALESCE(cafeteria.cuota, 0) cafeteria, COALESCE(celular.cuota, 0) celular, COALESCE(uniforme.cuota, 0) uniforme, COALESCE(calzado.cuota, 0) calzado, COALESCE(equipo.cuota, 0) equipo, COALESCE(producto.cuota, 0) producto, COALESCE(bancos.cuota, 0) bancos, COALESCE(otros.cuota, 0) otros, pl.judiciales judiciales, pl.seguro seguro, pl.parqueo parqueo, pl.boleta_ornato boleta_ornato, pl.otros_egresos otros_egresos, pl.egresos_tot total_egresos, pl.liquido liquido_recibir, pl.liquido liquido_primer_quincena, 0 liquido_segunda_quincena FROM pago_lote pl LEFT JOIN lote l ON l.id = pl.id_lote LEFT JOIN empleado e ON e.id = pl.id_empleado LEFT JOIN empresa emp ON emp.id = pl.id_empresa LEFT JOIN centro_costo cc ON cc.id = pl.id_centro LEFT JOIN departamento d ON d.id = pl.id_departamento LEFT JOIN tipo_pago tp ON tp.id = pl.cheque LEFT JOIN tipo_cuenta tc ON tc.id = pl.id_tipo_cuenta LEFT JOIN banco bnc ON bnc.id = pl.id_banco LEFT JOIN condicion_laboral cl ON cl.id = pl.condicion_laboral LEFT JOIN( SELECT dl.id_pago_lote id_lote, dv.id_empleado id_empleado, SUM(dv.monto_total / dv.cuotas) cuota FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria ON cafeteria.id_lote = pl.id_lote AND cafeteria.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular ON celular.id_lote = pl.id_lote AND celular.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme ON uniforme.id_lote = pl.id_lote AND uniforme.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado ON calzado.id_lote = pl.id_lote AND calzado.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo ON equipo.id_lote = pl.id_lote AND equipo.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto ON producto.id_lote = pl.id_lote AND producto.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos ON bancos.id_lote = pl.id_lote AND bancos.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros ON otros.id_lote = pl.id_lote AND otros.id_empleado = pl.id_empleado WHERE pl.id_lote = " . $_GET['id_lote'] . " AND emp.id = " . $_GET['id_empresa'] . "";
-
+        if ($_GET["quest"] == 'listado_empresas_historial') {
+            $sql = "SELECT DISTINCT e.id, e.nombre_comercial as nombre FROM pago_lote pl INNER JOIN empresa e ON pl.id_empresa = e.id WHERE pl.id_lote = " . $_GET['id_lote'];
             $result = mysqli_query($con, $sql);
-
             if (!$result) {
-                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
+                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
                 exit;
             }
-
             if (mysqli_num_rows($result) > 0) {
                 $json = array();
                 while ($row = mysqli_fetch_array($result)) {
-                    $json[] = array(
-                        'correlativo' => $row["correlativo"],
-                        'id_lote' => $row["id_lote"],
-                        'id_empleado' => $row["id_empleado"],
-                        'empleado' => $row["empleado"],
-                        'nombre_comercial' => $row["nombre_comercial"],
-                        'centro_costo' => $row["centro_costo"],
-                        'departamento' => $row["departamento"],
-                        'puesto' => $row["puesto"],
-                        'dias_laborados' => $row["dias_laborados"],
-                        'salario_ordinario' => $row["salario_ordinario"],
-                        'bon_incentivo' => $row["bon_incentivo"],
-                        'bon_decreto' => $row["bon_decreto"],
-                        'bonos' => $row["bonos"],
-                        'total_devengado' => $row["total_devengado"],
-                        'horas_simples' => $row["horas_simples"],
-                        'valor_horas_simples' => $row["valor_horas_simples"],
-                        'horas_dobles' => $row["horas_dobles"],
-                        'valor_horas_dobles' => $row["valor_horas_dobles"],
-                        'otros_ingresos' => $row["otros_ingresos"],
-                        'salario_total' => $row["salario_total"],
-                        'igss' => $row["igss"],
-                        'isr' => $row["isr"],
-                        'cafeteria' => $row["cafeteria"],
-                        'celular' => $row["celular"],
-                        'uniforme' => $row["uniforme"],
-                        'calzado' => $row["calzado"],
-                        'equipo' => $row["equipo"],
-                        'producto' => $row["producto"],
-                        'bancos' => $row["bancos"],
-                        'otros' => $row["otros"],
-                        'judiciales' => $row["judiciales"],
-                        'seguro' => $row["seguro"],
-                        'parqueo' => $row["parqueo"],
-                        'boleta_ornato' => $row["boleta_ornato"],
-                        'otros_egresos' => $row["otros_egresos"],
-                        'total_egresos' => $row["total_egresos"],
-                        'liquido_recibir' => $row["liquido_recibir"],
-                        'liquido_primer_quincena' => $row["liquido_primer_quincena"],
-                        'liquido_segunda_quincena' => $row["liquido_segunda_quincena"],
-                    );
+                    $json[] = array('id' => $row["id"], 'nombre' => $row["nombre"]);
                 }
-                $json_string = json_encode($json);
-                echo $json_string;
+                echo json_encode($json);
             } else {
                 echo 'No hay datos';
             }
+            exit;
         }
-
-        if ($_GET["quest"] == 'listado_pagos_centro_historial') {
-            $sql = "SELECT pl.id correlativo, pl.id_empleado id_empleado, pl.id_lote id_lote, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, emp.nombre_comercial, cc.nombre centro_costo, d.nombre departamento, pl.puesto puesto, CASE WHEN l.quincena = 0 THEN pl.dias_laborados ELSE( pl.dias_laborados + COALESCE(pla.dias_laborados, 0) ) END dias_laborados, CASE WHEN l.quincena = 0 THEN pl.sueldo_quincenal ELSE( pl.sueldo_quincenal + COALESCE(pla.sueldo_quincenal, 0) ) END salario_ordinario, CASE WHEN l.quincena = 0 THEN pl.bon_tot ELSE( pl.bon_tot + COALESCE(pla.bon_tot, 0) ) END bon_incentivo, CASE WHEN l.quincena = 0 THEN pl.bon_dec_tot ELSE( pl.bon_dec_tot + COALESCE(pla.bon_dec_tot, 0) ) END bon_decreto, CASE WHEN l.quincena = 0 THEN pl.bonos ELSE( pl.bonos + COALESCE(pla.bonos, 0) ) END bonos, CASE WHEN l.quincena = 0 THEN( pl.sueldo_quincenal + pl.bon_tot + pl.bon_dec_tot + pl.bonos ) ELSE( ( pl.sueldo_quincenal + COALESCE(pla.sueldo_quincenal, 0) ) +( pl.bon_tot + COALESCE(pla.bon_tot, 0) ) +( pl.bon_dec_tot + COALESCE(pla.bon_dec_tot, 0) ) +( pl.bonos + COALESCE(pla.bonos, 0) ) ) END total_devengado, CASE WHEN l.quincena = 0 THEN pl.cantidad_horas_dia ELSE pl.cantidad_horas_dia + COALESCE(pla.cantidad_horas_dia, 0) END horas_simples, CASE WHEN l.quincena = 0 THEN pl.horas_dia ELSE pl.horas_dia + COALESCE(pla.horas_dia, 0) END valor_horas_simples, CASE WHEN l.quincena = 0 THEN pl.cantidad_horas_noche ELSE pl.cantidad_horas_noche + COALESCE(pla.cantidad_horas_noche, 0) END horas_dobles, CASE WHEN l.quincena = 0 THEN pl.horas_noche ELSE pl.horas_noche + COALESCE(pla.horas_noche, 0) END valor_horas_dobles, CASE WHEN l.quincena = 0 THEN pl.otros_ingresos ELSE pl.otros_ingresos + COALESCE(pla.otros_ingresos, 0) END otros_ingresos, CASE WHEN l.quincena = 0 THEN pl.ingresos_tot ELSE pl.ingresos_tot + COALESCE(pla.ingresos_tot, 0) END salario_total, CASE WHEN l.quincena = 0 THEN pl.vacaciones ELSE pl.vacaciones + COALESCE(pla.vacaciones, 0) END vacaciones, tp.nombre tipo_pago, tc.nombre tipo_cuenta, pl.no_cuenta no_cuenta, bnc.nombre banco, cl.nombre condicion_laboral, CASE WHEN l.quincena = 0 THEN pl.igss ELSE pl.igss + COALESCE(pla.igss, 0) END igss, CASE WHEN l.quincena = 0 THEN pl.isr ELSE pl.isr + COALESCE(pla.isr, 0) END isr, CASE WHEN l.quincena = 0 THEN COALESCE(cafeteria.cuota, 0) ELSE COALESCE(cafeteria.cuota, 0) + COALESCE(cafeteria_anterior.cuota, 0) END cafeteria, CASE WHEN l.quincena = 0 THEN COALESCE(celular.cuota, 0) ELSE COALESCE(celular.cuota, 0) + COALESCE(celular_anterior.cuota, 0) END celular, CASE WHEN l.quincena = 0 THEN COALESCE(uniforme.cuota, 0) ELSE COALESCE(uniforme.cuota, 0) + COALESCE(uniforme_anterior.cuota, 0) END uniforme, CASE WHEN l.quincena = 0 THEN COALESCE(calzado.cuota, 0) ELSE COALESCE(calzado.cuota, 0) + COALESCE(calzado_anterior.cuota, 0) END calzado, CASE WHEN l.quincena = 0 THEN COALESCE(equipo.cuota, 0) ELSE COALESCE(equipo.cuota, 0) + COALESCE(equipo_anterior.cuota, 0) END equipo, CASE WHEN l.quincena = 0 THEN COALESCE(producto.cuota, 0) ELSE COALESCE(producto.cuota, 0) + COALESCE(producto_anterior.cuota, 0) END producto, CASE WHEN l.quincena = 0 THEN COALESCE(bancos.cuota, 0) ELSE COALESCE(bancos.cuota, 0) + COALESCE(bancos_anterior.cuota, 0) END bancos, CASE WHEN l.quincena = 0 THEN COALESCE(otros.cuota, 0) ELSE COALESCE(otros.cuota, 0) + COALESCE(otros_anterior.cuota, 0) END otros, CASE WHEN l.quincena = 0 THEN pl.judiciales ELSE pl.judiciales + COALESCE(pla.judiciales, 0) END judiciales, CASE WHEN l.quincena = 0 THEN pl.seguro ELSE pl.seguro + COALESCE(pla.seguro, 0) END seguro, CASE WHEN l.quincena = 0 THEN pl.parqueo ELSE pl.parqueo + COALESCE(pla.parqueo, 0) END parqueo, CASE WHEN l.quincena = 0 THEN pl.boleta_ornato ELSE pl.boleta_ornato + COALESCE(pla.boleta_ornato, 0) END boleta_ornato, CASE WHEN l.quincena = 0 THEN pl.otros_egresos ELSE pl.otros_egresos + COALESCE(pla.otros_egresos, 0) END otros_egresos, CASE WHEN l.quincena = 0 THEN pl.egresos_tot ELSE pl.egresos_tot + COALESCE(pla.egresos_tot, 0) END total_egresos, CASE WHEN l.quincena = 0 THEN pl.liquido ELSE pl.liquido + COALESCE(pla.liquido, 0) END liquido_recibir, CASE WHEN l.quincena = 0 THEN pl.liquido ELSE COALESCE(pla.liquido, 0) END liquido_primer_quincena, CASE WHEN l.quincena = 0 THEN 0 ELSE pl.liquido END liquido_segunda_quincena FROM pago_lote pl LEFT JOIN( SELECT * FROM pago_lote ) pla ON MONTH(pla.fecha_pago_lote) = MONTH(pl.fecha_pago_lote) AND YEAR(pla.fecha_pago_lote) = YEAR(pl.fecha_pago_lote) AND pla.id_empleado = pl.id_empleado AND pla.id_lote != pl.id_lote LEFT JOIN lote l ON l.id = pl.id_lote LEFT JOIN empleado e ON e.id = pl.id_empleado LEFT JOIN empresa emp ON emp.id = pl.id_empresa LEFT JOIN centro_costo cc ON cc.id = pl.id_centro LEFT JOIN departamento d ON d.id = pl.id_departamento LEFT JOIN tipo_pago tp ON tp.id = pl.cheque LEFT JOIN tipo_cuenta tc ON tc.id = pl.id_tipo_cuenta LEFT JOIN banco bnc ON bnc.id = pl.id_banco LEFT JOIN condicion_laboral cl ON cl.id = pl.condicion_laboral LEFT JOIN( SELECT dl.id_pago_lote id_lote, dv.id_empleado id_empleado, SUM(dv.monto_total / dv.cuotas) cuota FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria ON cafeteria.id_lote = pl.id_lote AND cafeteria.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria_anterior ON cafeteria_anterior.id_lote = pla.id_lote AND cafeteria_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular ON celular.id_lote = pl.id_lote AND celular.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular_anterior ON celular_anterior.id_lote = pla.id_lote AND celular_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme ON uniforme.id_lote = pl.id_lote AND uniforme.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme_anterior ON uniforme_anterior.id_lote = pla.id_lote AND uniforme_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado ON calzado.id_lote = pl.id_lote AND calzado.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado_anterior ON calzado_anterior.id_lote = pla.id_lote AND calzado_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo ON equipo.id_lote = pl.id_lote AND equipo.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo_anterior ON equipo_anterior.id_lote = pla.id_lote AND equipo_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto ON producto.id_lote = pl.id_lote AND producto.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto_anterior ON producto_anterior.id_lote = pla.id_lote AND producto_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos ON bancos.id_lote = pl.id_lote AND bancos.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos_anterior ON bancos_anterior.id_lote = pla.id_lote AND bancos_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros ON otros.id_lote = pl.id_lote AND otros.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros_anterior ON otros_anterior.id_lote = pla.id_lote AND otros_anterior.id_empleado = pl.id_empleado WHERE pl.id_lote = " . $_GET['id_lote'] . " AND emp.id = " . $_GET['id_empresa'] . " AND cc.id = " . $_GET['id_centro'] . "";
-
-            $result = mysqli_query($con, $sql);
-
-            if (!$result) {
-                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
-                exit;
-            }
-
-            if (mysqli_num_rows($result) > 0) {
-                $json = array();
-                while ($row = mysqli_fetch_array($result)) {
-                    $json[] = array(
-                        'correlativo' => $row["correlativo"],
-                        'id_lote' => $row["id_lote"],
-                        'id_empleado' => $row["id_empleado"],
-                        'empleado' => $row["empleado"],
-                        'nombre_comercial' => $row["nombre_comercial"],
-                        'centro_costo' => $row["centro_costo"],
-                        'departamento' => $row["departamento"],
-                        'puesto' => $row["puesto"],
-                        'dias_laborados' => $row["dias_laborados"],
-                        'salario_ordinario' => $row["salario_ordinario"],
-                        'bon_incentivo' => $row["bon_incentivo"],
-                        'bon_decreto' => $row["bon_decreto"],
-                        'bonos' => $row["bonos"],
-                        'total_devengado' => $row["total_devengado"],
-                        'horas_simples' => $row["horas_simples"],
-                        'valor_horas_simples' => $row["valor_horas_simples"],
-                        'horas_dobles' => $row["horas_dobles"],
-                        'valor_horas_dobles' => $row["valor_horas_dobles"],
-                        'otros_ingresos' => $row["otros_ingresos"],
-                        'salario_total' => $row["salario_total"],
-                        'igss' => $row["igss"],
-                        'isr' => $row["isr"],
-                        'cafeteria' => $row["cafeteria"],
-                        'celular' => $row["celular"],
-                        'uniforme' => $row["uniforme"],
-                        'calzado' => $row["calzado"],
-                        'equipo' => $row["equipo"],
-                        'producto' => $row["producto"],
-                        'bancos' => $row["bancos"],
-                        'otros' => $row["otros"],
-                        'judiciales' => $row["judiciales"],
-                        'seguro' => $row["seguro"],
-                        'parqueo' => $row["parqueo"],
-                        'boleta_ornato' => $row["boleta_ornato"],
-                        'otros_egresos' => $row["otros_egresos"],
-                        'total_egresos' => $row["total_egresos"],
-                        'liquido_recibir' => $row["liquido_recibir"],
-                        'liquido_primer_quincena' => $row["liquido_primer_quincena"],
-                        'liquido_segunda_quincena' => $row["liquido_segunda_quincena"],
-                    );
-                }
-                $json_string = json_encode($json);
-                echo $json_string;
-            } else {
-                echo 'No hay datos';
-            }
-        }
-
-        if ($_GET["quest"] == 'listado_pagos_departamento_historial') {
-            $sql = "SELECT pl.id correlativo, pl.id_empleado id_empleado, pl.id_lote id_lote, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, emp.nombre_comercial, cc.nombre centro_costo, d.nombre departamento, pl.puesto puesto, CASE WHEN l.quincena = 0 THEN pl.dias_laborados ELSE( pl.dias_laborados + COALESCE(pla.dias_laborados, 0) ) END dias_laborados, CASE WHEN l.quincena = 0 THEN pl.sueldo_quincenal ELSE( pl.sueldo_quincenal + COALESCE(pla.sueldo_quincenal, 0) ) END salario_ordinario, CASE WHEN l.quincena = 0 THEN pl.bon_tot ELSE( pl.bon_tot + COALESCE(pla.bon_tot, 0) ) END bon_incentivo, CASE WHEN l.quincena = 0 THEN pl.bon_dec_tot ELSE( pl.bon_dec_tot + COALESCE(pla.bon_dec_tot, 0) ) END bon_decreto, CASE WHEN l.quincena = 0 THEN pl.bonos ELSE( pl.bonos + COALESCE(pla.bonos, 0) ) END bonos, CASE WHEN l.quincena = 0 THEN( pl.sueldo_quincenal + pl.bon_tot + pl.bon_dec_tot + pl.bonos ) ELSE( ( pl.sueldo_quincenal + COALESCE(pla.sueldo_quincenal, 0) ) +( pl.bon_tot + COALESCE(pla.bon_tot, 0) ) +( pl.bon_dec_tot + COALESCE(pla.bon_dec_tot, 0) ) +( pl.bonos + COALESCE(pla.bonos, 0) ) ) END total_devengado, CASE WHEN l.quincena = 0 THEN pl.cantidad_horas_dia ELSE pl.cantidad_horas_dia + COALESCE(pla.cantidad_horas_dia, 0) END horas_simples, CASE WHEN l.quincena = 0 THEN pl.horas_dia ELSE pl.horas_dia + COALESCE(pla.horas_dia, 0) END valor_horas_simples, CASE WHEN l.quincena = 0 THEN pl.cantidad_horas_noche ELSE pl.cantidad_horas_noche + COALESCE(pla.cantidad_horas_noche, 0) END horas_dobles, CASE WHEN l.quincena = 0 THEN pl.horas_noche ELSE pl.horas_noche + COALESCE(pla.horas_noche, 0) END valor_horas_dobles, CASE WHEN l.quincena = 0 THEN pl.otros_ingresos ELSE pl.otros_ingresos + COALESCE(pla.otros_ingresos, 0) END otros_ingresos, CASE WHEN l.quincena = 0 THEN pl.ingresos_tot ELSE pl.ingresos_tot + COALESCE(pla.ingresos_tot, 0) END salario_total, CASE WHEN l.quincena = 0 THEN pl.vacaciones ELSE pl.vacaciones + COALESCE(pla.vacaciones, 0) END vacaciones, tp.nombre tipo_pago, tc.nombre tipo_cuenta, pl.no_cuenta no_cuenta, bnc.nombre banco, cl.nombre condicion_laboral, CASE WHEN l.quincena = 0 THEN pl.igss ELSE pl.igss + COALESCE(pla.igss, 0) END igss, CASE WHEN l.quincena = 0 THEN pl.isr ELSE pl.isr + COALESCE(pla.isr, 0) END isr, CASE WHEN l.quincena = 0 THEN COALESCE(cafeteria.cuota, 0) ELSE COALESCE(cafeteria.cuota, 0) + COALESCE(cafeteria_anterior.cuota, 0) END cafeteria, CASE WHEN l.quincena = 0 THEN COALESCE(celular.cuota, 0) ELSE COALESCE(celular.cuota, 0) + COALESCE(celular_anterior.cuota, 0) END celular, CASE WHEN l.quincena = 0 THEN COALESCE(uniforme.cuota, 0) ELSE COALESCE(uniforme.cuota, 0) + COALESCE(uniforme_anterior.cuota, 0) END uniforme, CASE WHEN l.quincena = 0 THEN COALESCE(calzado.cuota, 0) ELSE COALESCE(calzado.cuota, 0) + COALESCE(calzado_anterior.cuota, 0) END calzado, CASE WHEN l.quincena = 0 THEN COALESCE(equipo.cuota, 0) ELSE COALESCE(equipo.cuota, 0) + COALESCE(equipo_anterior.cuota, 0) END equipo, CASE WHEN l.quincena = 0 THEN COALESCE(producto.cuota, 0) ELSE COALESCE(producto.cuota, 0) + COALESCE(producto_anterior.cuota, 0) END producto, CASE WHEN l.quincena = 0 THEN COALESCE(bancos.cuota, 0) ELSE COALESCE(bancos.cuota, 0) + COALESCE(bancos_anterior.cuota, 0) END bancos, CASE WHEN l.quincena = 0 THEN COALESCE(otros.cuota, 0) ELSE COALESCE(otros.cuota, 0) + COALESCE(otros_anterior.cuota, 0) END otros, CASE WHEN l.quincena = 0 THEN pl.judiciales ELSE pl.judiciales + COALESCE(pla.judiciales, 0) END judiciales, CASE WHEN l.quincena = 0 THEN pl.seguro ELSE pl.seguro + COALESCE(pla.seguro, 0) END seguro, CASE WHEN l.quincena = 0 THEN pl.parqueo ELSE pl.parqueo + COALESCE(pla.parqueo, 0) END parqueo, CASE WHEN l.quincena = 0 THEN pl.boleta_ornato ELSE pl.boleta_ornato + COALESCE(pla.boleta_ornato, 0) END boleta_ornato, CASE WHEN l.quincena = 0 THEN pl.otros_egresos ELSE pl.otros_egresos + COALESCE(pla.otros_egresos, 0) END otros_egresos, CASE WHEN l.quincena = 0 THEN pl.egresos_tot ELSE pl.egresos_tot + COALESCE(pla.egresos_tot, 0) END total_egresos, CASE WHEN l.quincena = 0 THEN pl.liquido ELSE pl.liquido + COALESCE(pla.liquido, 0) END liquido_recibir, CASE WHEN l.quincena = 0 THEN pl.liquido ELSE COALESCE(pla.liquido, 0) END liquido_primer_quincena, CASE WHEN l.quincena = 0 THEN 0 ELSE pl.liquido END liquido_segunda_quincena FROM pago_lote pl LEFT JOIN( SELECT * FROM pago_lote ) pla ON MONTH(pla.fecha_pago_lote) = MONTH(pl.fecha_pago_lote) AND YEAR(pla.fecha_pago_lote) = YEAR(pl.fecha_pago_lote) AND pla.id_empleado = pl.id_empleado AND pla.id_lote != pl.id_lote LEFT JOIN lote l ON l.id = pl.id_lote LEFT JOIN empleado e ON e.id = pl.id_empleado LEFT JOIN empresa emp ON emp.id = pl.id_empresa LEFT JOIN centro_costo cc ON cc.id = pl.id_centro LEFT JOIN departamento d ON d.id = pl.id_departamento LEFT JOIN tipo_pago tp ON tp.id = pl.cheque LEFT JOIN tipo_cuenta tc ON tc.id = pl.id_tipo_cuenta LEFT JOIN banco bnc ON bnc.id = pl.id_banco LEFT JOIN condicion_laboral cl ON cl.id = pl.condicion_laboral LEFT JOIN( SELECT dl.id_pago_lote id_lote, dv.id_empleado id_empleado, SUM(dv.monto_total / dv.cuotas) cuota FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria ON cafeteria.id_lote = pl.id_lote AND cafeteria.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria_anterior ON cafeteria_anterior.id_lote = pla.id_lote AND cafeteria_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular ON celular.id_lote = pl.id_lote AND celular.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular_anterior ON celular_anterior.id_lote = pla.id_lote AND celular_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme ON uniforme.id_lote = pl.id_lote AND uniforme.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme_anterior ON uniforme_anterior.id_lote = pla.id_lote AND uniforme_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado ON calzado.id_lote = pl.id_lote AND calzado.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado_anterior ON calzado_anterior.id_lote = pla.id_lote AND calzado_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo ON equipo.id_lote = pl.id_lote AND equipo.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo_anterior ON equipo_anterior.id_lote = pla.id_lote AND equipo_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto ON producto.id_lote = pl.id_lote AND producto.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto_anterior ON producto_anterior.id_lote = pla.id_lote AND producto_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos ON bancos.id_lote = pl.id_lote AND bancos.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos_anterior ON bancos_anterior.id_lote = pla.id_lote AND bancos_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros ON otros.id_lote = pl.id_lote AND otros.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros_anterior ON otros_anterior.id_lote = pla.id_lote AND otros_anterior.id_empleado = pl.id_empleado WHERE pl.id_lote = " . $_GET['id_lote'] . " AND emp.id = " . $_GET['id_empresa'] . " AND d.id = " . $_GET['id_departamento'] . "";
-
-            $result = mysqli_query($con, $sql);
-
-            if (!$result) {
-                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
-                exit;
-            }
-
-            if (mysqli_num_rows($result) > 0) {
-                $json = array();
-                while ($row = mysqli_fetch_array($result)) {
-                    $json[] = array(
-                        'correlativo' => $row["correlativo"],
-                        'id_lote' => $row["id_lote"],
-                        'id_empleado' => $row["id_empleado"],
-                        'empleado' => $row["empleado"],
-                        'nombre_comercial' => $row["nombre_comercial"],
-                        'centro_costo' => $row["centro_costo"],
-                        'departamento' => $row["departamento"],
-                        'puesto' => $row["puesto"],
-                        'dias_laborados' => $row["dias_laborados"],
-                        'salario_ordinario' => $row["salario_ordinario"],
-                        'bon_incentivo' => $row["bon_incentivo"],
-                        'bon_decreto' => $row["bon_decreto"],
-                        'bonos' => $row["bonos"],
-                        'total_devengado' => $row["total_devengado"],
-                        'horas_simples' => $row["horas_simples"],
-                        'valor_horas_simples' => $row["valor_horas_simples"],
-                        'horas_dobles' => $row["horas_dobles"],
-                        'valor_horas_dobles' => $row["valor_horas_dobles"],
-                        'otros_ingresos' => $row["otros_ingresos"],
-                        'salario_total' => $row["salario_total"],
-                        'igss' => $row["igss"],
-                        'isr' => $row["isr"],
-                        'cafeteria' => $row["cafeteria"],
-                        'celular' => $row["celular"],
-                        'uniforme' => $row["uniforme"],
-                        'calzado' => $row["calzado"],
-                        'equipo' => $row["equipo"],
-                        'producto' => $row["producto"],
-                        'bancos' => $row["bancos"],
-                        'otros' => $row["otros"],
-                        'judiciales' => $row["judiciales"],
-                        'seguro' => $row["seguro"],
-                        'parqueo' => $row["parqueo"],
-                        'boleta_ornato' => $row["boleta_ornato"],
-                        'otros_egresos' => $row["otros_egresos"],
-                        'total_egresos' => $row["total_egresos"],
-                        'liquido_recibir' => $row["liquido_recibir"],
-                        'liquido_primer_quincena' => $row["liquido_primer_quincena"],
-                        'liquido_segunda_quincena' => $row["liquido_segunda_quincena"],
-                    );
-                }
-                $json_string = json_encode($json);
-                echo $json_string;
-            } else {
-                echo 'No hay datos';
-            }
-        }
-
 
         if ($_GET["quest"] == 'listado_empresas_pagos') {
             $sql = "SELECT id, nit, nombre_comercial, razon_social FROM empresa where id in(1,2)";
@@ -2214,7 +2047,7 @@ if (isset($_GET)) {
         if ($_GET["quest"] == 'detalle_horas_extra') {
             $id = intval($_GET["id"]);
             $origen = isset($_GET["origen"]) ? $_GET["origen"] : 'horas_extra';
-            
+
             if ($origen == 'comision') {
                 // Consultar de la tabla comision
                 $sql = "SELECT 
@@ -2240,7 +2073,7 @@ if (isset($_GET)) {
                 // Consultar de la tabla horas_extra (original)
                 $sql = "SELECT CONCAT(e.primer_nombre, ' ', e.segundo_nombre, ' ', e.otro_nombre, ' ', e.primer_apellido, ' ', e.segundo_apellido, ' ', e.apellido_casada) as empleado, cc.nombre as departamento, date(he.fecha_trabajado) as fecha_trabajado, em.nombre_comercial as empresa, he.horas, CASE WHEN he.jornada = 0 THEN 'Diurna' ELSE 'Nocturna' END as jornada, he.monto, he.observacion, u.nombre as solicitador, DATE(he.fecha_generado) as fecha_solicitado, he.observacion_gerencia, he.estado FROM horas_extra he INNER JOIN empleado e on he.id_empleado = e.id INNER JOIN centro_costo cc on e.centro_de_costo = cc.id INNER JOIN empresa_centro ec on ec.id_centro = cc.id INNER JOIN empresa em on ec.id_empresa = em.id INNER JOIN usuario u on he.id_solicitador = u.id WHERE he.id = $id";
             }
-            
+
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
@@ -2478,7 +2311,7 @@ if (isset($_GET)) {
         if ($_GET["quest"] == 'lista_comisiones_autorizados') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
-            
+
             if ($user_id && $user_role == 'operaciones') {
                 // Si es operaciones, mostrar solo los bonos que cre? que ya est?n autorizados (estado 2)
                 $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . $user_id . " AND eb.id = 2 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
@@ -2522,7 +2355,7 @@ if (isset($_GET)) {
         if ($_GET["quest"] == 'lista_comisiones_pendientes') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
-            
+
             if ($user_id && $user_role == 'operaciones') {
                 // Si es operaciones, mostrar solo los bonos que cre? con estado 1 (Solicitado/Pendiente)
                 $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . $user_id . " AND eb.id = 1 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
@@ -2603,26 +2436,26 @@ if (isset($_GET)) {
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
             } else {
-            if (mysqli_num_rows($result) > 0) {
-                $json = array();
-                while ($row = mysqli_fetch_array($result)) {
-                    $json[] = array(
-                        'id' => $row["id"],
-                        'empresa' => $row["empresa"],
-                        'fecha_trabajado' => $row["fecha_trabajado"],
-                        'fecha_generado' => $row["fecha_generado"],
-                        'estado' => $row["estado"],
-                        'horas' => $row["horas"],
-                        'tipo_jornada' => $row["tipo_jornada"],
-                        'monto' => $row["monto"],
-                        'tarea' => $row["tarea"],
-                        'usuario' => $row["usuario"],
-                        'observacion' => $row["observacion"],
-                        'autorizado_cenas' => $row["autorizado_cenas"],
-                    );
-                }
+                if (mysqli_num_rows($result) > 0) {
+                    $json = array();
+                    while ($row = mysqli_fetch_array($result)) {
+                        $json[] = array(
+                            'id' => $row["id"],
+                            'empresa' => $row["empresa"],
+                            'fecha_trabajado' => $row["fecha_trabajado"],
+                            'fecha_generado' => $row["fecha_generado"],
+                            'estado' => $row["estado"],
+                            'horas' => $row["horas"],
+                            'tipo_jornada' => $row["tipo_jornada"],
+                            'monto' => $row["monto"],
+                            'tarea' => $row["tarea"],
+                            'usuario' => $row["usuario"],
+                            'observacion' => $row["observacion"],
+                            'autorizado_cenas' => $row["autorizado_cenas"],
+                        );
+                    }
                     echo json_encode($json);
-            } else {
+                } else {
                     echo json_encode([]);
                 }
             }
@@ -3267,32 +3100,32 @@ if (isset($_GET)) {
             // Obtener el centro de costo del empleado 148
             $sql_centro = "SELECT centro_de_costo FROM empleado WHERE id = 148";
             $result_centro = mysqli_query($con, $sql_centro);
-            
+
             if (!$result_centro || mysqli_num_rows($result_centro) == 0) {
                 echo json_encode(['error' => 'No se encontr? empleado 148']);
                 exit;
             }
-            
+
             $row_centro = mysqli_fetch_array($result_centro);
             $id_centro = $row_centro['centro_de_costo'];
-            
+
             // Obtener la empresa del centro de costo
             $sql_empresa = "SELECT ec.id_empresa FROM empresa_centro ec WHERE ec.id_centro = $id_centro LIMIT 1";
             $result_empresa = mysqli_query($con, $sql_empresa);
-            
+
             if (!$result_empresa || mysqli_num_rows($result_empresa) == 0) {
                 echo json_encode(['error' => 'No se encontr? empresa para centro de costo: ' . $id_centro]);
                 exit;
             }
-            
+
             $row_empresa = mysqli_fetch_array($result_empresa);
             $id_empresa = $row_empresa['id_empresa'];
-            
+
             // Insertar la relaci?n empresa-empleado
             $sql = "INSERT INTO empresa_empleado(porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES (100, 1, 148, $id_empresa, 1, now())";
-            
+
             $result = mysqli_query($con, $sql);
-            
+
             if (!$result) {
                 echo json_encode(['error' => 'Error al insertar relaci?n: ' . mysqli_error($con)]);
                 exit;
@@ -3310,13 +3143,13 @@ if (isset($_GET)) {
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
                     WHERE e.id = 158
                     ORDER BY ee.principal DESC";
-            
+
             $result = mysqli_query($con, $sql);
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $json = array();
             while ($row = mysqli_fetch_array($result)) {
                 $json[] = $row;
@@ -3332,13 +3165,13 @@ if (isset($_GET)) {
                     LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
                     WHERE e.id = 154";
-            
+
             $result = mysqli_query($con, $sql);
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $json = array();
             while ($row = mysqli_fetch_array($result)) {
                 $json[] = $row;
@@ -3354,13 +3187,13 @@ if (isset($_GET)) {
                     LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
                     WHERE e.id = 148";
-            
+
             $result = mysqli_query($con, $sql);
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $json = array();
             while ($row = mysqli_fetch_array($result)) {
                 $json[] = $row;
@@ -3377,13 +3210,13 @@ if (isset($_GET)) {
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
                     WHERE e.id = (SELECT MAX(id) FROM empleado)
                     ORDER BY e.id DESC";
-            
+
             $result = mysqli_query($con, $sql);
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $json = array();
             while ($row = mysqli_fetch_array($result)) {
                 $json[] = $row;
@@ -3400,13 +3233,13 @@ if (isset($_GET)) {
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
                     WHERE e.estado = 1 
                     ORDER BY e.id DESC LIMIT 10";
-            
+
             $result = mysqli_query($con, $sql);
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $json = array();
             while ($row = mysqli_fetch_array($result)) {
                 $json[] = $row;
@@ -3435,7 +3268,7 @@ if (isset($_GET)) {
                     LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
                     WHERE e.estado = 1 " . $filtro_empresa . "
                     ORDER BY e.id DESC";
-            
+
             // Debug logging
             error_log("DEBUG: Consulta listado_empleados ejecut?ndose");
 
@@ -3451,7 +3284,7 @@ if (isset($_GET)) {
                 while ($row = mysqli_fetch_array($result)) {
                     // Debug logging para cada empleado
                     error_log("DEBUG: Empleado ID: " . $row["id"] . ", Empresa: " . $row["empresa"]);
-                    
+
                     $json[] = array(
                         'id' => $row["id"],
                         'primer_nombre' => $row["primer_nombre"],
@@ -3490,14 +3323,14 @@ if (isset($_GET)) {
                                    WHERE ee2.id != duplicados.min_id
                                ) AS subquery
                            )";
-            
+
             $result_limpiar = mysqli_query($con, $sql_limpiar);
-            
+
             if (!$result_limpiar) {
                 echo json_encode(['error' => 'Error al limpiar duplicados: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             // Marcar la primera empresa de cada empleado como principal si no tiene ninguna
             $sql_principal = "UPDATE empresa_empleado ee1 
                              SET ee1.principal = 1 
@@ -3514,57 +3347,57 @@ if (isset($_GET)) {
                                      GROUP BY ee2.id_empleado
                                  ) AS subquery
                              )";
-            
+
             $result_principal = mysqli_query($con, $sql_principal);
-            
+
             if (!$result_principal) {
                 echo json_encode(['error' => 'Error al marcar empresas principales: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             echo json_encode(['success' => 'Duplicados limpiados exitosamente']);
         }
 
         if ($_GET["quest"] == 'corregir_empleados_sin_empresa') {
             // Funci?n mejorada para corregir TODOS los empleados que aparecen "Sin Empresa"
-            
+
             // 1. Identificar empleados activos que no tienen empresa principal
             $sql_empleados_sin_empresa = "SELECT e.id, e.primer_nombre, e.primer_apellido 
                                          FROM empleado e 
                                          LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1
                                          WHERE e.estado = 1 AND ee.id IS NULL";
-            
+
             $result_sin_empresa = mysqli_query($con, $sql_empleados_sin_empresa);
-            
+
             if (!$result_sin_empresa) {
                 echo json_encode(['error' => 'Error al identificar empleados sin empresa: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $empleados_corregidos = 0;
             $empleados_sin_empresa = array();
             $errores = array();
-            
+
             while ($row = mysqli_fetch_array($result_sin_empresa)) {
                 $empleados_sin_empresa[] = $row;
             }
-            
+
             error_log("DEBUG: Empleados sin empresa encontrados: " . count($empleados_sin_empresa));
-            
+
             // 2. Para cada empleado sin empresa, buscar si tiene empresas asociadas
             foreach ($empleados_sin_empresa as $empleado) {
                 $id_empleado = $empleado['id'];
                 error_log("DEBUG: Procesando empleado ID: $id_empleado");
-                
+
                 // Buscar empresas asociadas al empleado
                 $sql_empresas_empleado = "SELECT ee.id, ee.id_empresa, ee.porcentaje, emp.nombre_comercial 
                                         FROM empresa_empleado ee 
                                         LEFT JOIN empresa emp ON ee.id_empresa = emp.id 
                                         WHERE ee.id_empleado = $id_empleado AND ee.activo = 1 
                                         ORDER BY ee.id ASC";
-                
+
                 $result_empresas = mysqli_query($con, $sql_empresas_empleado);
-                
+
                 if ($result_empresas && mysqli_num_rows($result_empresas) > 0) {
                     // Si tiene empresas asociadas, marcar la primera como principal
                     $sql_marcar_principal = "UPDATE empresa_empleado 
@@ -3572,9 +3405,9 @@ if (isset($_GET)) {
                                            WHERE id_empleado = $id_empleado AND activo = 1 
                                            ORDER BY id ASC 
                                            LIMIT 1";
-                    
+
                     $result_marcar = mysqli_query($con, $sql_marcar_principal);
-                    
+
                     if ($result_marcar) {
                         $empleados_corregidos++;
                         error_log("DEBUG: Empleado $id_empleado corregido - empresa marcada como principal");
@@ -3585,9 +3418,9 @@ if (isset($_GET)) {
                     // Si no tiene empresas asociadas, crear una relaci?n con la empresa por defecto (ID 1)
                     $sql_crear_empresa = "INSERT INTO empresa_empleado (porcentaje, principal, id_empleado, id_empresa, activo, fecha) 
                                         VALUES (100, 1, $id_empleado, 1, 1, NOW())";
-                    
+
                     $result_crear = mysqli_query($con, $sql_crear_empresa);
-                    
+
                     if ($result_crear) {
                         $empleados_corregidos++;
                         error_log("DEBUG: Empleado $id_empleado corregido - empresa creada");
@@ -3596,22 +3429,22 @@ if (isset($_GET)) {
                     }
                 }
             }
-            
+
             // 3. Verificar si hay empleados que a?n aparecen sin empresa despu?s de la correcci?n
             $sql_verificacion = "SELECT COUNT(*) as total_sin_empresa 
                                 FROM empleado e 
                                 LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1
                                 WHERE e.estado = 1 AND ee.id IS NULL";
-            
+
             $result_verificacion = mysqli_query($con, $sql_verificacion);
             $verificacion = mysqli_fetch_array($result_verificacion);
             $empleados_aun_sin_empresa = $verificacion['total_sin_empresa'];
-            
+
             $mensaje = "Empleados sin empresa corregidos exitosamente";
             if (count($errores) > 0) {
                 $mensaje .= ". Errores: " . implode(", ", $errores);
             }
-            
+
             echo json_encode([
                 'success' => $mensaje,
                 'empleados_corregidos' => $empleados_corregidos,
@@ -3626,38 +3459,38 @@ if (isset($_GET)) {
             try {
                 $empleados_corregidos = 0;
                 $errores = array();
-                
+
                 // 1. Identificar empleados que no tienen empresa principal
                 $sql_empleados_sin_empresa = "SELECT e.id, e.primer_nombre, e.primer_apellido 
                                              FROM empleado e 
                                              LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1
                                              WHERE e.estado = 1 AND ee.id IS NULL";
-                
+
                 $result_sin_empresa = mysqli_query($con, $sql_empleados_sin_empresa);
-                
+
                 if (!$result_sin_empresa) {
                     echo json_encode(['error' => 'Error al identificar empleados sin empresa: ' . mysqli_error($con)]);
                     exit;
                 }
-                
+
                 $empleados_sin_empresa = array();
                 while ($row = mysqli_fetch_array($result_sin_empresa)) {
                     $empleados_sin_empresa[] = $row;
                 }
-                
+
                 // 2. Para cada empleado sin empresa, corregir
                 foreach ($empleados_sin_empresa as $empleado) {
                     $id_empleado = $empleado['id'];
-                    
+
                     // Buscar si tiene empresas asociadas
                     $sql_empresas = "SELECT id FROM empresa_empleado WHERE id_empleado = $id_empleado AND activo = 1 LIMIT 1";
                     $result_empresas = mysqli_query($con, $sql_empresas);
-                    
+
                     if ($result_empresas && mysqli_num_rows($result_empresas) > 0) {
                         // Marcar la primera empresa como principal
                         $sql_marcar = "UPDATE empresa_empleado SET principal = 1 WHERE id_empleado = $id_empleado AND activo = 1 ORDER BY id ASC LIMIT 1";
                         $result_marcar = mysqli_query($con, $sql_marcar);
-                        
+
                         if ($result_marcar) {
                             $empleados_corregidos++;
                         }
@@ -3665,20 +3498,20 @@ if (isset($_GET)) {
                         // Crear empresa por defecto
                         $sql_crear = "INSERT INTO empresa_empleado (porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES (100, 1, $id_empleado, 1, 1, NOW())";
                         $result_crear = mysqli_query($con, $sql_crear);
-                        
+
                         if ($result_crear) {
                             $empleados_corregidos++;
                         }
                     }
                 }
-                
+
                 // 3. Respuesta simple
                 echo json_encode([
                     'success' => 'Correcci?n completada',
                     'empleados_corregidos' => $empleados_corregidos,
                     'total_empleados_sin_empresa' => count($empleados_sin_empresa)
                 ]);
-                
+
             } catch (Exception $e) {
                 echo json_encode(['error' => 'Error en la correcci?n: ' . $e->getMessage()]);
             }
@@ -3687,22 +3520,22 @@ if (isset($_GET)) {
         if ($_GET["quest"] == 'corregir_empleados_simple') {
             // Funci?n muy simple para corregir empleados sin empresa
             $empleados_corregidos = 0;
-            
+
             // 1. Obtener empleados sin empresa principal
             $sql = "SELECT e.id FROM empleado e 
                     LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1
                     WHERE e.estado = 1 AND ee.id IS NULL";
-            
+
             $result = mysqli_query($con, $sql);
-            
+
             if ($result) {
                 while ($row = mysqli_fetch_array($result)) {
                     $id_empleado = $row['id'];
-                    
+
                     // Verificar si tiene empresas asociadas
                     $sql_check = "SELECT id FROM empresa_empleado WHERE id_empleado = $id_empleado AND activo = 1 LIMIT 1";
                     $result_check = mysqli_query($con, $sql_check);
-                    
+
                     if ($result_check && mysqli_num_rows($result_check) > 0) {
                         // Marcar como principal
                         $sql_update = "UPDATE empresa_empleado SET principal = 1 WHERE id_empleado = $id_empleado AND activo = 1 ORDER BY id ASC LIMIT 1";
@@ -3712,11 +3545,11 @@ if (isset($_GET)) {
                         $sql_insert = "INSERT INTO empresa_empleado (porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES (100, 1, $id_empleado, 1, 1, NOW())";
                         mysqli_query($con, $sql_insert);
                     }
-                    
+
                     $empleados_corregidos++;
                 }
             }
-            
+
             echo json_encode([
                 'success' => 'Correcci?n completada',
                 'empleados_corregidos' => $empleados_corregidos
@@ -3778,7 +3611,7 @@ if (isset($_GET)) {
             $check_sql = "SELECT COUNT(*) as existe FROM pago_lote WHERE id_empleado = " . $id_empleado . " AND id_lote = " . $id_lote . $filtro_empresa_pago_lote;
             $check_result = mysqli_query($con, $check_sql);
             $check_row = mysqli_fetch_array($check_result);
-            
+
             if ($check_row['existe'] > 0) {
                 // Si ya est? en pago_lote, leer directamente de ah?
                 $sql = "SELECT e.id, e.primer_nombre, e.primer_apellido, COALESCE(pl.id_centro, e.centro_de_costo) AS centro_costo, COALESCE(pl.id_departamento, e.departamento_laboral) AS departamento, COALESCE(pl.puesto, e.puesto) AS puesto, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.banco, pl.bon_tot AS bon_incentivo, pl.bon_dec_tot AS bon_decreto, 0 AS cantidad_horas_dia, pl.horas_dia, 0 AS cantidad_horas_noche, pl.horas_noche, pl.sueldo_quincenal, pl.otros_ingresos, pl.vacaciones, pl.bonos, pl.desc_variables AS descuentos_variables, pl.boleta_ornato AS boleto_de_ornato, pl.igss AS igss_laboral, pl.isr, pl.otros_egresos AS otro_descuentos, 0 AS judiciales, 0 AS seguro, 0 AS parqueo, pl.ingresos_tot AS total_ingresos, pl.egresos_tot AS total_egresos, pl.liquido, pl.total_reporte_bono, pl.condicion_laboral, pl.cheque, e.banco, pl.no_cuenta, pl.id_tipo_cuenta AS tipo_cuenta, " . $id_lote . " AS id_lote, pl.fecha_pago_lote, pl.igss_patronal, pl.intecap, pl.irtra, pl.dias_laborados, pl.dias_bono FROM pago_lote pl INNER JOIN empleado e ON pl.id_empleado = e.id INNER JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE pl.id_empleado = " . $id_empleado . " AND pl.id_lote = " . $id_lote . $filtro_empresa_pago_lote . $filtro_empresa_empleado;
@@ -4149,7 +3982,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'aguinaldo_real') {
-            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON ar.id_empresa = em.id WHERE YEAR(ar.al) = ".$_GET["anio"]." AND ar.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5;";
+            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON ar.id_empresa = em.id WHERE YEAR(ar.al) = " . $_GET["anio"] . " AND ar.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5;";
 
             $result = mysqli_query($con, $sql);
 
@@ -4192,7 +4025,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'aguinaldo_contable') {
-            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON ar.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(ar.al) = ".$_GET["anio"]." AND ar.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5;";
+            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON ar.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(ar.al) = " . $_GET["anio"] . " AND ar.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5;";
 
             $result = mysqli_query($con, $sql);
 
@@ -4235,7 +4068,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'aguinaldo_ajuste') {
-            $sql = "SELECT empresa, d1, d2, d3, d4, d5, SUM(julio) julio, SUM(agosto) agosto, SUM(septiembre) septiembre, SUM(octubre) octubre, SUM(noviembre) noviembre, SUM(diciembre) diciembre, SUM(enero) enero, SUM(febrero) febrero, SUM(marzo) marzo, SUM(abril) abril, SUM(mayo) mayo, SUM(junio) junio, SUM(suma) suma, SUM(total) total FROM ( SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON ar.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(ar.al) = ".$_GET["anio"]." GROUP BY em.id, d.id, cc.id, d3, d4, d5 UNION ALL SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, - SUM(ar.julio) julio, - SUM(ar.agosto) agosto, - SUM(ar.septiembre) septiembre, - SUM(ar.octubre) octubre, - SUM(ar.noviembre) noviembre, - SUM(ar.diciembre) diciembre, - SUM(ar.enero) enero, - SUM(ar.febrero) febrero, - SUM(ar.marzo) marzo, - SUM(ar.abril) abril, - SUM(ar.mayo) mayo, - SUM(ar.junio) junio, - SUM(ar.total_periodo) suma, - SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON ar.id_empresa = em.id WHERE YEAR(ar.al) = ".$_GET["anio"]." GROUP BY em.id, d.id, cc.id, d3, d4, d5 ) AS combined GROUP BY empresa, d1, d2, d3, d4, d5 HAVING total != 0;";
+            $sql = "SELECT empresa, d1, d2, d3, d4, d5, SUM(julio) julio, SUM(agosto) agosto, SUM(septiembre) septiembre, SUM(octubre) octubre, SUM(noviembre) noviembre, SUM(diciembre) diciembre, SUM(enero) enero, SUM(febrero) febrero, SUM(marzo) marzo, SUM(abril) abril, SUM(mayo) mayo, SUM(junio) junio, SUM(suma) suma, SUM(total) total FROM ( SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON ar.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(ar.al) = " . $_GET["anio"] . " GROUP BY em.id, d.id, cc.id, d3, d4, d5 UNION ALL SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, - SUM(ar.julio) julio, - SUM(ar.agosto) agosto, - SUM(ar.septiembre) septiembre, - SUM(ar.octubre) octubre, - SUM(ar.noviembre) noviembre, - SUM(ar.diciembre) diciembre, - SUM(ar.enero) enero, - SUM(ar.febrero) febrero, - SUM(ar.marzo) marzo, - SUM(ar.abril) abril, - SUM(ar.mayo) mayo, - SUM(ar.junio) junio, - SUM(ar.total_periodo) suma, - SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON ar.id_empresa = em.id WHERE YEAR(ar.al) = " . $_GET["anio"] . " GROUP BY em.id, d.id, cc.id, d3, d4, d5 ) AS combined GROUP BY empresa, d1, d2, d3, d4, d5 HAVING total != 0;";
 
             $result = mysqli_query($con, $sql);
 
@@ -4278,7 +4111,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'aguinaldo_determinacion') {
-            $sql = "SELECT COALESCE(sub1.empresa, sub2.empresa) AS empresa, COALESCE(sub1.julio, 0) - sub2.julio AS julio, COALESCE(sub1.agosto, 0) - sub2.agosto AS agosto, COALESCE(sub1.septiembre, 0) - sub2.septiembre AS septiembre, COALESCE(sub1.octubre, 0) - sub2.octubre AS octubre, COALESCE(sub1.noviembre, 0) - sub2.noviembre AS noviembre, COALESCE(sub1.diciembre, 0) - sub2.diciembre AS diciembre, COALESCE(sub1.enero, 0) - sub2.enero AS enero, COALESCE(sub1.febrero, 0) - sub2.febrero AS febrero, COALESCE(sub1.marzo, 0) - sub2.marzo AS marzo, COALESCE(sub1.abril, 0) - sub2.abril AS abril, COALESCE(sub1.mayo, 0) - sub2.mayo AS mayo, COALESCE(sub1.junio, 0) - sub2.junio AS junio, COALESCE(sub1.suma, 0) - sub2.suma AS suma, COALESCE(sub1.total, 0) - sub2.total AS total FROM ( SELECT em.nombre_comercial empresa, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON ar.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(ar.al) = ".$_GET["anio"]." GROUP BY em.id ) AS sub1 RIGHT JOIN( SELECT em.nombre_comercial empresa, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa em ON ar.id_empresa = em.id WHERE YEAR(ar.al) = ".$_GET["anio"]." GROUP BY em.id ) AS sub2 ON sub1.empresa = sub2.empresa HAVING total != 0;";
+            $sql = "SELECT COALESCE(sub1.empresa, sub2.empresa) AS empresa, COALESCE(sub1.julio, 0) - sub2.julio AS julio, COALESCE(sub1.agosto, 0) - sub2.agosto AS agosto, COALESCE(sub1.septiembre, 0) - sub2.septiembre AS septiembre, COALESCE(sub1.octubre, 0) - sub2.octubre AS octubre, COALESCE(sub1.noviembre, 0) - sub2.noviembre AS noviembre, COALESCE(sub1.diciembre, 0) - sub2.diciembre AS diciembre, COALESCE(sub1.enero, 0) - sub2.enero AS enero, COALESCE(sub1.febrero, 0) - sub2.febrero AS febrero, COALESCE(sub1.marzo, 0) - sub2.marzo AS marzo, COALESCE(sub1.abril, 0) - sub2.abril AS abril, COALESCE(sub1.mayo, 0) - sub2.mayo AS mayo, COALESCE(sub1.junio, 0) - sub2.junio AS junio, COALESCE(sub1.suma, 0) - sub2.suma AS suma, COALESCE(sub1.total, 0) - sub2.total AS total FROM ( SELECT em.nombre_comercial empresa, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON ar.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(ar.al) = " . $_GET["anio"] . " GROUP BY em.id ) AS sub1 RIGHT JOIN( SELECT em.nombre_comercial empresa, SUM(ar.julio) julio, SUM(ar.agosto) agosto, SUM(ar.septiembre) septiembre, SUM(ar.octubre) octubre, SUM(ar.noviembre) noviembre, SUM(ar.diciembre) diciembre, SUM(ar.enero) enero, SUM(ar.febrero) febrero, SUM(ar.marzo) marzo, SUM(ar.abril) abril, SUM(ar.mayo) mayo, SUM(ar.junio) junio, SUM(ar.total_periodo) suma, SUM(ar.bono) total FROM aguinaldo_real ar LEFT JOIN empleado e ON ar.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa em ON ar.id_empresa = em.id WHERE YEAR(ar.al) = " . $_GET["anio"] . " GROUP BY em.id ) AS sub2 ON sub1.empresa = sub2.empresa HAVING total != 0;";
 
             $result = mysqli_query($con, $sql);
 
@@ -4316,7 +4149,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'aguinaldo_intercompany') {
-            $sql = "SELECT CONCAT_WS( ' ', ( SELECT e2.nombre_comercial FROM aguinaldo_real ar2 INNER JOIN empresa e2 ON ar2.id_empresa = e2.id WHERE ar2.principal = 1 AND ar2.id_empleado = ar.id_empleado AND YEAR(ar.al) = ".$_GET["anio"]." GROUP BY e2.nombre_comercial ), 'Debe Facturar a', e1.nombre_comercial ) factura, SUM(ar.total_periodo) base, SUM(ar.total_periodo) * 0.12 iva, ( SUM(ar.total_periodo) +(SUM(ar.total_periodo) * 0.12) ) total FROM aguinaldo_real ar INNER JOIN empresa e1 ON ar.id_empresa = e1.id WHERE ar.principal = 0 AND YEAR(ar.al) = ".$_GET["anio"]." GROUP BY factura HAVING total != 0;";
+            $sql = "SELECT CONCAT_WS( ' ', ( SELECT e2.nombre_comercial FROM aguinaldo_real ar2 INNER JOIN empresa e2 ON ar2.id_empresa = e2.id WHERE ar2.principal = 1 AND ar2.id_empleado = ar.id_empleado AND YEAR(ar.al) = " . $_GET["anio"] . " GROUP BY e2.nombre_comercial ), 'Debe Facturar a', e1.nombre_comercial ) factura, SUM(ar.total_periodo) base, SUM(ar.total_periodo) * 0.12 iva, ( SUM(ar.total_periodo) +(SUM(ar.total_periodo) * 0.12) ) total FROM aguinaldo_real ar INNER JOIN empresa e1 ON ar.id_empresa = e1.id WHERE ar.principal = 0 AND YEAR(ar.al) = " . $_GET["anio"] . " GROUP BY factura HAVING total != 0;";
 
             $result = mysqli_query($con, $sql);
 
@@ -4343,7 +4176,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'bono_real') {
-            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON br.id_empresa = em.id WHERE YEAR(br.al) = ".$_GET["anio"]." AND br.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5";
+            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON br.id_empresa = em.id WHERE YEAR(br.al) = " . $_GET["anio"] . " AND br.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5";
 
             $result = mysqli_query($con, $sql);
 
@@ -4386,7 +4219,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'bono_contable') {
-            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON br.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(br.al) = ".$_GET["anio"]." AND br.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5";
+            $sql = "SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON br.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(br.al) = " . $_GET["anio"] . " AND br.bono != 0 GROUP BY em.id, d.id, cc.id, d3, d4, d5";
 
             $result = mysqli_query($con, $sql);
 
@@ -4429,7 +4262,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'bono_ajuste') {
-            $sql = "SELECT empresa, d1, d2, d3, d4, d5, SUM(julio) julio, SUM(agosto) agosto, SUM(septiembre) septiembre, SUM(octubre) octubre, SUM(noviembre) noviembre, SUM(diciembre) diciembre, SUM(enero) enero, SUM(febrero) febrero, SUM(marzo) marzo, SUM(abril) abril, SUM(mayo) mayo, SUM(junio) junio, SUM(suma) suma, SUM(total) total FROM ( SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON br.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(br.al) = ".$_GET["anio"]." GROUP BY em.id, d.id, cc.id, d3, d4, d5 UNION ALL SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, - SUM(br.julio) julio, - SUM(br.agosto) agosto, - SUM(br.septiembre) septiembre, - SUM(br.octubre) octubre, - SUM(br.noviembre) noviembre, - SUM(br.diciembre) diciembre, - SUM(br.enero) enero, - SUM(br.febrero) febrero, - SUM(br.marzo) marzo, - SUM(br.abril) abril, - SUM(br.mayo) mayo, - SUM(br.junio) junio, - SUM(br.total_periodo) suma, - SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON br.id_empresa = em.id WHERE YEAR(br.al) = ".$_GET["anio"]." GROUP BY em.id, d.id, cc.id, d3, d4, d5 ) AS combined GROUP BY empresa, d1, d2, d3, d4, d5 HAVING total != 0";
+            $sql = "SELECT empresa, d1, d2, d3, d4, d5, SUM(julio) julio, SUM(agosto) agosto, SUM(septiembre) septiembre, SUM(octubre) octubre, SUM(noviembre) noviembre, SUM(diciembre) diciembre, SUM(enero) enero, SUM(febrero) febrero, SUM(marzo) marzo, SUM(abril) abril, SUM(mayo) mayo, SUM(junio) junio, SUM(suma) suma, SUM(total) total FROM ( SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa_empleado ee ON br.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(br.al) = " . $_GET["anio"] . " GROUP BY em.id, d.id, cc.id, d3, d4, d5 UNION ALL SELECT em.nombre_comercial empresa, d.nombre d1, cc.nombre d2, COALESCE(d3.nombre, '') d3, COALESCE(d4.nombre, '') d4, COALESCE(d5.nombre, '') d5, - SUM(br.julio) julio, - SUM(br.agosto) agosto, - SUM(br.septiembre) septiembre, - SUM(br.octubre) octubre, - SUM(br.noviembre) noviembre, - SUM(br.diciembre) diciembre, - SUM(br.enero) enero, - SUM(br.febrero) febrero, - SUM(br.marzo) marzo, - SUM(br.abril) abril, - SUM(br.mayo) mayo, - SUM(br.junio) junio, - SUM(br.total_periodo) suma, - SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN centro_costo cc ON e.centro_de_costo = cc.id LEFT JOIN dimension_3 d3 ON e.dimension_3 = d3.id LEFT JOIN dimension_4 d4 ON e.dimension_4 = d4.id LEFT JOIN dimension_5 d5 ON e.dimension_5 = d5.id LEFT JOIN empresa em ON br.id_empresa = em.id WHERE YEAR(br.al) = " . $_GET["anio"] . " GROUP BY em.id, d.id, cc.id, d3, d4, d5 ) AS combined GROUP BY empresa, d1, d2, d3, d4, d5 HAVING total != 0";
 
             $result = mysqli_query($con, $sql);
 
@@ -4472,7 +4305,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'bono_determinacion') {
-            $sql = "SELECT COALESCE(sub1.empresa, sub2.empresa) AS empresa, COALESCE(sub1.julio, 0) - sub2.julio AS julio, COALESCE(sub1.agosto, 0) - sub2.agosto AS agosto, COALESCE(sub1.septiembre, 0) - sub2.septiembre AS septiembre, COALESCE(sub1.octubre, 0) - sub2.octubre AS octubre, COALESCE(sub1.noviembre, 0) - sub2.noviembre AS noviembre, COALESCE(sub1.diciembre, 0) - sub2.diciembre AS diciembre, COALESCE(sub1.enero, 0) - sub2.enero AS enero, COALESCE(sub1.febrero, 0) - sub2.febrero AS febrero, COALESCE(sub1.marzo, 0) - sub2.marzo AS marzo, COALESCE(sub1.abril, 0) - sub2.abril AS abril, COALESCE(sub1.mayo, 0) - sub2.mayo AS mayo, COALESCE(sub1.junio, 0) - sub2.junio AS junio, COALESCE(sub1.suma, 0) - sub2.suma AS suma, COALESCE(sub1.total, 0) - sub2.total AS total FROM ( SELECT em.nombre_comercial empresa, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON br.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(br.al) = ".$_GET["anio"]." GROUP BY em.id ) AS sub1 RIGHT JOIN( SELECT em.nombre_comercial empresa, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa em ON br.id_empresa = em.id WHERE YEAR(br.al) = ".$_GET["anio"]." GROUP BY em.id ) AS sub2 ON sub1.empresa = sub2.empresa HAVING total != 0";
+            $sql = "SELECT COALESCE(sub1.empresa, sub2.empresa) AS empresa, COALESCE(sub1.julio, 0) - sub2.julio AS julio, COALESCE(sub1.agosto, 0) - sub2.agosto AS agosto, COALESCE(sub1.septiembre, 0) - sub2.septiembre AS septiembre, COALESCE(sub1.octubre, 0) - sub2.octubre AS octubre, COALESCE(sub1.noviembre, 0) - sub2.noviembre AS noviembre, COALESCE(sub1.diciembre, 0) - sub2.diciembre AS diciembre, COALESCE(sub1.enero, 0) - sub2.enero AS enero, COALESCE(sub1.febrero, 0) - sub2.febrero AS febrero, COALESCE(sub1.marzo, 0) - sub2.marzo AS marzo, COALESCE(sub1.abril, 0) - sub2.abril AS abril, COALESCE(sub1.mayo, 0) - sub2.mayo AS mayo, COALESCE(sub1.junio, 0) - sub2.junio AS junio, COALESCE(sub1.suma, 0) - sub2.suma AS suma, COALESCE(sub1.total, 0) - sub2.total AS total FROM ( SELECT em.nombre_comercial empresa, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON br.id_empleado = ee.id_empleado AND ee.principal = 1 AND ee.activo = 1 LEFT JOIN empresa em ON ee.id_empresa = em.id WHERE YEAR(br.al) = " . $_GET["anio"] . " GROUP BY em.id ) AS sub1 RIGHT JOIN( SELECT em.nombre_comercial empresa, SUM(br.julio) julio, SUM(br.agosto) agosto, SUM(br.septiembre) septiembre, SUM(br.octubre) octubre, SUM(br.noviembre) noviembre, SUM(br.diciembre) diciembre, SUM(br.enero) enero, SUM(br.febrero) febrero, SUM(br.marzo) marzo, SUM(br.abril) abril, SUM(br.mayo) mayo, SUM(br.junio) junio, SUM(br.total_periodo) suma, SUM(br.bono) total FROM bono_real br LEFT JOIN empleado e ON br.id_empleado = e.id LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa em ON br.id_empresa = em.id WHERE YEAR(br.al) = " . $_GET["anio"] . " GROUP BY em.id ) AS sub2 ON sub1.empresa = sub2.empresa HAVING total != 0";
 
             $result = mysqli_query($con, $sql);
 
@@ -4510,7 +4343,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'bono_intercompany') {
-            $sql = "SELECT CONCAT_WS(' ', ( SELECT e2.nombre_comercial FROM bono_real br2 INNER JOIN empresa e2 ON br2.id_empresa = e2.id WHERE br2.principal = 1 AND br2.id_empleado = br.id_empleado AND YEAR(br.al) = ".$_GET["anio"]." GROUP BY e2.nombre_comercial ), 'Debe Facturar a', e1.nombre_comercial ) factura, SUM(br.total_periodo) base, SUM(br.total_periodo) * 0.12 iva, (SUM(br.total_periodo) + (SUM(br.total_periodo) * 0.12)) total FROM bono_real br INNER JOIN empresa e1 ON br.id_empresa = e1.id WHERE br.principal = 0 AND YEAR(br.al) = ".$_GET["anio"]." GROUP BY factura HAVING total != 0";
+            $sql = "SELECT CONCAT_WS(' ', ( SELECT e2.nombre_comercial FROM bono_real br2 INNER JOIN empresa e2 ON br2.id_empresa = e2.id WHERE br2.principal = 1 AND br2.id_empleado = br.id_empleado AND YEAR(br.al) = " . $_GET["anio"] . " GROUP BY e2.nombre_comercial ), 'Debe Facturar a', e1.nombre_comercial ) factura, SUM(br.total_periodo) base, SUM(br.total_periodo) * 0.12 iva, (SUM(br.total_periodo) + (SUM(br.total_periodo) * 0.12)) total FROM bono_real br INNER JOIN empresa e1 ON br.id_empresa = e1.id WHERE br.principal = 0 AND YEAR(br.al) = " . $_GET["anio"] . " GROUP BY factura HAVING total != 0";
 
             $result = mysqli_query($con, $sql);
 
@@ -5028,12 +4861,12 @@ if (isset($_GET)) {
         if ($_GET["quest"] == 'datos_empleado_comision') {
             // Validar que id_empleado sea un n?mero v?lido
             $id_empleado = isset($_GET['id_empleado']) && is_numeric($_GET['id_empleado']) ? intval($_GET['id_empleado']) : 0;
-            
+
             if ($id_empleado <= 0) {
                 echo json_encode(['error' => 'ID de empleado no v?lido']);
                 exit;
             }
-            
+
             $sql = "SELECT e.id, e.estado, e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.direccion, e.estado_civil, e.fecha_nacimiento, e.cedula, e.dpi, e.no_igss, e.centro_de_costo, e.fecha_inicio, e.fecha_baja, e.telefono, e.genero, e.licencia, e.id_tipo_licencia, e.id_clase_licencia, e.horas_extra, e.tipo_de_pago, e.banco, e.no_cuenta, e.moneda, e.conyugue, e.foto, e.bon_dec_37_2001, e.bon_incentivo, e.horas_extras_dobles, e.horas_extras_simples, e.sueldo_ordinario, e.otro_ingresos, e.total_igss, e.vacaciones, e.anticipo_quincenal, e.bantrab, e.boleto_de_ornato, e.igss_laboral, e.igss_patronal, e.isr, e.otro_descuentos, e.prestamo_empresa, e.primaria, e.grado_primaria, e.secundaria, e.grado_secundaria, e.diversificado, e.universidad, e.nacionalidad, e.region_originario, e.departamento_originario, e.municipio_originario, e.municipio_cedula, e.municipio_laboral, e.apellido_casada, e.condicion_laboral, e.codigo_ocupacion, e.tipo_plantilla, e.horas_laborales, e.ventas_economicas, e.temporal, e.telefono_celular, e.telefono_emergencia, e.nombre_emergencia, e.edad, e.emision_dpi, e.edad_conyuge, e.ocupacion_conyuge, e.nombre_padre, e.edad_padre, e.ocupacion_padre, e.nombre_madre, e.edad_madre, e.ocupacion_madre, e.nit, e.departamento_laboral, e.apellido_casada_originario, COALESCE(d.nombre, 'Sin Departamento') as nombre_departamento FROM empleado e LEFT JOIN departamento d ON e.departamento_laboral = d.id WHERE e.id = " . $id_empleado;
 
             $result = mysqli_query($con, $sql);
@@ -5283,201 +5116,6 @@ if (isset($_GET)) {
             }
         }
 
-                if ($_GET["quest"] == 'listado_pagos') {
-            // Obtener lote activo
-            $q_act = mysqli_query($con, "SELECT id, quincena FROM lote WHERE id_estado = 1 ORDER BY id DESC LIMIT 1");
-            $l_act = mysqli_fetch_all($q_act, MYSQLI_ASSOC);
-            $id_l_act = $l_act ? $l_act[0]['id'] : 0;
-            $quin_act = $l_act ? $l_act[0]['quincena'] : 0;
-            
-            // Obtener lote anterior (si es 2da quincena)
-            $id_l_ant = 0;
-            if ($quin_act == 1) {
-                $q_ant = mysqli_query($con, "SELECT id FROM lote WHERE quincena = 0 AND id < $id_l_act ORDER BY id DESC LIMIT 1");
-                $l_ant = mysqli_fetch_all($q_ant, MYSQLI_ASSOC);
-                $id_l_ant = $l_ant ? $l_ant[0]['id'] : 0;
-            }
-
-            $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
-                CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
-                emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
-                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
-                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
-                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
-                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
-                COALESCE(pl.id, e.id) AS correlativo,
-                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
-                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
-                FROM empleado e 
-                INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
-                INNER JOIN empresa emp ON emp.id = ee.id_empresa 
-                LEFT JOIN pago_lote pl ON pl.id_empleado = e.id AND pl.id_lote = $id_l_act
-                LEFT JOIN pago_lote pla ON pla.id_empleado = e.id AND pla.id_lote = $id_l_ant
-                LEFT JOIN centro_costo cc ON cc.id = e.centro_de_costo 
-                LEFT JOIN departamento_centro dc ON dc.id_centro = cc.id 
-                LEFT JOIN departamento d ON d.id = dc.id_departamento 
-                LEFT JOIN tipo_pago tp ON tp.id = COALESCE(pl.cheque, e.tipo_de_pago) 
-                LEFT JOIN banco bnc ON bnc.id = COALESCE(pl.id_banco, e.banco) 
-                LEFT JOIN tipo_cuenta tc ON tc.id = COALESCE(pl.id_tipo_cuenta, e.tipo_cuenta) 
-                LEFT JOIN condicion_laboral cl ON cl.id = e.condicion_laboral 
-                WHERE e.estado = 1 AND emp.id = " . $_GET['id_empresa'] . " GROUP BY e.id";
-
-            $result = mysqli_query($con, $sql);
-            $json = array();
-            while ($row = mysqli_fetch_assoc($result)) { $json[] = $row; }
-            echo json_encode($json);
-            exit;
-        }
-
-                if ($_GET["quest"] == 'listado_pagos_centro') {
-            // Obtener lote activo
-            $q_act = mysqli_query($con, "SELECT id, quincena FROM lote WHERE id_estado = 1 ORDER BY id DESC LIMIT 1");
-            $l_act = mysqli_fetch_all($q_act, MYSQLI_ASSOC);
-            $id_l_act = $l_act ? $l_act[0]['id'] : 0;
-            $quin_act = $l_act ? $l_act[0]['quincena'] : 0;
-            
-            // Obtener lote anterior (si es 2da quincena)
-            $id_l_ant = 0;
-            if ($quin_act == 1) {
-                $q_ant = mysqli_query($con, "SELECT id FROM lote WHERE quincena = 0 AND id < $id_l_act ORDER BY id DESC LIMIT 1");
-                $l_ant = mysqli_fetch_all($q_ant, MYSQLI_ASSOC);
-                $id_l_ant = $l_ant ? $l_ant[0]['id'] : 0;
-            }
-
-            $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
-                CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
-                emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
-                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
-                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
-                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
-                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
-                COALESCE(pl.id, e.id) AS correlativo,
-                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
-                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
-                FROM empleado e 
-                INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
-                INNER JOIN empresa emp ON emp.id = ee.id_empresa 
-                LEFT JOIN pago_lote pl ON pl.id_empleado = e.id AND pl.id_lote = $id_l_act
-                LEFT JOIN pago_lote pla ON pla.id_empleado = e.id AND pla.id_lote = $id_l_ant
-                LEFT JOIN centro_costo cc ON cc.id = e.centro_de_costo 
-                LEFT JOIN departamento_centro dc ON dc.id_centro = cc.id 
-                LEFT JOIN departamento d ON d.id = dc.id_departamento 
-                LEFT JOIN tipo_pago tp ON tp.id = COALESCE(pl.cheque, e.tipo_de_pago) 
-                LEFT JOIN banco bnc ON bnc.id = COALESCE(pl.id_banco, e.banco) 
-                LEFT JOIN tipo_cuenta tc ON tc.id = COALESCE(pl.id_tipo_cuenta, e.tipo_cuenta) 
-                LEFT JOIN condicion_laboral cl ON cl.id = e.condicion_laboral 
-                WHERE e.estado = 1 AND emp.id = " . $_GET['id_empresa'] . " AND cc.id = " . $_GET['id_centro'] . " GROUP BY e.id";
-
-            $result = mysqli_query($con, $sql);
-            $json = array();
-            while ($row = mysqli_fetch_assoc($result)) { $json[] = $row; }
-            echo json_encode($json);
-            exit;
-        }
-
-                if ($_GET["quest"] == 'listado_pagos_departamento') {
-            // Obtener lote activo
-            $q_act = mysqli_query($con, "SELECT id, quincena FROM lote WHERE id_estado = 1 ORDER BY id DESC LIMIT 1");
-            $l_act = mysqli_fetch_all($q_act, MYSQLI_ASSOC);
-            $id_l_act = $l_act ? $l_act[0]['id'] : 0;
-            $quin_act = $l_act ? $l_act[0]['quincena'] : 0;
-            
-            // Obtener lote anterior (si es 2da quincena)
-            $id_l_ant = 0;
-            if ($quin_act == 1) {
-                $q_ant = mysqli_query($con, "SELECT id FROM lote WHERE quincena = 0 AND id < $id_l_act ORDER BY id DESC LIMIT 1");
-                $l_ant = mysqli_fetch_all($q_ant, MYSQLI_ASSOC);
-                $id_l_ant = $l_ant ? $l_ant[0]['id'] : 0;
-            }
-
-            $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
-                CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
-                emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
-                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
-                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
-                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
-                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
-                COALESCE(pl.id, e.id) AS correlativo,
-                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
-                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
-                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
-                FROM empleado e 
-                INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
-                INNER JOIN empresa emp ON emp.id = ee.id_empresa 
-                LEFT JOIN pago_lote pl ON pl.id_empleado = e.id AND pl.id_lote = $id_l_act
-                LEFT JOIN pago_lote pla ON pla.id_empleado = e.id AND pla.id_lote = $id_l_ant
-                LEFT JOIN centro_costo cc ON cc.id = e.centro_de_costo 
-                LEFT JOIN departamento_centro dc ON dc.id_centro = cc.id 
-                LEFT JOIN departamento d ON d.id = dc.id_departamento 
-                LEFT JOIN tipo_pago tp ON tp.id = COALESCE(pl.cheque, e.tipo_de_pago) 
-                LEFT JOIN banco bnc ON bnc.id = COALESCE(pl.id_banco, e.banco) 
-                LEFT JOIN tipo_cuenta tc ON tc.id = COALESCE(pl.id_tipo_cuenta, e.tipo_cuenta) 
-                LEFT JOIN condicion_laboral cl ON cl.id = e.condicion_laboral 
-                WHERE e.estado = 1 AND emp.id = " . $_GET['id_empresa'] . " AND d.id = " . $_GET['id_departamento'] . " GROUP BY e.id";
-
-            $result = mysqli_query($con, $sql);
-            $json = array();
-            while ($row = mysqli_fetch_assoc($result)) { $json[] = $row; }
-            echo json_encode($json);
-            exit;
-        }
-
         if ($_GET["quest"] == 'detalle_pago') {
             // Primero obtener los bonos confirmados desde la tabla comision
             $id_empleado_param = intval($_GET['id_empleado']);
@@ -5488,7 +5126,7 @@ if (isset($_GET)) {
                 $row_bonos = mysqli_fetch_assoc($result_bonos);
                 $bonos_confirmados = floatval($row_bonos['total_bonos']);
             }
-            
+
             $sql = "SELECT COALESCE(pl.id, e.id) AS correlativo, e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) AS nombre_empleado, emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.dias_laborados, e.dias_laborados) ELSE COALESCE(pl.dias_laborados, e.dias_laborados) + COALESCE(pla.dias_laborados, 0) END AS dias_laborados, ROUND( (e.sueldo_ordinario / 30) *( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.dias_laborados, e.dias_laborados) ELSE COALESCE(pl.dias_laborados, e.dias_laborados) + COALESCE(pla.dias_laborados, 0) END ), 2 ) AS salario_ordinario, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) ELSE COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) ELSE COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto, COALESCE((SELECT SUM(monto) FROM comision WHERE id_empleado = e.id AND seleccionado = 1 AND id_estado = 2 AND tipo_registro = 'bono' AND id_lote_pago IN (SELECT id FROM lote WHERE id_estado = 1)), 0) AS bonos, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN( (e.sueldo_ordinario / 30) * COALESCE(pl.dias_laborados, e.dias_laborados) ) + COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE((SELECT SUM(monto) FROM comision WHERE id_empleado = e.id AND seleccionado = 1 AND id_estado = 2 AND tipo_registro = 'bono' AND id_lote_pago IN (SELECT id FROM lote WHERE id_estado = 1)), 0) ELSE( (e.sueldo_ordinario / 30) *( COALESCE(pl.dias_laborados, e.dias_laborados) + COALESCE(pla.dias_laborados, 0) ) +( COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_tot, 0) ) +( COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_dec_tot, 0) ) + COALESCE((SELECT SUM(monto) FROM comision WHERE id_empleado = e.id AND seleccionado = 1 AND id_estado = 2 AND tipo_registro = 'bono' AND id_lote_pago IN (SELECT id FROM lote WHERE id_estado = 1)), 0) + COALESCE( ( SELECT SUM(b.monto) AS monto FROM bonos_pago_lote bpl LEFT JOIN bono b ON b.id = bpl.id_bono WHERE bpl.id_pago_lote = pla.id_lote AND b.id_empleado = e.id ), 0 ) ) END, 2 ) AS total_devengado, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.vacaciones, 0) ELSE COALESCE(pl.vacaciones, 0) + COALESCE(pla.vacaciones, 0) END AS vacaciones, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN( (e.sueldo_ordinario / 30) * COALESCE(pl.dias_laborados, e.dias_laborados) ) + COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pl.otros_ingresos, 0) + COALESCE((SELECT SUM(monto) FROM comision WHERE id_empleado = e.id AND seleccionado = 1 AND id_estado = 2 AND tipo_registro = 'bono' AND id_lote_pago IN (SELECT id FROM lote WHERE id_estado = 1)), 0) + COALESCE(pl.horas_dia, 0) + COALESCE(pl.horas_noche, 0) ELSE( (e.sueldo_ordinario / 30) *( COALESCE(pl.dias_laborados, e.dias_laborados) + COALESCE(pla.dias_laborados, 0) ) ) +( COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_tot, 0) ) +( COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_dec_tot, 0) ) + COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) + COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) +( COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) ) + COALESCE((SELECT SUM(monto) FROM comision WHERE id_empleado = e.id AND seleccionado = 1 AND id_estado = 2 AND tipo_registro = 'bono' AND id_lote_pago IN (SELECT id FROM lote WHERE id_estado = 1)), 0) + COALESCE( ( SELECT SUM(b.monto) AS monto FROM bonos_pago_lote bpl LEFT JOIN bono b ON b.id = bpl.id_bono WHERE bpl.id_pago_lote = pla.id_lote AND b.id_empleado = e.id ), 0 ) END, 2 ) AS salario_total, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS cafeteria, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS celular, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS uniforme, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS calzado, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS equipo, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS producto, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS bancos, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) ELSE COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) END, 2 ) AS otros, COALESCE(pl.otros_egresos, 0) AS otros_egresos, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN 0 ELSE ROUND(e.boleto_de_ornato, 2) END AS boleta_ornato, ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.igss, 0) + COALESCE(pl.isr, 0) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE(pl.otros_egresos, 0) + COALESCE(pl.judiciales, 0) + COALESCE(pl.seguro, 0) + COALESCE(pl.parqueo, 0) ELSE( COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) ) +(COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0)) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE(pl.otros_egresos, 0) +( COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) ) +( COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) ) +( COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) ) + e.boleto_de_ornato END, 2 ) total_egresos, ( ( ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN( (e.sueldo_ordinario / 30) * COALESCE(pl.dias_laborados, e.dias_laborados) ) + COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pl.otros_ingresos, 0) + COALESCE(pl.bonos, 0) + COALESCE(pl.horas_dia, 0) + COALESCE(pl.horas_noche, 0) ELSE( (e.sueldo_ordinario / 30) *( COALESCE(pl.dias_laborados, e.dias_laborados) + COALESCE(pla.dias_laborados, 0) ) ) +( COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_tot, 0) ) +( COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_dec_tot, 0) ) + COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) + COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) +( COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) ) + COALESCE(pl.bonos, 0) + COALESCE( ( SELECT SUM(b.monto) AS monto FROM bonos_pago_lote bpl LEFT JOIN bono b ON b.id = bpl.id_bono WHERE bpl.id_pago_lote = pla.id_lote AND b.id_empleado = e.id ), 0 ) END, 2 ) ) -( ROUND( CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN COALESCE(pl.igss, 0) + COALESCE(pl.isr, 0) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE(pl.otros_egresos, 0) + COALESCE(pl.judiciales, 0) + COALESCE(pl.seguro, 0) + COALESCE(pl.parqueo, 0) ELSE( COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) ) +(COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0)) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE(pl.otros_egresos, 0) +( COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) ) +( COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) ) +( COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) + e.boleto_de_ornato ) END, 2 ) ) ) AS liquido_recibir, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN( (e.sueldo_ordinario / 30) * COALESCE(pl.dias_laborados, e.dias_laborados) + COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pl.otros_ingresos, 0) + COALESCE(pl.bonos, 0) + COALESCE(pl.horas_dia, 0) + COALESCE(pl.horas_noche, 0) ) -( COALESCE(pl.igss, 0) + COALESCE(pl.isr, 0) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE(pl.otros_egresos, 0) + COALESCE(pl.judiciales, 0) + COALESCE(pl.seguro, 0) + COALESCE(pl.parqueo, 0) ) ELSE COALESCE(pla.liquido, 0) END AS liquido_primer_quincena, CASE WHEN l.quincena = 0 OR l.quincena IS NULL THEN 0 ELSE( ( (e.sueldo_ordinario / 30) *( COALESCE(pl.dias_laborados, e.dias_laborados) + COALESCE(pla.dias_laborados, 0) ) + COALESCE(pl.bon_tot, ROUND(((e.bon_incentivo / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_tot, 0) + COALESCE(pl.bon_dec_tot, ROUND(((e.bon_dec_37_2001 / 30) * e.dias_laborados), 2)) + COALESCE(pla.bon_dec_tot, 0) + COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) + COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) + COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) + COALESCE(pl.bonos, 0) + COALESCE( ( SELECT SUM(b.monto) AS monto FROM bonos_pago_lote bpl LEFT JOIN bono b ON b.id = bpl.id_bono WHERE bpl.id_pago_lote = pla.id_lote AND b.id_empleado = e.id ), 0 ) ) -( COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) + COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Celular' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Cafeteria' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Uniforme' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Calzado' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Equipo' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Producto' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso = 'Bancos' AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(monto_total / cuotas) cuotas FROM descuento_variable WHERE tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND faltan > 0 AND estado = 1 AND seleccionado = 1 AND id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE( ( SELECT SUM(dv.monto_total / dv.cuotas) cuotas FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) AND dl.id_pago_lote = pla.id_lote AND dv.id_empleado = e.id ), 0 ) + COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) + COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) + COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) + COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) + e.boleto_de_ornato ) ) - COALESCE(pla.liquido, 0) END AS liquido_segunda_quincena FROM empleado e INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 INNER JOIN empresa emp ON emp.id = ee.id_empresa LEFT JOIN (SELECT * FROM lote WHERE id_estado = 1 ORDER BY id DESC LIMIT 1) l ON 1=1 LEFT JOIN pago_lote pl ON pl.id_empleado = e.id AND pl.id_lote = l.id LEFT JOIN( SELECT * FROM pago_lote ) pla ON pla.id_empleado = e.id AND pla.id_lote = (SELECT MAX(id) FROM lote WHERE quincena = 0 AND id < l.id) LEFT JOIN centro_costo cc ON cc.id = e.centro_de_costo LEFT JOIN departamento_centro dc ON dc.id_centro = cc.id LEFT JOIN departamento d ON d.id = dc.id_departamento LEFT JOIN tipo_pago tp ON tp.id = COALESCE(pl.cheque, e.tipo_de_pago) LEFT JOIN banco bnc ON bnc.id = COALESCE(pl.id_banco, e.banco) LEFT JOIN tipo_cuenta tc ON tc.id = COALESCE(pl.id_tipo_cuenta, e.tipo_cuenta) LEFT JOIN condicion_laboral cl ON cl.id = e.condicion_laboral WHERE e.estado = 1 AND e.id = " . $_GET['id_empleado'] . " GROUP BY e.id;";
 
             $result = mysqli_query($con, $sql);
@@ -5556,7 +5194,36 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'detalle_pago_historial') {
-            $sql = "SELECT pl.id correlativo, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, emp.nombre_comercial empresa, cc.nombre centro_costo, d.nombre departamento, pl.puesto puesto, pl.dias_laborados dias_laborados, pl.sueldo_quincenal salario_ordinario, pl.bon_tot bon_incentivo, pl.bon_dec_tot bon_decreto, COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) bonos, ( pl.sueldo_quincenal + pl.bon_tot + pl.bon_dec_tot + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) ) total_devengado, pl.cantidad_horas_dia horas_simples, pl.horas_dia valor_horas_simples, pl.cantidad_horas_noche horas_dobles, pl.horas_noche valor_horas_dobles, pl.otros_ingresos otros_ingresos, pl.ingresos_tot + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) salario_total, pl.vacaciones vacaciones, tp.nombre tipo_pago, tc.nombre tipo_cuenta, pl.no_cuenta no_cuenta, bnc.nombre banco, cl.nombre condicion_laboral, pl.igss igss, pl.isr isr, COALESCE(cafeteria.cuota, 0) cafeteria, COALESCE(celular.cuota, 0) celular, COALESCE(uniforme.cuota, 0) uniforme, COALESCE(calzado.cuota, 0) calzado, COALESCE(equipo.cuota, 0) equipo, COALESCE(producto.cuota, 0) producto, COALESCE(bancos.cuota, 0) bancos, COALESCE(otros.cuota, 0) otros, pl.judiciales judiciales, pl.seguro seguro, pl.parqueo parqueo, pl.boleta_ornato boleta_ornato, pl.otros_egresos otros_egresos, pl.egresos_tot total_egresos, pl.liquido + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) liquido_recibir, 0 liquido_primer_quincena, pl.liquido + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) liquido_segunda_quincena FROM pago_lote pl LEFT JOIN lote l ON l.id = pl.id_lote LEFT JOIN empleado e ON e.id = pl.id_empleado LEFT JOIN empresa emp ON emp.id = pl.id_empresa LEFT JOIN centro_costo cc ON cc.id = pl.id_centro LEFT JOIN departamento d ON d.id = pl.id_departamento LEFT JOIN tipo_pago tp ON tp.id = pl.cheque LEFT JOIN tipo_cuenta tc ON tc.id = pl.id_tipo_cuenta LEFT JOIN banco bnc ON bnc.id = pl.id_banco LEFT JOIN condicion_laboral cl ON cl.id = pl.condicion_laboral LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria ON cafeteria.id_lote = pl.id_lote AND cafeteria.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular ON celular.id_lote = pl.id_lote AND celular.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme ON uniforme.id_lote = pl.id_lote AND uniforme.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado ON calzado.id_lote = pl.id_lote AND calzado.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo ON equipo.id_lote = pl.id_lote AND equipo.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto ON producto.id_lote = pl.id_lote AND producto.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos ON bancos.id_lote = pl.id_lote AND bancos.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros ON otros.id_lote = pl.id_lote AND otros.id_empleado = pl.id_empleado WHERE pl.id_lote = " . $_GET['id_pago_lote'] . " and e.id = " . $_GET['id_empleado'] . "";
+            $sql = "SELECT pl.id correlativo, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, emp.nombre_comercial empresa, cc.nombre centro_costo, d.nombre departamento, pl.puesto puesto, pl.dias_laborados dias_laborados, pl.sueldo_quincenal salario_ordinario, pl.bon_tot bon_incentivo, pl.bon_dec_tot bon_decreto, 
+                COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) bonos, 
+                ( pl.sueldo_quincenal + pl.bon_tot + pl.bon_dec_tot + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) ) total_devengado, pl.cantidad_horas_dia horas_simples, pl.horas_dia valor_horas_simples, pl.cantidad_horas_noche horas_dobles, pl.horas_noche valor_horas_dobles, pl.otros_ingresos otros_ingresos, pl.ingresos_tot + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) salario_total, pl.vacaciones vacaciones, tp.nombre tipo_pago, tc.nombre tipo_cuenta, pl.no_cuenta no_cuenta, bnc.nombre banco, cl.nombre condicion_laboral, pl.igss igss, pl.isr isr, 
+                COALESCE(descuentos.cafeteria, 0) cafeteria, COALESCE(descuentos.celular, 0) celular, COALESCE(descuentos.uniforme, 0) uniforme, COALESCE(descuentos.calzado, 0) calzado, COALESCE(descuentos.equipo, 0) equipo, COALESCE(descuentos.producto, 0) producto, COALESCE(descuentos.bancos, 0) bancos, COALESCE(descuentos.otros, 0) otros, pl.judiciales judiciales, pl.seguro seguro, pl.parqueo parqueo, pl.boleta_ornato boleta_ornato, pl.otros_egresos otros_egresos, pl.egresos_tot total_egresos, pl.liquido + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) liquido_recibir, 0 liquido_primer_quincena, pl.liquido + COALESCE((SELECT SUM(c.monto) FROM comision c WHERE c.id_empleado = pl.id_empleado AND c.id_lote_pago = pl.id_lote AND c.seleccionado = 1 AND c.id_estado = 2 AND c.tipo_registro = 'bono'), 0) liquido_segunda_quincena 
+                FROM pago_lote pl 
+                LEFT JOIN lote l ON l.id = pl.id_lote 
+                LEFT JOIN empleado e ON e.id = pl.id_empleado 
+                LEFT JOIN empresa emp ON emp.id = pl.id_empresa 
+                LEFT JOIN centro_costo cc ON cc.id = pl.id_centro 
+                LEFT JOIN departamento d ON d.id = pl.id_departamento 
+                LEFT JOIN tipo_pago tp ON tp.id = pl.cheque 
+                LEFT JOIN tipo_cuenta tc ON tc.id = pl.id_tipo_cuenta 
+                LEFT JOIN banco bnc ON bnc.id = pl.id_banco 
+                LEFT JOIN condicion_laboral cl ON cl.id = pl.condicion_laboral 
+                LEFT JOIN ( 
+                    SELECT dl.id_pago_lote id_lote, dv.id_empleado id_empleado, 
+                    SUM(CASE WHEN dv.tipo_egreso = 'Cafeteria' THEN dv.monto_total / dv.cuotas ELSE 0 END) AS cafeteria, 
+                    SUM(CASE WHEN dv.tipo_egreso = 'Celular' THEN dv.monto_total / dv.cuotas ELSE 0 END) AS celular, 
+                    SUM(CASE WHEN dv.tipo_egreso = 'Uniforme' THEN dv.monto_total / dv.cuotas ELSE 0 END) AS uniforme, 
+                    SUM(CASE WHEN dv.tipo_egreso = 'Calzado' THEN dv.monto_total / dv.cuotas ELSE 0 END) AS calzado, 
+                    SUM(CASE WHEN dv.tipo_egreso = 'Equipo' THEN dv.monto_total / dv.cuotas ELSE 0 END) AS equipo, 
+                    SUM(CASE WHEN dv.tipo_egreso = 'Producto' THEN dv.monto_total / dv.cuotas ELSE 0 END) AS producto, 
+                    SUM(CASE WHEN dv.tipo_egreso = 'Bancos' THEN dv.monto_total / dv.cuotas ELSE 0 END) AS bancos, 
+                    SUM(CASE WHEN dv.tipo_egreso NOT IN ('Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos') THEN dv.monto_total / dv.cuotas ELSE 0 END) AS otros 
+                    FROM descuento_lote dl 
+                    LEFT JOIN descuento_variable dv ON dv.id = dl.id_descuento 
+                    WHERE dl.id_pago_lote = " . $_GET['id_pago_lote'] . " AND dv.id_empleado = " . $_GET['id_empleado'] . " 
+                    GROUP BY dl.id_pago_lote, dv.id_empleado 
+                ) descuentos ON descuentos.id_lote = pl.id_lote AND descuentos.id_empleado = pl.id_empleado 
+                WHERE pl.id_lote = " . $_GET['id_pago_lote'] . " and e.id = " . $_GET['id_empleado'] . "";
 
             $result = mysqli_query($con, $sql);
 
@@ -5693,23 +5360,23 @@ if (isset($_GET)) {
 
         if ($_POST["quest"] == 'eliminar_lote_cerrado') {
             $id_lote = intval($_POST['id']);
-            
+
             // Primero eliminar los registros relacionados en pago_lote
             $sql_pago = "DELETE FROM pago_lote WHERE id_lote = $id_lote";
             mysqli_query($con, $sql_pago);
-            
+
             // Eliminar registros en descuento_lote relacionados
             $sql_descuento = "DELETE FROM descuento_lote WHERE id_pago_lote = $id_lote";
             mysqli_query($con, $sql_descuento);
-            
+
             // Eliminar registros en bonos_pago_lote relacionados
             $sql_bonos = "DELETE FROM bonos_pago_lote WHERE id_pago_lote = $id_lote";
             mysqli_query($con, $sql_bonos);
-            
+
             // Actualizar comisiones para quitar la referencia al lote
             $sql_comision = "UPDATE comision SET id_lote_pago = NULL WHERE id_lote_pago = $id_lote";
             mysqli_query($con, $sql_comision);
-            
+
             // Finalmente eliminar el lote
             $sql = "DELETE FROM lote WHERE id = $id_lote";
             $result = mysqli_query($con, $sql);
@@ -5723,7 +5390,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'detalle_descuentos_variables_otros') {
-            $sql = "SELECT dv.tipo_egreso, (dv.monto_total / dv.cuotas) monto, l.nombre FROM descuento_variable dv LEFT JOIN descuento_lote dl ON dl.id_descuento = dv.id LEFT JOIN pago_lote pl ON pl.id_lote = dl.id_pago_lote LEFT JOIN lote l ON l.id = pl.id_lote LEFT JOIN( SELECT * FROM pago_lote ) pla ON pla.id_empleado = pl.id_empleado AND MONTH(pla.fecha_pago_lote) = MONTH(pl.fecha_pago_lote) AND YEAR(pla.fecha_pago_lote) = YEAR(pl.fecha_pago_lote) AND pla.id_lote != " . $_GET['id_lote'] . " WHERE pl.id_lote IN(COALESCE(pla.id, ''), " . $_GET['id_lote'] . ") AND dv.id_empleado = " . $_GET['id_empleado'] . " AND dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dv.id, dl.id";
+            $sql = "SELECT dv.tipo_egreso, (dv.monto_total / dv.cuotas) monto, l.nombre FROM descuento_variable dv INNER JOIN descuento_lote dl ON dl.id_descuento = dv.id INNER JOIN pago_lote pl ON pl.id_lote = dl.id_pago_lote AND pl.id_empleado = dv.id_empleado INNER JOIN lote l ON l.id = pl.id_lote WHERE dv.id_empleado = " . $_GET['id_empleado'] . " AND dv.tipo_egreso NOT IN ('Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos') AND pl.id_lote IN ( SELECT id_lote FROM pago_lote WHERE id_empleado = " . $_GET['id_empleado'] . " AND MONTH(fecha_pago_lote) = (SELECT MONTH(fecha_pago_lote) FROM pago_lote WHERE id_lote = " . $_GET['id_lote'] . " AND id_empleado = " . $_GET['id_empleado'] . " LIMIT 1) AND YEAR(fecha_pago_lote) = (SELECT YEAR(fecha_pago_lote) FROM pago_lote WHERE id_lote = " . $_GET['id_lote'] . " AND id_empleado = " . $_GET['id_empleado'] . " LIMIT 1) ) GROUP BY dv.id, dl.id";
 
             $result = mysqli_query($con, $sql);
 
@@ -5750,11 +5417,11 @@ if (isset($_GET)) {
 
         if ($_GET["quest"] == 'listado_bonos_cerrados') {
             $id_lote = intval($_GET['id_lote']);
-            
+
             // Verificar si la columna id_lote_pago existe en la tabla comision
             $check_column = mysqli_query($con, "SHOW COLUMNS FROM comision LIKE 'id_lote_pago'");
             $tiene_columna_lote = (mysqli_num_rows($check_column) > 0);
-            
+
             // Consulta base de bonos de tabla 'bono'
             $sql = "SELECT b.id id, e.id id_empleado, d.nombre departamento, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_solicitado, b.monto monto, eb.nombre estado_bono, 'bono' as origen 
                     FROM bono b 
@@ -5764,7 +5431,7 @@ if (isset($_GET)) {
                     LEFT JOIN usuario u ON u.id = b.id_solicitante 
                     LEFT JOIN estado_bono eb ON eb.id = b.id_estado 
                     WHERE bpl.id_pago_lote = $id_lote";
-            
+
             // Si existe la columna id_lote_pago, agregar UNION con comisiones
             if ($tiene_columna_lote) {
                 $sql .= "
@@ -5778,7 +5445,7 @@ if (isset($_GET)) {
                     LEFT JOIN estado_bono eb ON eb.id = c.id_estado 
                     WHERE c.id_lote_pago = $id_lote AND c.tipo_registro = 'bono'";
             }
-            
+
             $sql .= " ORDER BY id DESC";
 
             $result = mysqli_query($con, $sql);
@@ -5812,14 +5479,14 @@ if (isset($_GET)) {
 
         if ($_GET["quest"] == 'listado_horas_cerradas') {
             $id_lote = intval($_GET['id_lote']);
-            
+
             // Verificar si la columna id_lote_pago existe en la tabla comision
             $check_column = mysqli_query($con, "SHOW COLUMNS FROM comision LIKE 'id_lote_pago'");
             $tiene_columna_lote = (mysqli_num_rows($check_column) > 0);
-            
+
             // Consulta base de horas extra de tabla 'horas_extra'
             $sql = "SELECT he.id id, e.id id_empleado, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, DATE(he.fecha_trabajado) fecha_trabajado, he.horas horas, CASE WHEN he.jornada = 0 THEN 'Diurna' ELSE 'Nocturna' END jornada, he.monto, et.nombre estado, 'horas_extra' as origen FROM horas_extra he LEFT JOIN horas_extra_lote hel ON hel.id_hora_extra = he.id LEFT JOIN empleado e ON e.id = he.id_empleado LEFT JOIN estado_bono et ON et.id = he.estado WHERE hel.id_pago_lote = $id_lote";
-            
+
             // Si existe la columna id_lote_pago, agregar UNION con horas extra de comision
             if ($tiene_columna_lote) {
                 $sql .= "
@@ -5827,7 +5494,7 @@ if (isset($_GET)) {
                     
                     SELECT c.id id, e.id id_empleado, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, DATE(c.fecha_trabajado) fecha_trabajado, c.horas horas, CASE WHEN c.tipo_jornada = 1 THEN 'Diurna' ELSE 'Nocturna' END jornada, c.monto, COALESCE(eb.nombre, 'Pagado') estado, 'comision' as origen FROM comision c LEFT JOIN empleado e ON e.id = c.id_empleado LEFT JOIN estado_bono eb ON eb.id = c.id_estado WHERE c.tipo_registro = 'hora_extra' AND c.id_lote_pago = $id_lote";
             }
-            
+
             $sql .= " ORDER BY id DESC";
 
             $result = mysqli_query($con, $sql);
@@ -6672,6 +6339,137 @@ if (isset($_GET)) {
 
 if (isset($_POST)) {
     if (isset($_POST['quest'])) {
+        if ($_POST["quest"] == 'listado_pagos') {
+            $q_act = mysqli_query($con, "SELECT id, quincena FROM lote WHERE id_estado = 1 ORDER BY id DESC LIMIT 1");
+            $l_act = mysqli_fetch_all($q_act, MYSQLI_ASSOC);
+            $id_l_act = $l_act ? $l_act[0]['id'] : 0;
+            $quin_act = $l_act ? $l_act[0]['quincena'] : 0;
+
+            $id_l_ant = 0;
+            if ($quin_act == 1) {
+                $q_ant = mysqli_query($con, "SELECT id FROM lote WHERE quincena = 0 AND id < $id_l_act ORDER BY id DESC LIMIT 1");
+                $l_ant = mysqli_fetch_all($q_ant, MYSQLI_ASSOC);
+                $id_l_ant = $l_ant ? $l_ant[0]['id'] : 0;
+            }
+
+            $id_empresa = intval($_POST['id_empresa']);
+            $centros = isset($_POST['centros']) && is_array($_POST['centros']) ? $_POST['centros'] : [];
+            $departamentos = isset($_POST['departamentos']) && is_array($_POST['departamentos']) ? $_POST['departamentos'] : [];
+
+            $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
+                CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
+                emp.nombre_comercial AS empresa, cc.nombre AS centro_costo, d.nombre AS departamento, e.puesto AS puesto,
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) ELSE COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0) END) END AS salario_ordinario,
+                CASE WHEN pl.id IS NULL THEN ROUND((ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pla.liquido, 0) END) END AS liquido_primer_quincena,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 0 ELSE (ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) - ROUND((ROUND( (e.sueldo_ordinario / 30) * 30, 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0)) / 2, 2) END) ELSE (CASE WHEN $quin_act = 0 THEN 0 ELSE COALESCE(pl.liquido, 0) END) END AS liquido_segunda_quincena,
+                CASE WHEN pl.id IS NULL THEN ROUND( (e.sueldo_ordinario / 30) * (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END), 2 ) + COALESCE(e.bon_incentivo, 0) + COALESCE(e.bon_dec_37_2001, 0) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.liquido, 0) ELSE COALESCE(pl.liquido, 0) + COALESCE(pla.liquido, 0) END) END AS liquido_recibir,
+                COALESCE(pl.id, e.id) AS correlativo,
+                CASE WHEN pl.id IS NULL THEN (CASE WHEN $quin_act = 0 THEN 15 ELSE 30 END) ELSE (CASE WHEN $quin_act = 0 THEN COALESCE(pl.dias_laborados, 15) ELSE COALESCE(pl.dias_laborados, 0) + COALESCE(pla.dias_laborados, 0) END) END AS dias_laborados,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_tot, 0) ELSE COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0) END AS bon_incentivo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bon_dec_tot, 0) ELSE COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0) END AS bon_decreto,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.bonos, 0) ELSE COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0) END AS bonos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pl.bon_tot, 0) + COALESCE(pl.bon_dec_tot, 0) + COALESCE(pl.bonos, 0) ELSE (COALESCE(pl.sueldo_quincenal, 0) + COALESCE(pla.sueldo_quincenal, 0)) + (COALESCE(pl.bon_tot, 0) + COALESCE(pla.bon_tot, 0)) + (COALESCE(pl.bon_dec_tot, 0) + COALESCE(pla.bon_dec_tot, 0)) + (COALESCE(pl.bonos, 0) + COALESCE(pla.bonos, 0)) END AS total_devengado,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_dia, 0) ELSE COALESCE(pl.cantidad_horas_dia, 0) + COALESCE(pla.cantidad_horas_dia, 0) END AS horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_dia, 0) ELSE COALESCE(pl.horas_dia, 0) + COALESCE(pla.horas_dia, 0) END AS valor_horas_simples,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.cantidad_horas_noche, 0) ELSE COALESCE(pl.cantidad_horas_noche, 0) + COALESCE(pla.cantidad_horas_noche, 0) END AS horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.horas_noche, 0) ELSE COALESCE(pl.horas_noche, 0) + COALESCE(pla.horas_noche, 0) END AS valor_horas_dobles,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_ingresos, 0) ELSE COALESCE(pl.otros_ingresos, 0) + COALESCE(pla.otros_ingresos, 0) END AS otros_ingresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.ingresos_tot, 0) ELSE COALESCE(pl.ingresos_tot, 0) + COALESCE(pla.ingresos_tot, 0) END AS salario_total,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.igss, 0) ELSE COALESCE(pl.igss, 0) + COALESCE(pla.igss, 0) END AS igss,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.isr, 0) ELSE COALESCE(pl.isr, 0) + COALESCE(pla.isr, 0) END AS isr,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.desc_variables, 0) ELSE COALESCE(pl.desc_variables, 0) + COALESCE(pla.desc_variables, 0) END AS cafeteria,
+                0 AS celular, 0 AS uniforme, 0 AS calzado, 0 AS equipo, 0 AS producto, 0 AS bancos, 0 AS otros,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.boleta_ornato, 0) ELSE COALESCE(pl.boleta_ornato, 0) + COALESCE(pla.boleta_ornato, 0) END AS boleta_ornato,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.otros_egresos, 0) ELSE COALESCE(pl.otros_egresos, 0) + COALESCE(pla.otros_egresos, 0) END AS otros_egresos,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.judiciales, 0) ELSE COALESCE(pl.judiciales, 0) + COALESCE(pla.judiciales, 0) END AS judiciales,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.seguro, 0) ELSE COALESCE(pl.seguro, 0) + COALESCE(pla.seguro, 0) END AS seguro,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.parqueo, 0) ELSE COALESCE(pl.parqueo, 0) + COALESCE(pla.parqueo, 0) END AS parqueo,
+                CASE WHEN $quin_act = 0 THEN COALESCE(pl.egresos_tot, 0) ELSE COALESCE(pl.egresos_tot, 0) + COALESCE(pla.egresos_tot, 0) END AS total_egresos
+                FROM empleado e 
+                INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 
+                INNER JOIN empresa emp ON emp.id = ee.id_empresa 
+                LEFT JOIN pago_lote pl ON pl.id_empleado = e.id AND pl.id_lote = $id_l_act
+                LEFT JOIN pago_lote pla ON pla.id_empleado = e.id AND pla.id_lote = $id_l_ant
+                LEFT JOIN centro_costo cc ON cc.id = e.centro_de_costo 
+                LEFT JOIN departamento_centro dc ON dc.id_centro = cc.id 
+                LEFT JOIN departamento d ON d.id = dc.id_departamento 
+                LEFT JOIN tipo_pago tp ON tp.id = COALESCE(pl.cheque, e.tipo_de_pago) 
+                LEFT JOIN banco bnc ON bnc.id = COALESCE(pl.id_banco, e.banco) 
+                LEFT JOIN tipo_cuenta tc ON tc.id = COALESCE(pl.id_tipo_cuenta, e.tipo_cuenta) 
+                LEFT JOIN condicion_laboral cl ON cl.id = e.condicion_laboral 
+                WHERE e.estado = 1 AND emp.id = " . $id_empresa;
+
+            if (!empty($centros)) {
+                $centros_str = implode(',', array_map('intval', $centros));
+                $sql .= " AND e.centro_de_costo IN ($centros_str) ";
+            }
+            if (!empty($departamentos)) {
+                $dept_str = implode(',', array_map('intval', $departamentos));
+                $sql .= " AND dc.id_departamento IN ($dept_str) ";
+            }
+
+            $sql .= " GROUP BY e.id";
+
+            $result = mysqli_query($con, $sql);
+            if (!$result) {
+                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                exit;
+            }
+            $json = array();
+            while ($row = mysqli_fetch_assoc($result)) {
+                $json[] = $row;
+            }
+            if(count($json) > 0) {
+                echo json_encode($json);
+            } else {
+                echo 'No hay datos';
+            }
+            exit;
+        }
+
+        if ($_POST["quest"] == 'listado_pagos_historial') {
+            $id_lote = intval($_POST['id_lote']);
+            $id_empresa_fallback = intval($_POST['id_empresa']);
+            $empresas = isset($_POST['empresas']) && is_array($_POST['empresas']) ? $_POST['empresas'] : [];
+            $centros = isset($_POST['centros']) && is_array($_POST['centros']) ? $_POST['centros'] : [];
+            $departamentos = isset($_POST['departamentos']) && is_array($_POST['departamentos']) ? $_POST['departamentos'] : [];
+
+            $sql = "SELECT pl.id correlativo, pl.id_empleado id_empleado, pl.id_lote id_lote, CONCAT_WS( ' ', e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada ) empleado, emp.nombre_comercial, cc.nombre centro_costo, d.nombre departamento, pl.puesto puesto, CASE WHEN l.quincena = 0 THEN pl.dias_laborados ELSE( pl.dias_laborados + COALESCE(pla.dias_laborados, 0) ) END dias_laborados, CASE WHEN l.quincena = 0 THEN pl.sueldo_quincenal ELSE( pl.sueldo_quincenal + COALESCE(pla.sueldo_quincenal, 0) ) END salario_ordinario, CASE WHEN l.quincena = 0 THEN pl.bon_tot ELSE( pl.bon_tot + COALESCE(pla.bon_tot, 0) ) END bon_incentivo, CASE WHEN l.quincena = 0 THEN pl.bon_dec_tot ELSE( pl.bon_dec_tot + COALESCE(pla.bon_dec_tot, 0) ) END bon_decreto, CASE WHEN l.quincena = 0 THEN pl.bonos ELSE( pl.bonos + COALESCE(pla.bonos, 0) ) END bonos, CASE WHEN l.quincena = 0 THEN( pl.sueldo_quincenal + pl.bon_tot + pl.bon_dec_tot + pl.bonos ) ELSE( ( pl.sueldo_quincenal + COALESCE(pla.sueldo_quincenal, 0) ) +( pl.bon_tot + COALESCE(pla.bon_tot, 0) ) +( pl.bon_dec_tot + COALESCE(pla.bon_dec_tot, 0) ) +( pl.bonos + COALESCE(pla.bonos, 0) ) ) END total_devengado, CASE WHEN l.quincena = 0 THEN pl.cantidad_horas_dia ELSE pl.cantidad_horas_dia + COALESCE(pla.cantidad_horas_dia, 0) END horas_simples, CASE WHEN l.quincena = 0 THEN pl.horas_dia ELSE pl.horas_dia + COALESCE(pla.horas_dia, 0) END valor_horas_simples, CASE WHEN l.quincena = 0 THEN pl.cantidad_horas_noche ELSE pl.cantidad_horas_noche + COALESCE(pla.cantidad_horas_noche, 0) END horas_dobles, CASE WHEN l.quincena = 0 THEN pl.horas_noche ELSE pl.horas_noche + COALESCE(pla.horas_noche, 0) END valor_horas_dobles, CASE WHEN l.quincena = 0 THEN pl.otros_ingresos ELSE pl.otros_ingresos + COALESCE(pla.otros_ingresos, 0) END otros_ingresos, CASE WHEN l.quincena = 0 THEN pl.ingresos_tot ELSE pl.ingresos_tot + COALESCE(pla.ingresos_tot, 0) END salario_total, CASE WHEN l.quincena = 0 THEN pl.vacaciones ELSE pl.vacaciones + COALESCE(pla.vacaciones, 0) END vacaciones, tp.nombre tipo_pago, tc.nombre tipo_cuenta, pl.no_cuenta no_cuenta, bnc.nombre banco, cl.nombre condicion_laboral, CASE WHEN l.quincena = 0 THEN pl.igss ELSE pl.igss + COALESCE(pla.igss, 0) END igss, CASE WHEN l.quincena = 0 THEN pl.isr ELSE pl.isr + COALESCE(pla.isr, 0) END isr, CASE WHEN l.quincena = 0 THEN COALESCE(cafeteria.cuota, 0) ELSE COALESCE(cafeteria.cuota, 0) + COALESCE(cafeteria_anterior.cuota, 0) END cafeteria, CASE WHEN l.quincena = 0 THEN COALESCE(celular.cuota, 0) ELSE COALESCE(celular.cuota, 0) + COALESCE(celular_anterior.cuota, 0) END celular, CASE WHEN l.quincena = 0 THEN COALESCE(uniforme.cuota, 0) ELSE COALESCE(uniforme.cuota, 0) + COALESCE(uniforme_anterior.cuota, 0) END uniforme, CASE WHEN l.quincena = 0 THEN COALESCE(calzado.cuota, 0) ELSE COALESCE(calzado.cuota, 0) + COALESCE(calzado_anterior.cuota, 0) END calzado, CASE WHEN l.quincena = 0 THEN COALESCE(equipo.cuota, 0) ELSE COALESCE(equipo.cuota, 0) + COALESCE(equipo_anterior.cuota, 0) END equipo, CASE WHEN l.quincena = 0 THEN COALESCE(producto.cuota, 0) ELSE COALESCE(producto.cuota, 0) + COALESCE(producto_anterior.cuota, 0) END producto, CASE WHEN l.quincena = 0 THEN COALESCE(bancos.cuota, 0) ELSE COALESCE(bancos.cuota, 0) + COALESCE(bancos_anterior.cuota, 0) END bancos, CASE WHEN l.quincena = 0 THEN COALESCE(otros.cuota, 0) ELSE COALESCE(otros.cuota, 0) + COALESCE(otros_anterior.cuota, 0) END otros, CASE WHEN l.quincena = 0 THEN pl.judiciales ELSE pl.judiciales + COALESCE(pla.judiciales, 0) END judiciales, CASE WHEN l.quincena = 0 THEN pl.seguro ELSE pl.seguro + COALESCE(pla.seguro, 0) END seguro, CASE WHEN l.quincena = 0 THEN pl.parqueo ELSE pl.parqueo + COALESCE(pla.parqueo, 0) END parqueo, CASE WHEN l.quincena = 0 THEN pl.boleta_ornato ELSE pl.boleta_ornato + COALESCE(pla.boleta_ornato, 0) END boleta_ornato, CASE WHEN l.quincena = 0 THEN pl.otros_egresos ELSE pl.otros_egresos + COALESCE(pla.otros_egresos, 0) END otros_egresos, CASE WHEN l.quincena = 0 THEN pl.egresos_tot ELSE pl.egresos_tot + COALESCE(pla.egresos_tot, 0) END total_egresos, CASE WHEN l.quincena = 0 THEN pl.liquido ELSE pl.liquido + COALESCE(pla.liquido, 0) END liquido_recibir, CASE WHEN l.quincena = 0 THEN pl.liquido ELSE COALESCE(pla.liquido, 0) END liquido_primer_quincena, CASE WHEN l.quincena = 0 THEN 0 ELSE pl.liquido END liquido_segunda_quincena FROM pago_lote pl LEFT JOIN( SELECT * FROM pago_lote ) pla ON MONTH(pla.fecha_pago_lote) = MONTH(pl.fecha_pago_lote) AND YEAR(pla.fecha_pago_lote) = YEAR(pl.fecha_pago_lote) AND pla.id_empleado = pl.id_empleado AND pla.id_lote != pl.id_lote LEFT JOIN lote l ON l.id = pl.id_lote LEFT JOIN empleado e ON e.id = pl.id_empleado LEFT JOIN empresa emp ON emp.id = pl.id_empresa LEFT JOIN centro_costo cc ON cc.id = pl.id_centro LEFT JOIN departamento d ON d.id = pl.id_departamento LEFT JOIN tipo_pago tp ON tp.id = pl.cheque LEFT JOIN tipo_cuenta tc ON tc.id = pl.id_tipo_cuenta LEFT JOIN banco bnc ON bnc.id = pl.id_banco LEFT JOIN condicion_laboral cl ON cl.id = pl.condicion_laboral LEFT JOIN( SELECT dl.id_pago_lote id_lote, dv.id_empleado id_empleado, SUM(dv.monto_total / dv.cuotas) cuota FROM descuento_variable dv INNER JOIN descuento_lote dl ON dl.id_descuento = dv.id WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria ON cafeteria.id_lote = pl.id_lote AND cafeteria.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Cafeteria' GROUP BY dl.id_pago_lote, dv.id_empleado ) cafeteria_anterior ON cafeteria_anterior.id_lote = pla.id_lote AND cafeteria_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular ON celular.id_lote = pl.id_lote AND celular.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Celular' GROUP BY dl.id_pago_lote, dv.id_empleado ) celular_anterior ON celular_anterior.id_lote = pla.id_lote AND celular_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme ON uniforme.id_lote = pl.id_lote AND uniforme.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Uniforme' GROUP BY dl.id_pago_lote, dv.id_empleado ) uniforme_anterior ON uniforme_anterior.id_lote = pla.id_lote AND uniforme_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado ON calzado.id_lote = pl.id_lote AND calzado.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Calzado' GROUP BY dl.id_pago_lote, dv.id_empleado ) calzado_anterior ON calzado_anterior.id_lote = pla.id_lote AND calzado_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo ON equipo.id_lote = pl.id_lote AND equipo.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Equipo' GROUP BY dl.id_pago_lote, dv.id_empleado ) equipo_anterior ON equipo_anterior.id_lote = pla.id_lote AND equipo_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto ON producto.id_lote = pl.id_lote AND producto.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Producto' GROUP BY dl.id_pago_lote, dv.id_empleado ) producto_anterior ON producto_anterior.id_lote = pla.id_lote AND producto_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos ON bancos.id_lote = pl.id_lote AND bancos.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso = 'Bancos' GROUP BY dl.id_pago_lote, dv.id_empleado ) bancos_anterior ON bancos_anterior.id_lote = pla.id_lote AND bancos_anterior.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros ON otros.id_lote = pl.id_lote AND otros.id_empleado = pl.id_empleado LEFT JOIN( SELECT SUM(dv.monto_total / dv.cuotas) cuota, dl.id_pago_lote id_lote, dv.id_empleado id_empleado FROM descuento_lote dl INNER JOIN descuento_variable dv ON dv.id = dl.id_descuento WHERE dv.tipo_egreso NOT IN( 'Cafeteria', 'Celular', 'Uniforme', 'Calzado', 'Equipo', 'Producto', 'Bancos' ) GROUP BY dl.id_pago_lote, dv.id_empleado ) otros_anterior ON otros_anterior.id_lote = pla.id_lote AND otros_anterior.id_empleado = pl.id_empleado WHERE pl.id_lote = " . $id_lote;
+
+            if (!empty($empresas)) {
+                $emp_str = implode(',', array_map('intval', $empresas));
+                $sql .= " AND emp.id IN ($emp_str) ";
+            } else {
+                $sql .= " AND emp.id = " . $id_empresa_fallback;
+            }
+
+            if (!empty($centros)) {
+                $centros_str = implode(',', array_map('intval', $centros));
+                $sql .= " AND pl.id_centro IN ($centros_str) ";
+            }
+
+            if (!empty($departamentos)) {
+                $dept_str = implode(',', array_map('intval', $departamentos));
+                $sql .= " AND pl.id_departamento IN ($dept_str) ";
+            }
+
+            $result = mysqli_query($con, $sql);
+            if (!$result) {
+                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                exit;
+            }
+            $json = array();
+            while ($row = mysqli_fetch_assoc($result)) {
+                $json[] = $row;
+            }
+            if(count($json) > 0) {
+                echo json_encode($json);
+            } else {
+                echo 'No hay datos';
+            }
+            exit;
+        }
+
         if ($_POST["quest"] == 'agregar_empresa') {
             $apartado_postal = $con->real_escape_string($_POST["apartado_postal"]);
             $apto = $con->real_escape_string($_POST["apto"]);
@@ -7268,21 +7066,21 @@ if (isset($_POST)) {
             } else {
                 $ultimo_id_empleado = mysqli_insert_id($con);
                 $_SESSION["ultimo_id_empleado"] = $ultimo_id_empleado;
-                
+
                 // Procesar empresas intercompany si vienen en el POST
                 if (isset($_POST['empresas_json']) && !empty($_POST['empresas_json'])) {
                     $empresas = json_decode($_POST['empresas_json'], true);
                     error_log("DEBUG: Procesando empresas intercompany: " . $_POST['empresas_json']);
-                    
+
                     if (is_array($empresas)) {
                         foreach ($empresas as $empresa) {
                             $porcentaje = isset($empresa['porcentaje']) ? floatval($empresa['porcentaje']) : 0;
                             $principal = (isset($empresa['principal']) && ($empresa['principal'] === true || $empresa['principal'] === 'true' || $empresa['principal'] === 1)) ? 1 : 0;
                             $id_empresa = intval($empresa['id']);
-                            
+
                             $sql_emp = "INSERT INTO empresa_empleado(porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES ($porcentaje, $principal, $ultimo_id_empleado, $id_empresa, 1, now())";
                             $result_emp = mysqli_query($con, $sql_emp);
-                            
+
                             if ($result_emp) {
                                 error_log("DEBUG: Empresa insertada - ID: $id_empresa, Porcentaje: $porcentaje, Principal: $principal");
                             } else {
@@ -7291,7 +7089,7 @@ if (isset($_POST)) {
                         }
                     }
                 }
-                
+
                 echo 'Successfully';
                 exit;
             }
@@ -7597,7 +7395,7 @@ if (isset($_POST)) {
 
         if ($_POST["quest"] == 'eliminar_tipo_bono') {
             $id = intval($_POST['id']);
-            
+
             $sql = "DELETE FROM tipo_bono WHERE id = $id";
             $result = mysqli_query($con, $sql);
 
@@ -7903,37 +7701,37 @@ if (isset($_POST)) {
         if ($_POST["quest"] == 'ingresar_empresa_principal_db') {
             $id_empleado = $_SESSION["ultimo_id_empleado"];
             $id_centro = $_POST['id_centro'];
-            
+
             error_log("DEBUG: ingresar_empresa_principal_db - ID Empleado: $id_empleado, ID Centro: $id_centro");
-            
+
             // Obtener la empresa principal del centro de costo
             $sql_empresa = "SELECT ec.id_empresa FROM empresa_centro ec WHERE ec.id_centro = $id_centro LIMIT 1";
             $result_empresa = mysqli_query($con, $sql_empresa);
-            
+
             if (!$result_empresa) {
                 error_log("DEBUG: Error en consulta empresa_centro: " . mysqli_error($con));
                 echo json_encode(['error' => 'Error en consulta empresa_centro: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             if (mysqli_num_rows($result_empresa) == 0) {
                 error_log("DEBUG: No se encontr? empresa para centro de costo: $id_centro");
                 echo json_encode(['error' => 'No se encontr? empresa para el centro de costo: ' . $id_centro]);
                 exit;
             }
-            
+
             $row_empresa = mysqli_fetch_array($result_empresa);
             $id_empresa = $row_empresa['id_empresa'];
-            
+
             error_log("DEBUG: Empresa encontrada - ID Empresa: $id_empresa");
-            
+
             // Insertar la relaci?n empresa-empleado como principal
             $sql = "INSERT INTO empresa_empleado(porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES (100, 1, $id_empleado, $id_empresa, 1, now())";
-            
+
             error_log("DEBUG: Ejecutando INSERT empresa_empleado: $sql");
-            
+
             $result = mysqli_query($con, $sql);
-            
+
             if (!$result) {
                 error_log("DEBUG: Error en INSERT empresa_empleado: " . mysqli_error($con));
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
@@ -7947,10 +7745,10 @@ if (isset($_POST)) {
         if ($_POST["quest"] == 'ingresar_empresa_empleado_db') {
             $id_empleado = $_SESSION["ultimo_id_empleado"];
             $principal = ($_POST['principal'] === 'true' || $_POST['principal'] === true || $_POST['principal'] === 1) ? 1 : 0;
-            
+
             // Debug logging
             error_log("DEBUG: Insertando empresa_empleado - ID Empleado: $id_empleado, ID Empresa: " . $_POST['id_empresa'] . ", Principal: $principal, Porcentaje: " . $_POST['porcentaje']);
-            
+
             $sql = "INSERT INTO empresa_empleado(porcentaje, principal, id_empleado, id_empresa, activo, fecha) VALUES (" . $_POST['porcentaje'] . "," . $principal . "," . $id_empleado . "," . $_POST['id_empresa'] . ", 1, now())";
 
             $result = mysqli_query($con, $sql);
@@ -8190,15 +7988,15 @@ if (isset($_POST)) {
 
         if ($_POST["quest"] == 'confirmar_comision') {
             $comision_id = intval($_POST['id']);
-            
+
             // Primero obtener los datos de la comisi?n (empleado, monto, horas, tipo_registro, tipo_jornada y estado actual de seleccionado)
             $sql_datos = "SELECT id_empleado, monto, horas, seleccionado, tipo_registro, tipo_jornada FROM comision WHERE id = $comision_id";
             $result_datos = mysqli_query($con, $sql_datos);
-            
+
             if (!$result_datos) {
                 die('Query Fall? al obtener datos de comisi?n');
             }
-            
+
             $comision_data = mysqli_fetch_assoc($result_datos);
             $id_empleado = $comision_data['id_empleado'];
             $monto = floatval($comision_data['monto']);
@@ -8206,14 +8004,14 @@ if (isset($_POST)) {
             $ya_seleccionado = $comision_data['seleccionado'];
             $tipo_registro = $comision_data['tipo_registro'];
             $tipo_jornada = intval($comision_data['tipo_jornada']); // 1=Diurna, 2=Nocturna
-            
+
             // Solo proceder si no estaba ya seleccionado (evitar duplicaci?n)
             if ($ya_seleccionado == 1) {
                 // Ya estaba confirmado, no hacer nada
                 echo 'Successfully';
                 exit;
             }
-            
+
             // Obtener el lote activo actual
             $sql_lote_activo = "SELECT id FROM lote WHERE id_estado = 1 LIMIT 1";
             $result_lote = mysqli_query($con, $sql_lote_activo);
@@ -8222,7 +8020,7 @@ if (isset($_POST)) {
                 $lote_row = mysqli_fetch_assoc($result_lote);
                 $id_lote_activo = $lote_row['id'];
             }
-            
+
             // Marcar la comisi?n como seleccionada y asociar al lote activo
             $sql = "UPDATE comision SET seleccionado = 1, id_lote_pago = " . ($id_lote_activo ? $id_lote_activo : "NULL") . " WHERE id = $comision_id";
             $result = mysqli_query($con, $sql);
@@ -8230,17 +8028,17 @@ if (isset($_POST)) {
             if (!$result) {
                 die('Query Fall?');
             }
-            
+
             // Buscar registro en pago_lote para el lote activo
             $sql_check = "SELECT pl.id, pl.bonos, pl.horas_dia, pl.horas_noche, pl.cantidad_horas_dia, pl.cantidad_horas_noche, pl.ingresos_tot, pl.liquido FROM pago_lote pl 
                           INNER JOIN lote l ON l.id = pl.id_lote AND l.id_estado = 1 
                           WHERE pl.id_empleado = $id_empleado LIMIT 1";
             $result_check = mysqli_query($con, $sql_check);
-            
+
             if ($result_check && mysqli_num_rows($result_check) > 0) {
                 // Existe registro en lote activo - actualizar seg?n tipo de registro
                 $pago_lote = mysqli_fetch_assoc($result_check);
-                
+
                 if ($tipo_registro == 'hora_extra') {
                     // Es hora extra - actualizar horas_dia o horas_noche seg?n tipo_jornada
                     if ($tipo_jornada == 1) {
@@ -8249,7 +8047,7 @@ if (isset($_POST)) {
                         $cantidad_horas_dia_actuales = floatval($pago_lote['cantidad_horas_dia']);
                         $nuevas_horas_dia = $horas_dia_actuales + $monto;
                         $nueva_cantidad_horas_dia = $cantidad_horas_dia_actuales + $horas;
-                        
+
                         $sql_update = "UPDATE pago_lote SET horas_dia = $nuevas_horas_dia, cantidad_horas_dia = $nueva_cantidad_horas_dia, ingresos_tot = ingresos_tot + $monto, liquido = liquido + $monto WHERE id = " . $pago_lote['id'];
                     } else {
                         // Jornada Nocturna (tipo_jornada = 2)
@@ -8257,14 +8055,14 @@ if (isset($_POST)) {
                         $cantidad_horas_noche_actuales = floatval($pago_lote['cantidad_horas_noche']);
                         $nuevas_horas_noche = $horas_noche_actuales + $monto;
                         $nueva_cantidad_horas_noche = $cantidad_horas_noche_actuales + $horas;
-                        
+
                         $sql_update = "UPDATE pago_lote SET horas_noche = $nuevas_horas_noche, cantidad_horas_noche = $nueva_cantidad_horas_noche, ingresos_tot = ingresos_tot + $monto, liquido = liquido + $monto WHERE id = " . $pago_lote['id'];
                     }
                 } else {
                     // Es bono - actualizar bonos como antes
                     $bonos_actuales = floatval($pago_lote['bonos']);
                     $nuevos_bonos = $bonos_actuales + $monto;
-                    
+
                     $sql_update = "UPDATE pago_lote SET bonos = $nuevos_bonos, bon_tot = bon_tot + $monto, ingresos_tot = ingresos_tot + $monto, liquido = liquido + $monto WHERE id = " . $pago_lote['id'];
                 }
                 mysqli_query($con, $sql_update);
@@ -8281,7 +8079,7 @@ if (isset($_POST)) {
                                      LEFT JOIN departamento_centro dc ON dc.id_centro = e.centro_de_costo
                                      WHERE e.id = $id_empleado";
                     $result_empleado = mysqli_query($con, $sql_empleado);
-                    
+
                     if ($result_empleado && mysqli_num_rows($result_empleado) > 0) {
                         $emp_data = mysqli_fetch_assoc($result_empleado);
                         $dias_laborados = floatval($emp_data['dias_laborados']);
@@ -8297,19 +8095,19 @@ if (isset($_POST)) {
                         $id_departamento = $emp_data['id_departamento'] ? $emp_data['id_departamento'] : 0;
                         $igss_patronal = $emp_data['igss_patronal'] ? $emp_data['igss_patronal'] : 0;
                         $no_cuenta = $emp_data['no_cuenta'] ? "'" . $emp_data['no_cuenta'] . "'" : "''";
-                        
+
                         // Calcular valores base
                         $sueldo_quincenal = round(($sueldo / 30) * $dias_laborados, 2);
                         $bon_tot = round(($bon_incentivo / 30) * $dias_laborados, 2);
                         $bon_dec_tot = round(($bon_decreto / 30) * $dias_laborados, 2);
-                        
+
                         // Inicializar valores de horas y bonos
                         $horas_dia_val = 0;
                         $horas_noche_val = 0;
                         $cantidad_horas_dia_val = 0;
                         $cantidad_horas_noche_val = 0;
                         $bonos_val = 0;
-                        
+
                         if ($tipo_registro == 'hora_extra') {
                             if ($tipo_jornada == 1) {
                                 $horas_dia_val = $monto;
@@ -8321,10 +8119,10 @@ if (isset($_POST)) {
                         } else {
                             $bonos_val = $monto;
                         }
-                        
+
                         $ingresos_tot = $sueldo_quincenal + $bon_tot + $bon_dec_tot + $bonos_val + $horas_dia_val + $horas_noche_val;
                         $liquido = $ingresos_tot; // Sin descuentos inicialmente
-                        
+
                         $sql_insert = "INSERT INTO pago_lote (id_empleado, id_lote, id_empresa, id_centro, id_departamento, puesto,
                                        dias_laborados, dias_bono, sueldo_quincenal, bon_tot, bon_dec_tot, 
                                        bonos, horas_dia, horas_noche, cantidad_horas_dia, cantidad_horas_noche, 
@@ -8343,22 +8141,22 @@ if (isset($_POST)) {
                     }
                 }
             }
-            
+
             echo 'Successfully';
         }
 
         // Endpoint para desconfirmar una comisi?n (quitar seleccionado y restar del pago_lote)
         if ($_POST["quest"] == 'desconfirmar_comision') {
             $comision_id = intval($_POST['id']);
-            
+
             // Primero obtener los datos de la comisi?n (empleado, monto, horas, tipo_registro, tipo_jornada)
             $sql_datos = "SELECT id_empleado, monto, horas, seleccionado, tipo_registro, tipo_jornada FROM comision WHERE id = $comision_id";
             $result_datos = mysqli_query($con, $sql_datos);
-            
+
             if (!$result_datos) {
                 die('Query Fall? al obtener datos de comisi?n');
             }
-            
+
             $comision_data = mysqli_fetch_assoc($result_datos);
             $id_empleado = $comision_data['id_empleado'];
             $monto = floatval($comision_data['monto']);
@@ -8366,7 +8164,7 @@ if (isset($_POST)) {
             $ya_seleccionado = $comision_data['seleccionado'];
             $tipo_registro = $comision_data['tipo_registro'];
             $tipo_jornada = intval($comision_data['tipo_jornada']); // 1=Diurna, 2=Nocturna
-            
+
             // Marcar la comisi?n como NO seleccionada
             $sql = "UPDATE comision SET seleccionado = 0 WHERE id = $comision_id";
             $result = mysqli_query($con, $sql);
@@ -8374,15 +8172,15 @@ if (isset($_POST)) {
             if (!$result) {
                 die('Query Fall?');
             }
-            
+
             // Si estaba seleccionada, restar el monto del campo correspondiente en pago_lote
             if ($ya_seleccionado == 1) {
                 $sql_check = "SELECT id, bonos, horas_dia, horas_noche, cantidad_horas_dia, cantidad_horas_noche, ingresos_tot, liquido FROM pago_lote WHERE id_empleado = $id_empleado ORDER BY id DESC LIMIT 1";
                 $result_check = mysqli_query($con, $sql_check);
-                
+
                 if ($result_check && mysqli_num_rows($result_check) > 0) {
                     $pago_lote = mysqli_fetch_assoc($result_check);
-                    
+
                     if ($tipo_registro == 'hora_extra') {
                         // Es hora extra - restar de horas_dia o horas_noche seg?n tipo_jornada
                         if ($tipo_jornada == 1) {
@@ -8391,7 +8189,7 @@ if (isset($_POST)) {
                             $cantidad_horas_dia_actuales = floatval($pago_lote['cantidad_horas_dia']);
                             $nuevas_horas_dia = max(0, $horas_dia_actuales - $monto);
                             $nueva_cantidad_horas_dia = max(0, $cantidad_horas_dia_actuales - $horas);
-                            
+
                             $sql_update = "UPDATE pago_lote SET horas_dia = $nuevas_horas_dia, cantidad_horas_dia = $nueva_cantidad_horas_dia, ingresos_tot = GREATEST(0, ingresos_tot - $monto), liquido = GREATEST(0, liquido - $monto) WHERE id = " . $pago_lote['id'];
                         } else {
                             // Jornada Nocturna (tipo_jornada = 2)
@@ -8399,20 +8197,20 @@ if (isset($_POST)) {
                             $cantidad_horas_noche_actuales = floatval($pago_lote['cantidad_horas_noche']);
                             $nuevas_horas_noche = max(0, $horas_noche_actuales - $monto);
                             $nueva_cantidad_horas_noche = max(0, $cantidad_horas_noche_actuales - $horas);
-                            
+
                             $sql_update = "UPDATE pago_lote SET horas_noche = $nuevas_horas_noche, cantidad_horas_noche = $nueva_cantidad_horas_noche, ingresos_tot = GREATEST(0, ingresos_tot - $monto), liquido = GREATEST(0, liquido - $monto) WHERE id = " . $pago_lote['id'];
                         }
                     } else {
                         // Es bono - restar de bonos como antes
                         $bonos_actuales = floatval($pago_lote['bonos']);
                         $nuevos_bonos = max(0, $bonos_actuales - $monto);
-                        
+
                         $sql_update = "UPDATE pago_lote SET bonos = $nuevos_bonos, bon_tot = GREATEST(0, bon_tot - $monto), ingresos_tot = GREATEST(0, ingresos_tot - $monto), liquido = GREATEST(0, liquido - $monto) WHERE id = " . $pago_lote['id'];
                     }
                     mysqli_query($con, $sql_update);
                 }
             }
-            
+
             echo 'Successfully';
         }
 
@@ -8459,21 +8257,21 @@ if (isset($_POST)) {
             $comision_id = $_POST['id'];
             $aprobador_id = $_POST['aprobador_id'] ?? 1; // ID del usuario que aprueba
             $rol_aprobador = $_POST['rol_aprobador'] ?? 'rh'; // Rol del aprobador
-            
+
             // Obtener datos de la comisi?n
             $sql_comision = "SELECT id_empleado, monto, id_estado FROM comision WHERE id = " . $comision_id;
             $result_comision = mysqli_query($con, $sql_comision);
-            
+
             if (!$result_comision) {
                 echo json_encode(['error' => 'Query Fall? al obtener comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $comision_data = mysqli_fetch_array($result_comision);
             $id_empleado = $comision_data['id_empleado'];
             $monto_comision = $comision_data['monto'];
             $estado_actual = $comision_data['id_estado'];
-            
+
             // Determinar el nuevo estado seg?n el rol del aprobador
             $nuevo_estado = 0;
             if ($rol_aprobador == 'jefe' || $rol_aprobador == 'gerente') {
@@ -8481,7 +8279,7 @@ if (isset($_POST)) {
             } else if ($rol_aprobador == 'rh' || $rol_aprobador == 'admin') {
                 $nuevo_estado = 2; // Autorizado (estado final, se agrega a n?mina)
             }
-            
+
             // Actualizar el estado de la comisi?n
             $sql_update_comision = "UPDATE comision SET id_estado = " . $nuevo_estado . " WHERE id = " . $comision_id;
             $result_update_comision = mysqli_query($con, $sql_update_comision);
@@ -8490,26 +8288,26 @@ if (isset($_POST)) {
                 echo json_encode(['error' => 'Query Fall? al actualizar comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             // Admin y RH pueden actualizar la bonificaci?n en pago_lote
             if ($rol_aprobador == 'rh' || $rol_aprobador == 'admin') {
                 // Buscar el registro m?s reciente de pago_lote para este empleado
                 $sql_check_pago = "SELECT id, bon_tot as bonos, id_lote FROM pago_lote WHERE id_empleado = " . $id_empleado . " ORDER BY id DESC LIMIT 1";
                 $result_check_pago = mysqli_query($con, $sql_check_pago);
-                
+
                 if (!$result_check_pago) {
                     echo json_encode(['error' => 'Query Fall? al verificar pago: ' . mysqli_error($con)]);
                     exit;
                 }
-                
+
                 if (mysqli_num_rows($result_check_pago) > 0) {
                     // Si existe registro, actualizar la bonificaci?n
                     $pago_data = mysqli_fetch_array($result_check_pago);
                     $nueva_bonificacion = $pago_data['bonos'] + $monto_comision;
-                    
+
                     $sql_update_bonificacion = "UPDATE pago_lote SET bon_tot = " . $nueva_bonificacion . " WHERE id = " . $pago_data['id'];
                     $result_update_bonificacion = mysqli_query($con, $sql_update_bonificacion);
-                    
+
                     if (!$result_update_bonificacion) {
                         echo json_encode(['error' => 'Query Fall? al actualizar bonificaci?n: ' . mysqli_error($con)]);
                         exit;
@@ -8518,14 +8316,14 @@ if (isset($_POST)) {
                     // Si no existe registro, crear uno nuevo con la bonificaci?n
                     $sql_insert_pago = "INSERT INTO pago_lote (id_empleado, bon_tot, id_lote, fecha_pago_lote, sueldo_quincenal, otros_ingresos, vacaciones, desc_variables, boleta_ornato, igss, isr, prestamo_empresa, otros_egresos, dias_laborados, dias_bono) VALUES (" . $id_empleado . ", " . $monto_comision . ", 1, CURDATE(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 0)";
                     $result_insert_pago = mysqli_query($con, $sql_insert_pago);
-                    
+
                     if (!$result_insert_pago) {
                         echo json_encode(['error' => 'Query Fall? al crear registro de pago: ' . mysqli_error($con)]);
                         exit;
                     }
                 }
             }
-            
+
             echo json_encode(['success' => 'Comisi?n aprobada por ' . $rol_aprobador]);
         }
 
@@ -8534,20 +8332,20 @@ if (isset($_POST)) {
 
         if ($_POST["quest"] == 'desaprobar_comision') {
             $comision_id = $_POST['id'];
-            
+
             // Primero obtener los datos de la comisi?n
             $sql_comision = "SELECT id_empleado, monto FROM comision WHERE id = " . $comision_id;
             $result_comision = mysqli_query($con, $sql_comision);
-            
+
             if (!$result_comision) {
                 echo json_encode(['error' => 'Query Fall? al obtener comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $comision_data = mysqli_fetch_array($result_comision);
             $id_empleado = $comision_data['id_empleado'];
             $monto_comision = $comision_data['monto'];
-            
+
             // Actualizar el estado de la comisi?n
             $sql_update_comision = "UPDATE comision SET id_estado = 1 WHERE id = " . $comision_id;
             $result_update_comision = mysqli_query($con, $sql_update_comision);
@@ -8556,31 +8354,31 @@ if (isset($_POST)) {
                 echo json_encode(['error' => 'Query Fall? al actualizar comisi?n: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             // Buscar el registro m?s reciente de pago_lote para este empleado
             $sql_check_pago = "SELECT id, bon_tot as bonos FROM pago_lote WHERE id_empleado = " . $id_empleado . " ORDER BY id DESC LIMIT 1";
             $result_check_pago = mysqli_query($con, $sql_check_pago);
-            
+
             if (!$result_check_pago) {
                 echo json_encode(['error' => 'Query Fall? al verificar pago: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             if (mysqli_num_rows($result_check_pago) > 0) {
                 // Si existe registro, restar la bonificaci?n
                 $pago_data = mysqli_fetch_array($result_check_pago);
                 $nueva_bonificacion = max(0, $pago_data['bonos'] - $monto_comision); // No permitir valores negativos
-                
+
                 $sql_update_bonificacion = "UPDATE pago_lote SET bon_tot = " . $nueva_bonificacion . " WHERE id = " . $pago_data['id'];
                 $result_update_bonificacion = mysqli_query($con, $sql_update_bonificacion);
-                
+
                 if (!$result_update_bonificacion) {
                     echo json_encode(['error' => 'Query Fall? al actualizar bonificaci?n: ' . mysqli_error($con)]);
                     exit;
                 }
             }
             // Si no existe registro, no hacer nada (no hay bonificaci?n que restar)
-            
+
             echo 'Successfully';
         }
 
@@ -8765,7 +8563,7 @@ if (isset($_POST)) {
 
         if ($_POST["quest"] == 'actualizar_igss_empleado') {
             $id_empleado = intval($_POST['id']);
-            
+
             // Actualizar IGSS incluyendo horas extra de ambas tablas (horas_extra y comision)
             $sql = "UPDATE empleado SET igss_laboral = (
                 SELECT ( 
@@ -8985,7 +8783,7 @@ if (isset($_POST)) {
             if (mysqli_num_rows($check_column) == 0) {
                 mysqli_query($con, "ALTER TABLE comision ADD COLUMN id_lote_pago INT DEFAULT NULL");
             }
-            
+
             // Guardar el id_lote en las comisiones que ser?n pagadas
             $id_lote = intval($_POST['id_lote']);
             $sql = "UPDATE comision SET id_lote_pago = $id_lote WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'bono'";
@@ -9016,7 +8814,7 @@ if (isset($_POST)) {
 
         if ($_POST["quest"] == 'ingresar_horas_extra_lote') {
             $id_lote = intval($_POST['id_lote']);
-            
+
             // Insertar horas extra de tabla horas_extra
             $sql = "INSERT INTO horas_extra_lote(id_hora_extra, id_pago_lote) SELECT h.id, $id_lote from horas_extra h WHERE h.estado = 2 and h.seleccionado = 1";
             $result = mysqli_query($con, $sql);
@@ -9025,17 +8823,17 @@ if (isset($_POST)) {
                 echo $sql;
                 die('Query Fall?');
             }
-            
+
             // Verificar si la columna id_lote_pago existe en comision, si no, crearla
             $check_column = mysqli_query($con, "SHOW COLUMNS FROM comision LIKE 'id_lote_pago'");
             if (mysqli_num_rows($check_column) == 0) {
                 mysqli_query($con, "ALTER TABLE comision ADD COLUMN id_lote_pago INT DEFAULT NULL");
             }
-            
+
             // Actualizar horas extra de tabla comision con el id_lote_pago
             $sql_comision = "UPDATE comision SET id_lote_pago = $id_lote WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra'";
             mysqli_query($con, $sql_comision);
-            
+
             echo 'Successfully';
         }
 
@@ -9048,11 +8846,11 @@ if (isset($_POST)) {
                 echo $sql;
                 die('Query Fall?');
             }
-            
+
             // Pagar horas extra de tabla comision (estado 4 = Pagado)
             $sql_comision = "UPDATE comision SET id_estado = 4, seleccionado = 0 WHERE id_estado = 2 AND seleccionado = 1 AND tipo_registro = 'hora_extra'";
             mysqli_query($con, $sql_comision);
-            
+
             echo 'Successfully';
         }
 
@@ -9204,12 +9002,12 @@ if (isset($_POST)) {
             $solicitante_id = $_POST['id_solicitante'];
             $sql_rol = "SELECT rol FROM usuario WHERE id = " . $solicitante_id;
             $result_rol = mysqli_query($con, $sql_rol);
-            
+
             $estado_inicial = 1; // Por defecto: Solicitado
             if ($result_rol && mysqli_num_rows($result_rol) > 0) {
                 $rol_data = mysqli_fetch_array($result_rol);
                 $rol_solicitante = $rol_data['rol'];
-                
+
                 // Determinar estado inicial seg?n el rol
                 if ($rol_solicitante == 'empleado') {
                     $estado_inicial = 5; // Pendiente Jefe
@@ -9219,18 +9017,18 @@ if (isset($_POST)) {
                     $estado_inicial = 8; // Aprobado RH (auto-aprobado)
                 }
             }
-            
-            $sql = "INSERT INTO comision (empresa_trabajo, area_trabajo, puesto_trabajo, fecha_trabajado, fecha_generado, horas, tipo_jornada, monto, tarea, id_empleado, id_solicitante, id_estado, seleccionado) VALUES (" . 
-                   $_POST['empresa_trabajo'] . ", '" . 
-                   mysqli_real_escape_string($con, $_POST['area_trabajo']) . "', '" . 
-                   mysqli_real_escape_string($con, $_POST['puesto_trabajo']) . "', '" . 
-                   $_POST['fecha_trabajado'] . "', NOW(), " . 
-                   $_POST['horas'] . ", " . 
-                   $_POST['tipo_jornada'] . ", " . 
-                   $_POST['monto'] . ", '" . 
-                   mysqli_real_escape_string($con, $_POST['tarea']) . "', " . 
-                   $_POST['id_empleado'] . ", " . 
-                   $_POST['id_solicitante'] . ", " . $estado_inicial . ", 0)";
+
+            $sql = "INSERT INTO comision (empresa_trabajo, area_trabajo, puesto_trabajo, fecha_trabajado, fecha_generado, horas, tipo_jornada, monto, tarea, id_empleado, id_solicitante, id_estado, seleccionado) VALUES (" .
+                $_POST['empresa_trabajo'] . ", '" .
+                mysqli_real_escape_string($con, $_POST['area_trabajo']) . "', '" .
+                mysqli_real_escape_string($con, $_POST['puesto_trabajo']) . "', '" .
+                $_POST['fecha_trabajado'] . "', NOW(), " .
+                $_POST['horas'] . ", " .
+                $_POST['tipo_jornada'] . ", " .
+                $_POST['monto'] . ", '" .
+                mysqli_real_escape_string($con, $_POST['tarea']) . "', " .
+                $_POST['id_empleado'] . ", " .
+                $_POST['id_solicitante'] . ", " . $estado_inicial . ", 0)";
 
             $result = mysqli_query($con, $sql);
 
@@ -9246,22 +9044,22 @@ if (isset($_POST)) {
             error_log("DEBUG: Ejecutando lista_usuarios");
             $sql = "SELECT id, usuario, nombre, rol FROM usuario ORDER BY nombre";
             $result = mysqli_query($con, $sql);
-            
+
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $data = [];
             while ($row = mysqli_fetch_array($result)) {
                 $data[] = $row;
             }
-            
+
             if (empty($data)) {
                 echo json_encode(['error' => 'No se encontraron usuarios']);
                 exit;
             }
-            
+
             echo json_encode($data);
         }
 
@@ -9269,17 +9067,17 @@ if (isset($_POST)) {
         if ($_GET["quest"] == 'lista_departamentos') {
             $sql = "SELECT id, nombre FROM departamento ORDER BY nombre";
             $result = mysqli_query($con, $sql);
-            
+
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             $data = [];
             while ($row = mysqli_fetch_array($result)) {
                 $data[] = $row;
             }
-            
+
             echo json_encode($data);
         }
 
@@ -9287,20 +9085,20 @@ if (isset($_POST)) {
         if ($_POST["quest"] == 'actualizar_rol_usuario') {
             $user_id = $_POST['user_id'] ?? null;
             $nuevo_rol = $_POST['nuevo_rol'] ?? null;
-            
+
             if (!$user_id || !$nuevo_rol) {
                 echo json_encode(['error' => 'Par?metros requeridos']);
                 exit;
             }
-            
+
             $sql = "UPDATE usuario SET rol = '" . mysqli_real_escape_string($con, $nuevo_rol) . "' WHERE id = " . intval($user_id);
             $result = mysqli_query($con, $sql);
-            
+
             if (!$result) {
                 echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
                 exit;
             }
-            
+
             echo 'Successfully';
         }
     }

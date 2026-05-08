@@ -179,7 +179,7 @@
                             </div>
                         </div>
                         <div class="row layout-top-spacing g-4 mt-2">
-                            <div class="col-12 col-md-4 administrar-nomina card-descuentos" style="cursor: pointer" onclick="mostrar_modal(0)">
+                            <div class="col-12 col-md-4 administrar-nomina card-descuentos" style="cursor: pointer" onclick="descuentos()">
                                 <div class="info-box-3">
                                     <div class="info-box-3-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
@@ -196,7 +196,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4 administrar-nomina card-pagos" style="cursor: pointer" onclick="mostrar_modal(1)">
+                            <div class="col-12 col-md-4 administrar-nomina card-pagos" style="cursor: pointer" onclick="pagos()">
                                 <div class="info-box-3">
                                     <div class="info-box-3-icon">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
@@ -279,35 +279,6 @@
             <!--  END FOOTER  -->
         </div>
         <!--  END CONTENT AREA  -->
-
-        <div class="modal fade" id="modal_empresa" tabindex="-1" role="dialog" aria-labelledby="modal_empresa"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal_empresaLabel">
-                            Empresa Nómina
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="info-box-3-content" style="text-align: center;">Seleccione la empresa en la cual
-                            desee trabajar:</div>
-                        <br>
-                        <div style="text-align: center;">
-                            <select name="" id="slc_empresa" onchange="seleccionar_empresa()"></select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-success" id="btn_modal"
-                            onclick="descuentos_pago()">Continuar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </div>
 

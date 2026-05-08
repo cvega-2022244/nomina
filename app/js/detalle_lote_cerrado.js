@@ -3,68 +3,10 @@ var empleados_fuera_nomina = [];
 var empleados = [];
 var nomina_activa = sessionStorage.getItem('nomina_activa');
 var id_lote_activo;
-var tipo_modal;
 
 $(document).ready(function () {
-    inicializar_select();
+    nombre_lote_cerrado();
 })
-
-function inicializar_select() {
-    return new Promise((resolve) => {
-        cargando();
-        $.ajax({
-            url: 'php/servidor.php',
-            type: 'GET',
-            dataType: 'text',
-            data: {
-                quest: 'listado_empresas',
-            },
-            success: function (res) {
-                if (res.includes('Query Falló')) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error Al Obtener Empresas',
-                        text: 'Por favor, comunicate con sistemas'
-                    });
-                    console.log(res);
-                    resolve();
-                } else if (res.includes('No hay datos')) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'No Hay Empresas Registradas',
-                    });
-                    console.log(res);
-                    resolve();
-                } else {
-                    try {
-                        let lista = JSON.parse(res);
-                        var slc_empresa = document.getElementById('slc_empresa');
-                        if (slc_empresa) {
-                            var template = '';
-                            lista.forEach(empresa => {
-                                template += `<option value="${empresa.id}">${empresa.nombre_comercial}</option>`;
-                            });
-                            slc_empresa.innerHTML = template;
-                            selectBox = new vanillaSelectBox("#slc_empresa", {
-                                "keepInlineStyles": true,
-                                "maxHeight": 678,
-                                "minWidth": 200,
-                                "search": true,
-                                "placeHolder": "Empresa..."
-                            });
-                        }
-                    } catch (error) {
-                        console.log(error);
-                    } finally {
-                        resolve();
-                    }
-                }
-            }
-        })
-    }).then(() => {
-        nombre_lote_cerrado();
-    })
-}
 
 function nombre_lote_cerrado() {
     try {
@@ -106,23 +48,12 @@ function dias_laborados() {
     window.location.href = './dias_laborados_lote_cerrado.html';
 }
 
-function mostrar_modal(tipo) {
-    tipo_modal = tipo
-    $('#modal_empresa').modal('show')
+function descuentos() {
+    window.location.href = './descuentos_lote_cerrado.html';
 }
 
-function descuentos_pago() {
-    // Guardar la empresa seleccionada antes de navegar
-    var slc_empresa = document.getElementById('slc_empresa');
-    if (slc_empresa && slc_empresa.value) {
-        sessionStorage.setItem('id_empresa_nomina', slc_empresa.value);
-    }
-    
-    if (tipo_modal == 0) {
-        window.location.href = './descuentos_lote_cerrado.html';
-    } else {
-        window.location.href = './pagos_lote_cerrado.html';
-    }
+function pagos() {
+    window.location.href = './pagos_lote_cerrado.html';
 }
 
 function isr() {
@@ -131,10 +62,6 @@ function isr() {
 
 function facturacion() {
     window.location.href = './facturacion.html';
-}
-
-function seleccionar_empresa() {
-    sessionStorage.setItem('id_empresa_nomina', slc_empresa.value);
 }
 
 function cargando() {
