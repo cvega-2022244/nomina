@@ -189,13 +189,30 @@ function datos_comision() {
                         document.getElementById("empresa_labor").value = comision.empresa || 'Sin empresa';
                         document.getElementById("fecha_labor").value = comision.fecha_trabajado || '';
                         document.getElementById("fecha_solicitud").value = comision.fecha_generado || '';
-                        document.getElementById("horas_trabajadas").value = comision.horas || '0';
+                        document.getElementById("horas_trabajadas").value = comision.horas != null ? String(comision.horas) : '0';
                         
                         // Jornada: 1 = Diurna, 2 = Nocturna (o 0 = Diurna según algunos registros)
                         if (comision.tipo_jornada == 2) {
                             document.getElementById("jornada").value = "Nocturna";
                         } else {
                             document.getElementById("jornada").value = "Diurna";
+                        }
+
+                        const elMes = document.getElementById("mes_trabajo");
+                        if (elMes) {
+                            elMes.value = comision.mes_trabajo != null && comision.mes_trabajo !== '' ? comision.mes_trabajo : '';
+                        }
+                        const elTipoHora = document.getElementById("tipo_hora_dn");
+                        if (elTipoHora) {
+                            elTipoHora.value = comision.tipo_hora_dn != null ? String(comision.tipo_hora_dn) : '';
+                        }
+                        const elUni = document.getElementById("unidades_bono");
+                        if (elUni) {
+                            elUni.value = comision.unidades_bono != null && comision.unidades_bono !== '' ? String(comision.unidades_bono) : '';
+                        }
+                        const elOrigen = document.getElementById("origen_reporte");
+                        if (elOrigen) {
+                            elOrigen.value = comision.origen_reporte != null ? String(comision.origen_reporte) : '';
                         }
                         
                         document.getElementById("monto").value = formatear_numeros(comision.monto || 0);

@@ -44,7 +44,7 @@ if (isset($_GET["quest"]) && $_GET["quest"] == 'listado_empresas') {
 if (isset($_GET["quest"]) && $_GET["quest"] == 'listado_empleados_activos') {
     $id_departamento = isset($_GET['id_departamento']) ? intval($_GET['id_departamento']) : 0;
     
-    $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido, e.sueldo_ordinario, e.departamento_laboral, e.centro_de_costo, d.nombre as departamento_laboral_nombre, emp.nombre_comercial as empresa, emp.id as id_empresa FROM empleado e LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE e.estado = 1";
+    $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido, e.puesto, e.sueldo_ordinario, e.departamento_laboral, e.centro_de_costo, d.nombre as departamento_laboral_nombre, emp.nombre_comercial as empresa, emp.id as id_empresa FROM empleado e LEFT JOIN departamento d ON e.departamento_laboral = d.id LEFT JOIN empresa_empleado ee ON e.id = ee.id_empleado AND ee.activo = 1 AND ee.principal = 1 LEFT JOIN empresa emp ON ee.id_empresa = emp.id WHERE e.estado = 1";
 
     if ($id_departamento > 0) {
         $sql .= " AND e.centro_de_costo = $id_departamento";
@@ -67,6 +67,7 @@ if (isset($_GET["quest"]) && $_GET["quest"] == 'listado_empleados_activos') {
                 'departamento_laboral' => $row["departamento_laboral_nombre"],
                 'empresa' => $row["empresa"],
                 'id_empresa' => $row["id_empresa"],
+                'puesto' => isset($row["puesto"]) && $row["puesto"] !== null ? $row["puesto"] : '',
                 'sueldo_ordinario' => floatval($row["sueldo_ordinario"])
             );
         }
@@ -190,6 +191,13 @@ if (isset($_POST["quest"]) && $_POST["quest"] == 'crear_comision') {
     $tarea = mysqli_real_escape_string($con, $_POST['tarea']);
     $tipo_registro = isset($_POST['tipo_registro']) ? mysqli_real_escape_string($con, $_POST['tipo_registro']) : 'bono';
     $autorizado_cenas = isset($_POST['autorizado_cenas']) ? intval($_POST['autorizado_cenas']) : 0;
+    $mes_trabajo = isset($_POST['mes_trabajo']) ? mysqli_real_escape_string($con, $_POST['mes_trabajo']) : '';
+    $tipo_hora_dn = isset($_POST['tipo_hora_dn']) ? mysqli_real_escape_string($con, $_POST['tipo_hora_dn']) : '';
+    $unidades_bono = isset($_POST['unidades_bono']) ? floatval($_POST['unidades_bono']) : 1;
+    if ($unidades_bono <= 0) {
+        $unidades_bono = 1;
+    }
+    $origen_reporte = isset($_POST['origen_reporte']) ? mysqli_real_escape_string($con, $_POST['origen_reporte']) : '';
     
     $insertados = 0;
     $errores = 0;
@@ -218,7 +226,7 @@ if (isset($_POST["quest"]) && $_POST["quest"] == 'crear_comision') {
         // Asegurar que empresa_trabajo sea un número válido
         $empresa_trabajo_val = !empty($empresa_trabajo) ? intval($empresa_trabajo) : 0;
         
-        $sql = "INSERT INTO comision (empresa_trabajo, area_trabajo, puesto_trabajo, fecha_trabajado, fecha_generado, horas, tipo_jornada, monto, tarea, id_empleado, id_solicitante, id_estado, seleccionado, tipo_registro, autorizado_cenas) VALUES (" . 
+        $sql = "INSERT INTO comision (empresa_trabajo, area_trabajo, puesto_trabajo, fecha_trabajado, fecha_generado, horas, tipo_jornada, monto, tarea, id_empleado, id_solicitante, id_estado, seleccionado, tipo_registro, autorizado_cenas, mes_trabajo, tipo_hora_dn, unidades_bono, origen_reporte) VALUES (" . 
                $empresa_trabajo_val . ", '" . 
                $area_trabajo . "', '" . 
                $puesto_trabajo . "', '" . 
@@ -231,7 +239,11 @@ if (isset($_POST["quest"]) && $_POST["quest"] == 'crear_comision') {
                $solicitante_id . ", " . 
                $estado_inicial . ", 0, '" . 
                $tipo_registro . "', " . 
-               $autorizado_cenas . ")";
+               $autorizado_cenas . ", '" .
+               $mes_trabajo . "', '" .
+               $tipo_hora_dn . "', " .
+               $unidades_bono . ", '" .
+               $origen_reporte . "')";
 
         $result = mysqli_query($con, $sql);
 

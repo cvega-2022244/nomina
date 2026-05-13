@@ -44,94 +44,7 @@
             display: none !important;
         }
         
-        /* Estilos para el modal de tipo */
-        #modalTipoRegistro .modal-content {
-            background-color: var(--dash-card-bg);
-            border: 1px solid var(--dash-border);
-        }
-        #modalTipoRegistro .modal-header {
-            border-bottom: 1px solid var(--dash-border);
-        }
-        #modalTipoRegistro .modal-title {
-            color: var(--dash-title);
-        }
-        
-        /* Cards de selección tipo */
-        .tipo-card {
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        .tipo-card:hover {
-            transform: translateY(-5px);
-            border-color: #4361ee;
-        }
-        .tipo-card.selected {
-            border-color: #4361ee;
-            box-shadow: 0 0 15px rgba(67, 97, 238, 0.3);
-        }
-        
-        /* Cards del modal mismo tamaño */
-        #modalTipoRegistro .modal-dialog {
-            max-width: 1100px;
-        }
-        #modalTipoRegistro .modal-content {
-            padding: 30px;
-        }
-        #modalTipoRegistro .modal-header {
-            padding-bottom: 30px;
-        }
-        #modalTipoRegistro .modal-title {
-            font-size: 1.6rem;
-        }
-        #modalTipoRegistro .modal-body {
-            padding: 25px 40px 40px;
-        }
-        #modalTipoRegistro .info-box-3 {
-            min-height: 180px;
-            min-width: 380px;
-            display: flex;
-            align-items: center;
-            padding: 35px 60px 35px 40px;
-            margin: 0;
-        }
-        #modalTipoRegistro .info-box-3-icon {
-            width: 100px;
-            height: 100px;
-            min-width: 100px;
-            margin-right: 30px;
-        }
-        #modalTipoRegistro .info-box-3-icon svg {
-            width: 48px;
-            height: 48px;
-        }
-        #modalTipoRegistro .info-box-3-content-wrapper {
-            flex: 1;
-            min-width: 150px;
-        }
-        #modalTipoRegistro .info-box-3-title {
-            margin-bottom: 12px;
-            font-size: 1.8rem;
-            white-space: nowrap;
-        }
-        #modalTipoRegistro .info-box-3-content {
-            font-size: 16px;
-            opacity: 0.8;
-            white-space: nowrap;
-        }
-        
-        /* Tarjetas de selección simétricas */
-        .tipo-selector-card {
-            cursor: pointer;
-            max-width: 100%;
-            height: 100%;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        .tipo-selector-card:hover {
-            transform: translateY(-3px);
-            border-color: #4361ee;
-        }
+
         
         /* Lista de empleados con checkboxes */
         #lista_empleados {
@@ -301,26 +214,22 @@
                     <div class="p-2">
                         <div class="statbox widget box box-shadow">
                             <div class="widget-content widget-content-area">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="badge bg-secondary" id="badge_tipo_registro" style="display:none">Tipo: <span id="badge_tipo_texto"></span></span>
-                                    <button type="button" class="btn btn-outline-primary" id="btn_cambiar_tipo">Cambiar tipo</button>
-                                </div>
+
                                 
-                                <!-- Formulario Bono (oculto inicialmente) -->
-                                <div id="formulario_bono" style="display:none">
-                                    <form id="form_bono">
-                                        <input type="hidden" id="tipo_registro_bono" name="tipo_registro" value="bono">
-                                    <!-- Empleado (selección única) -->
+                                <!-- Formulario único: bonos -->
+                                <div id="formulario_registro">
+                                    <input type="hidden" id="tipo_registro_activo" name="tipo_registro_activo" value="bono">
+                                    <form id="form_registro_unificado">
+
                                     <div class="form-group mb-3">
                                         <label class="form-label">Empleado</label>
                                         <input type="text" class="form-control mb-2" id="buscar_empleado" placeholder="Buscar empleado...">
                                         <div id="lista_empleados" style="max-height: 280px; overflow-y: auto; border: 1px solid #191e3a; border-radius: 6px; padding: 10px;">
                                             <p class="text-muted text-center">Cargando empleados...</p>
                                         </div>
-                                        <small class="form-text text-muted">Seleccionado: <strong id="contador_empleados">0</strong> <span style="color: #888;">(La empresa se selecciona automáticamente)</span></small>
+                                        <small class="form-text text-muted">Seleccionado: <strong id="contador_empleados">0</strong> <span style="color: #888;">(La empresa se asigna según el empleado)</span></small>
                                     </div>
 
-                                    <!-- Autorizado cenas -->
                                     <div class="autorizado-cenas-wrapper mb-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="autorizado_cenas" name="autorizado_cenas" value="1">
@@ -337,202 +246,100 @@
                                         </div>
                                     </div>
 
-                                    <!-- Primera fila de 3 columnas -->
                                     <div class="row">
-                                        <!-- Fecha Trabajada -->
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label for="fecha_trabajado" class="form-label">Fecha Trabajada</label>
+                                                <label for="fecha_trabajado" class="form-label">FECHA</label>
                                                 <input type="date" class="form-control" id="fecha_trabajado" name="fecha_trabajado" required>
                                             </div>
                                         </div>
-
-                                        <!-- Empresa Trabajada -->
                                         <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label for="empresa_trabajo" class="form-label">Empresa Trabajada</label>
+                                                <label for="mes_trabajado" class="form-label">MES</label>
+                                                <input type="text" class="form-control" id="mes_trabajado" name="mes_trabajado" readonly placeholder="Según la fecha">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label for="empresa_trabajo" class="form-label">EMPRESA</label>
                                                 <select class="form-control" id="empresa_trabajo" name="empresa_trabajo" required>
                                                     <option value="">Empresa...</option>
                                                 </select>
                                             </div>
                                         </div>
-
-               <!-- Jornada -->
-               <div class="col-md-4">
-                   <div class="form-group mb-3">
-                       <label for="tipo_jornada" class="form-label">Jornada</label>
-                       <select class="form-control" id="tipo_jornada" name="tipo_jornada" required>
-                           <option value="">Jornada...</option>
-                           <option value="1">Diurna</option>
-                           <option value="2">Nocturna</option>
-                       </select>
-                   </div>
-               </div>
                                     </div>
 
-                                    <!-- Segunda fila de 2 columnas -->
                                     <div class="row">
-                                        <!-- Tipo de Bono -->
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group mb-3">
-                                                <label for="area_trabajo" class="form-label">Tipo de Bono</label>
-                                                <select class="form-control" id="area_trabajo" name="area_trabajo" required>
-                                                    <option value="">Seleccionar...</option>
+                                                <label for="horas" class="form-label" id="label_horas">HORAS (opcional)</label>
+                                                <input type="number" class="form-control" id="horas" name="horas" step="0.25" min="0" placeholder="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label for="tipo_hora_dn" class="form-label">TIPO DE HORA (D-N)</label>
+                                                <input type="text" class="form-control" id="tipo_hora_dn" name="tipo_hora_dn" maxlength="40" placeholder="Ej. D, N">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label for="tipo_jornada" class="form-label">JORNADA DE TRABAJO</label>
+                                                <select class="form-control" id="tipo_jornada" name="tipo_jornada" required>
+                                                    <option value="">Seleccione...</option>
+                                                    <option value="1">D — Diurna</option>
+                                                    <option value="2">N — Nocturna</option>
                                                 </select>
                                             </div>
                                         </div>
-
-               <!-- Monto -->
-               <div class="col-md-6">
-                   <div class="form-group mb-3">
-                       <label for="monto" class="form-label">Monto</label>
-                       <input type="number" class="form-control" id="monto" name="monto" 
-                              placeholder="Monto del bono" step="0.01" min="0" required>
-                       <small class="form-text text-muted">Valores por defecto: Planta = 225, Logística = 240</small>
-                   </div>
-               </div>
                                     </div>
 
-                                    <!-- Puesto de Trabajo -->
-                                    <div class="form-group mb-3">
-                                        <label for="puesto_trabajo" class="form-label">Puesto de Trabajo</label>
-                                        <input type="text" class="form-control" id="puesto_trabajo" name="puesto_trabajo" 
-                                               placeholder="Ingrese el puesto de trabajo" required>
-                                    </div>
-
-                                    <!-- Descripción de la Tarea -->
-                                    <div class="form-group mb-3">
-                                        <label for="tarea" class="form-label">Descripción de la Tarea</label>
-                                        <textarea class="form-control" id="tarea" name="tarea" rows="3" 
-                                                  placeholder="Describa la tarea realizada..." required></textarea>
-                                    </div>
-
-           <!-- Solicitante (automático del usuario logueado) -->
-           <div class="form-group mb-3">
-               <label for="nombre_solicitante" class="form-label">Solicitante</label>
-               <input type="text" class="form-control" id="nombre_solicitante" readonly>
-               <input type="hidden" id="id_solicitante" name="id_solicitante">
-           </div>
-           
-
-                                        <!-- Botón Guardar Bono -->
-                                        <div class="text-end">
-                                            <button type="button" class="btn btn-success" id="btn_guardar_bono">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save">
-                                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                                    <polyline points="17,21 17,13 7,13 7,21"></polyline>
-                                                    <polyline points="7,3 7,8 15,8"></polyline>
-                                                </svg>
-                                                Guardar
-                                            </button>
+                                    <div id="grupo_bono" class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label for="unidades_bono" class="form-label">BONO (unidades)</label>
+                                                <input type="number" class="form-control" id="unidades_bono" name="unidades_bono" step="0.01" min="0.01" value="1">
+                                            </div>
                                         </div>
-                                    </form>
-                                </div>
-                                
-                                <!-- Formulario Hora Extra (oculto inicialmente) -->
-                                <div id="formulario_hora_extra" style="display:none">
-                                    <form id="form_hora_extra">
-                                        <input type="hidden" id="tipo_registro_hora" name="tipo_registro" value="hora_extra">
-                                            
-                                            <!-- Empleado (selección única) -->
+                                        <div class="col-md-6">
                                             <div class="form-group mb-3">
-                                                <label class="form-label">Empleado</label>
-                                                <input type="text" class="form-control mb-2" id="buscar_empleado_hora" placeholder="Buscar empleado...">
-                                                <div id="lista_empleados_hora" style="max-height: 280px; overflow-y: auto; border: 1px solid var(--dash-border); border-radius: 6px; padding: 10px; background: var(--dash-card-bg);">
-                                                    <p class="text-muted text-center">Cargando empleados...</p>
-                                                </div>
-                                                <small class="form-text text-muted">Seleccionado: <strong id="contador_empleados_hora">0</strong> <span style="color: #888;">(La empresa se selecciona automáticamente)</span></small>
+                                                <label for="monto" class="form-label">MONTO DE BONO</label>
+                                                <input type="number" class="form-control" id="monto" name="monto" placeholder="Ingrese el monto" step="0.01" min="0">
                                             </div>
-
-                                            <!-- Autorizado cenas -->
-                                            <div class="autorizado-cenas-wrapper mb-3">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="autorizado_cenas_hora" name="autorizado_cenas" value="1">
-                                                    <label class="form-check-label" for="autorizado_cenas_hora">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="me-2">
-                                                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
-                                                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
-                                                            <line x1="6" y1="1" x2="6" y2="4"></line>
-                                                            <line x1="10" y1="1" x2="10" y2="4"></line>
-                                                            <line x1="14" y1="1" x2="14" y2="4"></line>
-                                                        </svg>
-                                                        Autorizado cenas
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <!-- Primera fila de 3 columnas -->
-                                            <div class="row">
-                                                <!-- Fecha Trabajada -->
-                                                <div class="col-md-4">
-                                                    <div class="form-group mb-3">
-                                                        <label for="fecha_trabajado_hora" class="form-label">Fecha Trabajada</label>
-                                                        <input type="date" class="form-control" id="fecha_trabajado_hora" name="fecha_trabajado" required>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Empresa Trabajada -->
-                                                <div class="col-md-4">
-                                                    <div class="form-group mb-3">
-                                                        <label for="empresa_trabajo_hora" class="form-label">Empresa Trabajada</label>
-                                                        <select class="form-control" id="empresa_trabajo_hora" name="empresa_trabajo" required>
-                                                            <option value="">Empresa...</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Jornada -->
-                                                <div class="col-md-4">
-                                                    <div class="form-group mb-3">
-                                                        <label for="tipo_jornada_hora" class="form-label">Jornada</label>
-                                                        <select class="form-control" id="tipo_jornada_hora" name="tipo_jornada" required>
-                                                            <option value="">Jornada...</option>
-                                                            <option value="1">Diurna</option>
-                                                            <option value="2">Nocturna</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Horas Trabajadas -->
-                                            <div class="form-group mb-3">
-                                                <label for="horas_hora" class="form-label">Horas Trabajadas</label>
-                                                <input type="number" class="form-control" id="horas_hora" name="horas" 
-                                                       placeholder="Ingrese la cantidad de horas..." step="0.01" min="0" required>
-                                            </div>
-
-                                            <!-- Observaciones -->
-                                            <div class="form-group mb-3">
-                                                <label for="observaciones_hora" class="form-label">Observaciones</label>
-                                                <textarea class="form-control" id="observaciones_hora" name="observaciones" rows="3" 
-                                                          placeholder="Ingrese una observación del trabajo realizado..." required></textarea>
-                                            </div>
-
-                                            <!-- Monto a pagar -->
-                                            <div class="form-group mb-3">
-                                                <label for="monto_hora" class="form-label">Monto a pagar</label>
-                                                <input type="number" class="form-control" id="monto_hora" name="monto" 
-                                                       placeholder="El monto se calculará automáticamente..." step="0.01" min="0" readonly>
-                                                <small class="form-text text-muted">
-                                                    <strong>El monto se calcula automáticamente:</strong><br>
-                                                    • Valor hora = Sueldo ÷ 30 días ÷ 8 horas<br>
-                                                    • Factor: Diurna = 1.5x, Nocturna = 2x<br>
-                                                    • Monto = Valor hora × Factor × Horas trabajadas
-                                                </small>
-                                            </div>
-
-                                        <!-- Botón Guardar Hora Extra -->
-                                        <div class="text-end">
-                                            <button type="button" class="btn btn-success" id="btn_guardar_hora">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save">
-                                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                                    <polyline points="17,21 17,13 7,13 7,21"></polyline>
-                                                    <polyline points="7,3 7,8 15,8"></polyline>
-                                                </svg>
-                                                Guardar
-                                            </button>
                                         </div>
+                                    </div>
+
+
+
+                                    <div class="form-group mb-3">
+                                        <label for="puesto_trabajo" class="form-label">Puesto</label>
+                                        <input type="text" class="form-control" id="puesto_trabajo" name="puesto_trabajo" readonly>
+                                        <small class="form-text text-muted">Tomado del expediente del empleado seleccionado.</small>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="tarea" class="form-label" id="label_tarea_descripcion">TAREA REALIZADA</label>
+                                        <textarea class="form-control" id="tarea" name="tarea" rows="3" placeholder="Descripción de la tarea u observaciones..." required></textarea>
+                                    </div>
+
                                     </form>
+
+                                    <div class="form-group mb-3">
+                                        <label for="nombre_solicitante" class="form-label">Solicitante</label>
+                                        <input type="text" class="form-control" id="nombre_solicitante" readonly>
+                                        <input type="hidden" id="id_solicitante" name="id_solicitante">
+                                    </div>
+
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-success" id="btn_guardar_registro">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save">
+                                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                                <polyline points="17,21 17,13 7,13 7,21"></polyline>
+                                                <polyline points="7,3 7,8 15,8"></polyline>
+                                            </svg>
+                                            Guardar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -653,50 +460,7 @@
 
 
 
-    <!-- Modal: Selección de tipo (Bono | Hora Extra) -->
-    <div class="modal fade" id="modalTipoRegistro" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header border-0 justify-content-center">
-                    <h4 class="modal-title">¿Qué deseas registrar?</h4>
-                </div>
-                <div class="modal-body py-4">
-                    <div class="d-flex justify-content-center" style="gap: 40px;">
-                        <!-- Opción Bono -->
-                        <div>
-                            <div class="info-box-3 tipo-selector-card" data-select-tipo="bono">
-                                <div class="info-box-3-icon" style="background:#00ab55; box-shadow: 0 0 30px 0 #06081885 inset, 0 15px 45px 0 #00ab5538;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">Bono</h3>
-                                    <div class="info-box-3-content">Bono variable</div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Opción Hora Extra -->
-                        <div>
-                            <div class="info-box-3 tipo-selector-card" data-select-tipo="hora_extra">
-                                <div class="info-box-3-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                </div>
-                                <div class="info-box-3-content-wrapper">
-                                    <h3 class="info-box-3-title">Hora Extra</h3>
-                                    <div class="info-box-3-content">Horas extras</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     </body>
 

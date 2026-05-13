@@ -2430,7 +2430,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'detalle_comision') {
-            $sql = "SELECT b.id, COALESCE(e.nombre_comercial, 'Sin Empresa') as empresa, b.fecha_trabajado, DATE(b.fecha_generado) as fecha_generado, b.horas, b.tipo_jornada, b.monto, b.tarea, COALESCE(u.nombre, 'Sin Usuario') as usuario, COALESCE(eb.nombre, 'Sin Estado') as estado, '' as observacion, b.autorizado_cenas FROM comision b LEFT JOIN empresa e ON b.empresa_trabajo = e.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id = " . $_GET["id"];
+            $sql = "SELECT b.id, COALESCE(e.nombre_comercial, 'Sin Empresa') as empresa, b.fecha_trabajado, DATE(b.fecha_generado) as fecha_generado, b.horas, b.tipo_jornada, b.monto, b.tarea, COALESCE(u.nombre, 'Sin Usuario') as usuario, COALESCE(eb.nombre, 'Sin Estado') as estado, '' as observacion, b.autorizado_cenas, b.mes_trabajo, b.tipo_hora_dn, b.unidades_bono, b.origen_reporte FROM comision b LEFT JOIN empresa e ON b.empresa_trabajo = e.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id = " . $_GET["id"];
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
@@ -2452,6 +2452,10 @@ if (isset($_GET)) {
                             'usuario' => $row["usuario"],
                             'observacion' => $row["observacion"],
                             'autorizado_cenas' => $row["autorizado_cenas"],
+                            'mes_trabajo' => isset($row["mes_trabajo"]) ? $row["mes_trabajo"] : '',
+                            'tipo_hora_dn' => isset($row["tipo_hora_dn"]) ? $row["tipo_hora_dn"] : '',
+                            'unidades_bono' => isset($row["unidades_bono"]) ? $row["unidades_bono"] : '',
+                            'origen_reporte' => isset($row["origen_reporte"]) ? $row["origen_reporte"] : '',
                         );
                     }
                     echo json_encode($json);
