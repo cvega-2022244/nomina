@@ -627,6 +627,10 @@ function crear_bono_variable() {
     window.location.href = 'crear-bono-variable.html';
 }
 
+function seleccion_bonos() {
+    window.location.href = 'seleccion_bonos.html';
+}
+
 function bono_14() {
     bono();
 }

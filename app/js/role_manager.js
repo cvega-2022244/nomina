@@ -99,9 +99,9 @@ class RoleManager {
         return this.isAdmin();
     }
 
-    // Puede crear/ver Bonos Variables (operaciones y admin)
+    // Puede crear/ver Bonos Variables (solo operaciones)
     canViewBonosVariables() {
-        return this.isAdmin() || this.isOperaciones();
+        return this.isOperaciones();
     }
 
     // Puede ver/ingresar Horas Extra (operaciones y admin)
@@ -130,13 +130,14 @@ class RoleManager {
         console.log('🔧 Aplicando restricciones para rol:', rol);
 
         if (this.isAdmin()) {
-            // Admin: mostrar todo
+            // Admin: mostrar todo excepto paneles exclusivos de operaciones
             this.showElement('.datos-maestros');
             this.showElement('.administrar-nomina');
             this.showElement('.historial');
             this.showElement('.bono-14');
             this.showElement('.aguinaldo');
-            this.showElement('.crear-bono-variable');
+            this.hideElement('.crear-bono-variable');
+            this.hideElement('.seleccion-bonos');
         } else if (this.isOperaciones()) {
             // Operaciones: solo bonos y horas extra
             this.hideElement('.datos-maestros');

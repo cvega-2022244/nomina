@@ -137,9 +137,11 @@
     <!-- BASE X -->
     <link href="../src/assets/css/dark/pages/knowledge_base.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/light/pages/knowledge_base.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="../app/css/index.css">
 
     <!-- AJAX -->
     <script src="js/jquery.js"></script>
+    <script src="js/auth.js"></script>
     
     <style>
         .role-restricted {
@@ -554,32 +556,8 @@
     <script src="js/role_manager.js"></script>
     <script src="js/seleccion_comision_completo.js"></script>
     <script>
-        // Función para cerrar sesión
-        function cerrarSesion() {
-            Swal.fire({
-                icon: 'question',
-                title: '¿Cerrar sesión?',
-                text: '¿Estás seguro de que deseas cerrar sesión?',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, cerrar sesión',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#dc3545'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    sessionStorage.clear();
-                    window.location.href = 'login.html';
-                }
-            });
-        }
-        
         // Protección de página - Admin y Operaciones pueden ver Bonos
         $(document).ready(function() {
-            // Mostrar nombre de usuario en navbar
-            const userData = JSON.parse(sessionStorage.getItem('usuario_principal'));
-            if (userData && userData.nombre) {
-                $('#usuario_nombre_header').text('Hola, ' + userData.nombre);
-            }
-            
             // Sistema sin roles activado - Todos los elementos visibles
             $('.role-restricted').removeClass('role-restricted');
             $('.menu-item-restricted').removeClass('menu-item-restricted');

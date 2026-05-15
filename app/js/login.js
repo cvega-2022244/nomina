@@ -115,8 +115,8 @@ function login() {
                     // Admin va al dashboard completo
                     window.location.href = 'index.html';
                 } else if (userRole === 'operaciones') {
-                    // Operaciones va directamente a nómina (bonos y horas extra)
-                    window.location.href = 'nomina.html';
+                    // Operaciones va al dashboard donde solo verá sus opciones
+                    window.location.href = 'index.html';
                 } else if (userRole === 'capturador') {
                     // Capturador va solo a empleados
                     window.location.href = 'empleados.html';
