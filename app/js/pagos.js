@@ -86,7 +86,8 @@ function inicializar_select_centro_costo() {
                         var slc_centro = document.getElementById('slc_centro_costo');
                         if (slc_centro) {
                             var template = '';
-                            lista.forEach(centro => {
+                            let lista_filtrada = lista.filter(centro => /^\s*\d/.test(centro.nombre));
+                            lista_filtrada.forEach(centro => {
                                 template += `<option value="${centro.id}">${centro.nombre}</option>`
                             });
                             slc_centro.innerHTML = template;
@@ -166,7 +167,8 @@ function inicializar_select_departamento() {
                         var slc_departamento = document.getElementById('slc_departamento');
                         if (slc_departamento) {
                             var template = '';
-                            lista.forEach(departamento => {
+                            let lista_filtrada = lista.slice(-3);
+                            lista_filtrada.forEach(departamento => {
                                 template += `<option value="${departamento.id}">${departamento.nombre}</option>`
                             });
                             slc_departamento.innerHTML = template;
@@ -190,6 +192,60 @@ function inicializar_select_departamento() {
             }
         })
     }).then(() => {
+        inicializar_select_puesto();
+    })
+}
+
+function inicializar_select_puesto() {
+    return new Promise((resolve) => {
+        $.ajax({
+            url: 'php/servidor.php',
+            type: 'GET',
+            data: {
+                quest: 'listado_nombres_puestos',
+                id_empresa: id_empresa_nomina
+            },
+            dataType: 'text',
+            success: function (res) {
+                if (res.includes('Query Falló')) {
+                    console.log('Error Al Obtener Puestos', res);
+                    resolve();
+                    return;
+                } else if (res.includes('No hay datos') || res.trim() === 'No') {
+                    resolve();
+                    return;
+                } else {
+                    if (res.trim().startsWith('<') || res.includes('<br')) {
+                        resolve();
+                        return;
+                    }
+                    try {
+                        let lista = typeof res === 'string' ? JSON.parse(res) : res;
+                        var slc_puesto = document.getElementById('slc_puesto');
+                        if (slc_puesto) {
+                            var template = '';
+                            lista.forEach(p => {
+                                template += `<option value="${p.puesto}">${p.puesto}</option>`
+                            });
+                            slc_puesto.innerHTML = template;
+                            if (window.selectBoxPuesto) window.selectBoxPuesto.destroy();
+                            window.selectBoxPuesto = new vanillaSelectBox("#slc_puesto", {
+                                "keepInlineStyles": true,
+                                "maxHeight": 300,
+                                "minWidth": 200,
+                                "search": true,
+                                "placeHolder": "Puestos..."
+                            });
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    } finally {
+                        resolve();
+                    }
+                }
+            }
+        })
+    }).then(() => {
         listado_pagos();
     })
 }
@@ -200,7 +256,8 @@ function listado_pagos() {
             quest: 'listado_pagos',
             id_empresa: id_empresa_nomina,
             centros: $('#slc_centro_costo').val() || [],
-            departamentos: $('#slc_departamento').val() || []
+            departamentos: $('#slc_departamento').val() || [],
+            puestos: $('#slc_puesto').val() || []
         };
         $.ajax({
             url: 'php/servidor.php',
@@ -218,17 +275,25 @@ function listado_pagos() {
                     resolve();
                     return;
                 } else if (res.includes('No hay datos')) {
+                    let textMsg = 'No hay pagos registrados en la base de datos.';
+                    if (filtros.centros.length > 0 || filtros.departamentos.length > 0 || filtros.puestos.length > 0) {
+                        textMsg = 'No se encontraron resultados con los filtros aplicados.';
+                    }
                     Swal.fire({
-                        icon: 'warning',
-                        title: 'No Hay Pagos Registrados',
+                        icon: 'info',
+                        title: 'Sin Resultados',
+                        text: textMsg
                     });
-                    console.log(res);
+                    if ($.fn.DataTable.isDataTable('#tabla')) {
+                        $('#tabla').DataTable().clear().draw();
+                    }
                     resolve();
                     return;
                 } else {
                     // Verificar si la respuesta es JSON válido antes de parsear
                     if (res.trim().startsWith('<') || res.includes('<br') || res.includes('Query Falló') || res.includes('Successfully') || res.trim() === 'No') {
                         console.log('Respuesta no válida para listado_pagos:', res);
+                        Swal.close();
                         resolve();
                         return;
                     }
@@ -310,9 +375,36 @@ function listado_pagos() {
                         $('#tabla').DataTable().destroy();
                         document.getElementById("cuerpo_tabla").innerHTML = template;
                         $('#tabla').DataTable({
-                            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'f>>>" +
+                            "dom": "<'dt--top-section'<'row'<'col-12 col-sm-6 d-flex justify-content-sm-start justify-content-center'l><'col-12 col-sm-6 d-flex justify-content-sm-end justify-content-center mt-sm-0 mt-3'Bf>>>" +
                                 "<'table-responsive'tr>" +
                                 "<'dt--bottom-section d-sm-flex justify-content-sm-between text-center'<'dt--pages-count  mb-sm-0 mb-3'i><'dt--pagination'p>>",
+                            "buttons": [
+                                {
+                                    extend: 'excelHtml5',
+                                    text: 'Excel Específico',
+                                    className: 'btn btn-success ms-2 mb-2',
+                                    title: 'Reporte de Pagos - Filtrado',
+                                    exportOptions: { columns: ':visible:not(:last-child)' }
+                                },
+                                {
+                                    extend: 'pdfHtml5',
+                                    text: 'PDF Específico',
+                                    className: 'btn btn-danger ms-2 mb-2',
+                                    title: 'Reporte de Pagos - Filtrado',
+                                    orientation: 'landscape',
+                                    pageSize: { width: 2400, height: 612 },
+                                    exportOptions: { columns: ':visible:not(:last-child)' },
+                                    customize: function (doc) {
+                                        doc.defaultStyle.fontSize = 5;
+                                        doc.styles.tableHeader.fontSize = 6;
+                                        doc.styles.title.fontSize = 12;
+                                        doc.pageMargins = [10, 20, 10, 20];
+                                        if (doc.content[1] && doc.content[1].table) {
+                                            doc.content[1].table.widths = Array(doc.content[1].table.body[0].length).fill('auto');
+                                        }
+                                    }
+                                }
+                            ],
                             "oLanguage": {
                                 "oPaginate": { "sPrevious": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>', "sNext": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>' },
                                 "sInfo": "Showing page _PAGE_ of _PAGES_",
@@ -324,6 +416,7 @@ function listado_pagos() {
                             "lengthMenu": [5, 10, 20, 50],
                             "pageLength": 10
                         });
+                        Swal.close();
                     } catch (error) {
                         console.log(error);
                     } finally {
@@ -332,9 +425,7 @@ function listado_pagos() {
                 }
             }
         });
-    }).then(() => {
-        Swal.close();
-    })
+    });
 }
 
 function aplicar_filtros() {
@@ -345,8 +436,164 @@ function aplicar_filtros() {
 function limpiar_filtros() {
     if (window.selectBoxCentro) window.selectBoxCentro.empty();
     if (window.selectBoxDepartamento) window.selectBoxDepartamento.empty();
+    if (window.selectBoxPuesto) window.selectBoxPuesto.empty();
     cargando();
     listado_pagos();
+}
+
+function exportar_completo(formato) {
+    cargando();
+    $.ajax({
+        url: 'php/servidor.php',
+        type: 'POST',
+        data: {
+            quest: 'listado_pagos',
+            id_empresa: id_empresa_nomina,
+            centros: [],
+            departamentos: [],
+            puestos: []
+        },
+        dataType: 'text',
+        success: function (res) {
+            if (res.includes('Query Falló') || res.includes('No hay datos')) {
+                Swal.fire({ icon: 'warning', title: 'Sin Datos', text: 'No hay empleados registrados para exportar.' });
+                return;
+            }
+            try {
+                let lista = typeof res === 'string' ? JSON.parse(res) : res;
+                if (formato === 'excel') {
+                    generar_excel_completo(lista);
+                } else {
+                    generar_pdf_completo(lista);
+                }
+                Swal.close();
+            } catch (e) {
+                console.error(e);
+                Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo procesar la información para exportar.' });
+            }
+        },
+        error: function () {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo conectar con el servidor.' });
+        }
+    });
+}
+
+function generar_excel_completo(lista) {
+    var headers = ['Correlativo','Nombre Empleado','Empresa','Área','Departamento','Puesto','Días Laborados',
+        'Salario Ordinario','Bonif. Incentivo','Bonif. Decreto 37-2001','Bonos','Total Devengado',
+        'Horas Simples','Valor Horas Simples','Horas Dobles','Valor Horas Dobles','Otros Ingresos','Salario Total',
+        'IGSS','ISR','Cafeteria','Celular','Uniforme','Calzado','Equipo','Producto','Bancos','Otros',
+        'Judiciales','Seguro','Parqueo','Boleta Ornato','Otros Egresos','Total Egresos',
+        'Líquido a Recibir','Líquido 1ra Quincena','Líquido 2da Quincena'];
+    var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Reporte</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
+    html += '<h2>Reporte Completo de Pagos</h2>';
+    html += '<table border="1"><thead><tr>';
+    headers.forEach(h => { html += '<th style="background-color:#1b2e4b;color:#fff;font-weight:bold;padding:4px;font-size:10px;">' + h + '</th>'; });
+    html += '</tr></thead><tbody>';
+    lista.forEach(e => {
+        html += '<tr>';
+        html += '<td>' + (e.correlativo || '') + '</td>';
+        html += '<td>' + (e.nombre_empleado || '') + '</td>';
+        html += '<td>' + (e.empresa || '') + '</td>';
+        html += '<td>' + (e.centro_costo || '') + '</td>';
+        html += '<td>' + (e.departamento || '') + '</td>';
+        html += '<td>' + (e.puesto || '') + '</td>';
+        html += '<td>' + (e.dias_laborados || 0) + '</td>';
+        html += '<td>' + (e.salario_ordinario || 0) + '</td>';
+        html += '<td>' + (e.bon_incentivo || 0) + '</td>';
+        html += '<td>' + (e.bon_decreto || 0) + '</td>';
+        html += '<td>' + (e.bonos || 0) + '</td>';
+        html += '<td>' + (e.total_devengado || 0) + '</td>';
+        html += '<td>' + (e.horas_simples || 0) + '</td>';
+        html += '<td>' + (e.valor_horas_simples || 0) + '</td>';
+        html += '<td>' + (e.horas_dobles || 0) + '</td>';
+        html += '<td>' + (e.valor_horas_dobles || 0) + '</td>';
+        html += '<td>' + (e.otros_ingresos || 0) + '</td>';
+        html += '<td>' + (e.salario_total || 0) + '</td>';
+        html += '<td>' + (e.igss || 0) + '</td>';
+        html += '<td>' + (e.isr || 0) + '</td>';
+        html += '<td>' + (e.cafeteria || 0) + '</td>';
+        html += '<td>' + (e.celular || 0) + '</td>';
+        html += '<td>' + (e.uniforme || 0) + '</td>';
+        html += '<td>' + (e.calzado || 0) + '</td>';
+        html += '<td>' + (e.equipo || 0) + '</td>';
+        html += '<td>' + (e.producto || 0) + '</td>';
+        html += '<td>' + (e.bancos || 0) + '</td>';
+        html += '<td>' + (e.otros || 0) + '</td>';
+        html += '<td>' + (e.judiciales || 0) + '</td>';
+        html += '<td>' + (e.seguro || 0) + '</td>';
+        html += '<td>' + (e.parqueo || 0) + '</td>';
+        html += '<td>' + (e.boleta_ornato || 0) + '</td>';
+        html += '<td>' + (e.otros_egresos || 0) + '</td>';
+        html += '<td>' + (e.total_egresos || 0) + '</td>';
+        html += '<td>' + (e.liquido_recibir || 0) + '</td>';
+        html += '<td>' + (e.liquido_primer_quincena || 0) + '</td>';
+        html += '<td>' + (e.liquido_segunda_quincena || 0) + '</td>';
+        html += '</tr>';
+    });
+    html += '</tbody></table></body></html>';
+    var blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'Reporte_Completo_Pagos.xls';
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
+function generar_pdf_completo(lista) {
+    var headers = ['Corr.','Nombre','Empresa','Área','Depto.','Puesto','Días',
+        'Sal.Ord.','Bon.Inc.','Bon.Dec.','Bonos','Tot.Dev.',
+        'H.Simp','V.H.Simp','H.Dob','V.H.Dob','Otros Ing.','Sal.Tot.',
+        'IGSS','ISR','Cafet.','Cel.','Unif.','Calz.','Equip.','Prod.','Bancos','Otros',
+        'Judic.','Seguro','Parq.','Ornato','Otr.Eg.','Tot.Eg.',
+        'Líquido','Líq.1Q','Líq.2Q'];
+    var body = [headers.map(h => ({ text: h, style: 'tableHeader' }))];
+    lista.forEach(e => {
+        body.push([
+            e.correlativo || '', e.nombre_empleado || '', e.empresa || '',
+            e.centro_costo || '', e.departamento || '', e.puesto || '',
+            e.dias_laborados || '0',
+            e.salario_ordinario || '0', e.bon_incentivo || '0', e.bon_decreto || '0',
+            e.bonos || '0', e.total_devengado || '0',
+            e.horas_simples || '0', e.valor_horas_simples || '0',
+            e.horas_dobles || '0', e.valor_horas_dobles || '0',
+            e.otros_ingresos || '0', e.salario_total || '0',
+            e.igss || '0', e.isr || '0',
+            e.cafeteria || '0', e.celular || '0', e.uniforme || '0',
+            e.calzado || '0', e.equipo || '0', e.producto || '0',
+            e.bancos || '0', e.otros || '0',
+            e.judiciales || '0', e.seguro || '0', e.parqueo || '0',
+            e.boleta_ornato || '0', e.otros_egresos || '0', e.total_egresos || '0',
+            e.liquido_recibir || '0', e.liquido_primer_quincena || '0', e.liquido_segunda_quincena || '0'
+        ]);
+    });
+    var docDef = {
+        pageSize: { width: 2400, height: 612 },
+        pageOrientation: 'landscape',
+        pageMargins: [10, 30, 10, 20],
+        header: { text: 'Reporte Completo de Pagos', alignment: 'center', fontSize: 14, bold: true, margin: [0, 10, 0, 0] },
+        content: [
+            {
+                table: {
+                    headerRows: 1,
+                    widths: Array(headers.length).fill('auto'),
+                    body: body
+                },
+                layout: {
+                    fillColor: function (rowIndex) { return rowIndex === 0 ? '#1b2e4b' : (rowIndex % 2 === 0 ? '#f5f5f5' : null); },
+                    hLineWidth: function () { return 0.5; },
+                    vLineWidth: function () { return 0.5; },
+                    hLineColor: function () { return '#aaa'; },
+                    vLineColor: function () { return '#aaa'; }
+                }
+            }
+        ],
+        styles: {
+            tableHeader: { bold: true, fontSize: 6, color: '#ffffff', fillColor: '#1b2e4b' }
+        },
+        defaultStyle: { fontSize: 5 }
+    };
+    pdfMake.createPdf(docDef).download('Reporte_Completo_Pagos.pdf');
 }
 
 function detalle(id) {

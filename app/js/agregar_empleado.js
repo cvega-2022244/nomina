@@ -3456,6 +3456,8 @@ function eliminar_hijo(id) {
 
 async function validar_empleado_repetido() {
   var dpi = document.getElementById("dpi");
+  var no_igss = document.getElementById("no_igss");
+
   if (dpi.value == '') {
     Swal.fire({
       title: 'DPI Vacio',
@@ -3466,51 +3468,95 @@ async function validar_empleado_repetido() {
       showCancelButton: false
     });
     return;
-  } else {
-    const resp = await $.ajax({
-      url: 'php/servidor.php',
-      type: 'GET',
-      data: {
-        quest: 'buscar_empleado_dpi',
-        dpi: dpi.value
-      },
-    });
-
-    let lista;
-    if (typeof resp === 'string') {
-      lista = JSON.parse(resp);
-    } else {
-      lista = resp;
-    }
-
-    if (lista.error && lista.error.includes('Query Falló')) {
-      Swal.fire({
-        title: 'Error',
-        html: 'Ha ocurrido un error al validar el DPI',
-        icon: 'error',
-        allowOutsideClick: false,
-        showConfirmButton: true,
-      });
-    } else if (lista.cantidad == 0) {
-      ingresar_empleado();
-    } else {
-      Swal.fire({
-        title: 'Empleado Ya Existente',
-        html: 'El empleado ya existe en la base de datos ¿Desea ingresarlo nuevamente?',
-        icon: 'warning',
-        allowOutsideClick: false,
-        showConfirmButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Ingresar',
-        cancelButtonText: 'Cancelar',
-        cancelButtonColor: '#d33'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          ingresar_empleado();
-        }
-      });
-    }
   }
+
+  if (no_igss.value == '') {
+    Swal.fire({
+      title: 'IGSS Vacio',
+      html: 'Por favor, asegurese de haber ingresado el número de IGSS',
+      icon: 'warning',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+      showCancelButton: false
+    });
+    return;
+  }
+
+  const respDpi = await $.ajax({
+    url: 'php/servidor.php',
+    type: 'GET',
+    data: {
+      quest: 'buscar_empleado_dpi',
+      dpi: dpi.value
+    },
+  });
+
+  let listaDpi;
+  if (typeof respDpi === 'string') {
+    listaDpi = JSON.parse(respDpi);
+  } else {
+    listaDpi = respDpi;
+  }
+
+  if (listaDpi.error && listaDpi.error.includes('Query Fall')) {
+    Swal.fire({
+      title: 'Error',
+      html: 'Ha ocurrido un error al validar el DPI',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+    });
+    return;
+  } else if (listaDpi.cantidad > 0) {
+    Swal.fire({
+      title: 'DPI Duplicado',
+      html: 'El DPI ingresado ya se encuentra registrado a nombre de otro empleado. No puede continuar.',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+      confirmButtonText: 'Cerrar'
+    });
+    return;
+  }
+
+  const respIgss = await $.ajax({
+    url: 'php/servidor.php',
+    type: 'GET',
+    data: {
+      quest: 'buscar_empleado_igss',
+      igss: no_igss.value
+    },
+  });
+
+  let listaIgss;
+  if (typeof respIgss === 'string') {
+    listaIgss = JSON.parse(respIgss);
+  } else {
+    listaIgss = respIgss;
+  }
+
+  if (listaIgss.error && listaIgss.error.includes('Query Fall')) {
+    Swal.fire({
+      title: 'Error',
+      html: 'Ha ocurrido un error al validar el IGSS',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+    });
+    return;
+  } else if (listaIgss.cantidad > 0) {
+    Swal.fire({
+      title: 'IGSS Duplicado',
+      html: 'El número de IGSS ingresado ya se encuentra registrado a nombre de otro empleado. No puede continuar.',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+      confirmButtonText: 'Cerrar'
+    });
+    return;
+  }
+
+  ingresar_empleado();
 }
 
 function ingresar_empleado() {

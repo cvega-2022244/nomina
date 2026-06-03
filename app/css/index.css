@@ -191,6 +191,15 @@ body.dark {
     color: #2196f3 !important;
 }
 
+.seleccion-bonos .info-box-3-icon {
+    background: rgba(138, 43, 226, 0.15) !important;
+    color: #8a2be2 !important;
+}
+
+.seleccion-bonos:hover::before {
+    background: #8a2be2;
+}
+
 /* Tipografía de las tarjetas */
 .info-box-3-title {
     font-size: 18px;

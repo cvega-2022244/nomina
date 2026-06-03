@@ -26,6 +26,10 @@ $data_source = 'zzzz';
 $user = 'sa';
 $password = 'Empres@s0425';
 
+// $dsn = "Driver={SQL Server};Server=LAPTOP-VURT2290;Port=1433;Database=Permisos"; 
+// $user = 'admin';
+// $password = '1215';
+
 $conn = odbc_connect($dsn, $user, $password);
 if (!$conn) {
     // En lugar de exit, devolver JSON de error

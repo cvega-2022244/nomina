@@ -64,6 +64,7 @@ $.ajax({
                 <th>Nombre Completo</th>
                 <th>Fecha de Baja</th>
                 <th>Departamento</th>
+                <th>Motivo</th>
             </tr>
         `;
 
@@ -77,6 +78,7 @@ $.ajax({
                     <td>${nombreCompleto}</td>
                     <td>${formattedFechaInicio}</td>
                     <td>${empleado.departamento}</td>
+                    <td>${empleado.motivo_baja ? empleado.motivo_baja : ''}</td>
                 </tr>
             `;
             });

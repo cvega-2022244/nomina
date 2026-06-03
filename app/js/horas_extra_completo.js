@@ -7,7 +7,7 @@ function getActionButtonsHoras(horaId, idEmpleado) {
     const userRole = userData ? userData.rol : null;
     const empleadoId = idEmpleado || 0;
     
-    if (userRole === 'operaciones') {
+    if (userRole === 'operaciones' || userRole === 'empleado') {
         // Operaciones solo puede ver detalles
         return `
             <button type="button" class="btn btn-outline-primary btn-sm" onclick="detalleHora(${horaId}, ${empleadoId})" title="Ver Detalles">
@@ -53,7 +53,25 @@ function getActionButtonsHoras(horaId, idEmpleado) {
     }
 }
 
+function obtener_lote_activo_info() {
+    $.ajax({
+        url: 'php/servidor.php',
+        type: 'GET',
+        data: { quest: 'lote_activo' },
+        success: function (resp) {
+            try {
+                let lista = typeof resp === 'string' ? JSON.parse(resp) : resp;
+                if (lista && lista.length > 0) {
+                    const badge = document.getElementById('nombre_lote_badge');
+                    if (badge) badge.innerHTML = lista[0].nombre;
+                }
+            } catch (e) {}
+        }
+    });
+}
+
 $(document).ready(function () {
+    obtener_lote_activo_info();
     console.log('🚀 Iniciando carga de horas extra con pestañas...');
     cargando();
     
@@ -166,14 +184,14 @@ function listado_horas_pendientes() {
             type: 'GET',
             dataType: 'text',
             data: {
-                quest: 'lista_horas_pendientes',
+                quest: 'lista_comisiones_pendientes',
                 user_id: userId,
                 user_role: userRole
             },
             success: function (res) {
                 try {
                     if (!res || res === '0' || res.includes('No hay datos')) {
-                        $('#cuerpo_tabla_pendientes_horas').html('<tr><td colspan="9" class="text-center">No hay horas extra pendientes de aprobación</td></tr>');
+                        $('#cuerpo_tabla_pendientes_horas').html('<tr><td colspan="9" class="text-center">No hay comisiones pendientes de aprobación</td></tr>');
                         $('#chx_todos_pendientes_horas').hide();
                         resolve();
                         return;
@@ -187,7 +205,7 @@ function listado_horas_pendientes() {
                     }
                     
                     let template = '';
-                    const isOperaciones = userRole === 'operaciones';
+                    const isOperaciones = userRole === 'operaciones' || userRole === 'empleado';
                     
                     if (lista && lista.length > 0) {
                         lista.forEach(item => {
@@ -212,7 +230,7 @@ function listado_horas_pendientes() {
                         });
                         $('#chx_todos_pendientes_horas').show();
                     } else {
-                        template = '<tr><td colspan="9" class="text-center">No hay horas extra pendientes de aprobación</td></tr>';
+                        template = '<tr><td colspan="9" class="text-center">No hay comisiones pendientes de aprobación</td></tr>';
                         $('#chx_todos_pendientes_horas').hide();
                     }
                     
@@ -247,14 +265,14 @@ function listado_horas_autorizadas() {
             type: 'GET',
             dataType: 'text',
             data: {
-                quest: 'lista_horas_autorizadas',
+                quest: 'lista_comisiones_autorizados',
                 user_id: userId,
                 user_role: userRole
             },
             success: function (res) {
                 try {
                     if (!res || res === '0' || res.includes('No hay datos')) {
-                        $('#cuerpo_tabla_autorizadas_horas').html('<tr><td colspan="9" class="text-center">No hay horas extra autorizadas</td></tr>');
+                        $('#cuerpo_tabla_autorizadas_horas').html('<tr><td colspan="9" class="text-center">No hay comisiones autorizadas</td></tr>');
                         $('#chx_todos_autorizadas_horas').hide();
                         resolve();
                         return;
@@ -268,7 +286,7 @@ function listado_horas_autorizadas() {
                     }
                     
                     let template = '';
-                    const isOperaciones = userRole === 'operaciones';
+                    const isOperaciones = userRole === 'operaciones' || userRole === 'empleado';
                     
                     if (lista && lista.length > 0) {
                         lista.forEach(item => {
@@ -306,7 +324,7 @@ function listado_horas_autorizadas() {
                         });
                         $('#chx_todos_autorizadas_horas').show();
                     } else {
-                        template = '<tr><td colspan="9" class="text-center">No hay horas extra autorizadas</td></tr>';
+                        template = '<tr><td colspan="9" class="text-center">No hay comisiones autorizadas</td></tr>';
                         $('#chx_todos_autorizadas_horas').hide();
                     }
                     
@@ -341,14 +359,14 @@ function listado_horas_rechazadas() {
             type: 'GET',
             dataType: 'text',
             data: {
-                quest: 'lista_horas_rechazadas',
+                quest: 'lista_comisiones_rechazadas',
                 user_id: userId,
                 user_role: userRole
             },
             success: function (res) {
                 try {
                     if (!res || res === '0' || res.includes('No hay datos')) {
-                        $('#cuerpo_tabla_rechazadas_horas').html('<tr><td colspan="9" class="text-center">No hay horas extra rechazadas</td></tr>');
+                        $('#cuerpo_tabla_rechazadas_horas').html('<tr><td colspan="9" class="text-center">No hay comisiones rechazadas</td></tr>');
                         $('#chx_todos_rechazadas_horas').hide();
                         resolve();
                         return;
@@ -362,7 +380,7 @@ function listado_horas_rechazadas() {
                     }
                     
                     let template = '';
-                    const isOperaciones = userRole === 'operaciones';
+                    const isOperaciones = userRole === 'operaciones' || userRole === 'empleado';
                     
                     if (lista && lista.length > 0) {
                         lista.forEach(item => {
@@ -392,7 +410,7 @@ function listado_horas_rechazadas() {
                         });
                         $('#chx_todos_rechazadas_horas').show();
                     } else {
-                        template = '<tr><td colspan="9" class="text-center">No hay horas extra rechazadas</td></tr>';
+                        template = '<tr><td colspan="9" class="text-center">No hay comisiones rechazadas</td></tr>';
                         $('#chx_todos_rechazadas_horas').hide();
                     }
                     
@@ -434,7 +452,7 @@ function cargar_historial_horas() {
         url: 'servidor-bonos.php',
         type: 'GET',
         data: {
-            quest: 'historial_completo_horas',
+            quest: 'historial_completo_bonos',
             ...filtros
         },
         dataType: 'json',

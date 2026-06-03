@@ -258,403 +258,420 @@
         <div id="basic" class="col-lg-12 layout-spacing container">
           <div class="statbox widget box box-shadow">
             <div class="widget-content widget-content-area">
-              <hr>
-              <h2 style="text-align: center;">Empresa Del Empleado</h2>
-              <div class="row text-center">
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Departamento <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select id="departamento_laboral" onchange="listado_centro_costo()">
-                      </select>
+              <div class="row mt-4">
+                
+                <!-- CARD 0: Empresa Del Empleado -->
+                <div class="col-12 mb-4">
+                  <div class="card shadow-sm">
+                    <div class="card-header bg-transparent border-bottom">
+                      <h5 class="mb-0 text-center">Empresa Del Empleado</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row text-center mb-3">
+                        <div class="col-md-4">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Departamento <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select id="departamento_laboral" onchange="listado_centro_costo()">
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4" id="slc_centro_costo">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Área <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select id="centro_de_costo" onchange="listado_dimension_3()">
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4" id="slc_dimension_3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>División <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select id="dimension_3" onchange="listado_dimension_4()">
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row text-center mb-3">
+                        <div class="col-md-4" id="slc_dimension_4">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Sub División</p>
+                              <select id="dimension_4" onchange="listado_dimension_5()">
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4" id="slc_dimension_5">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Nivel 5</p>
+                              <select id="dimension_5">
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4" id="input_puesto">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Puesto <b style="color: red">(OBLIGATORIO)</b></p>
+                              <input id="puesto_empleado" type="text" placeholder="Ingrese el puesto o puestos del empleado" class="form-control" required>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="table-responsive" style="padding-top: 1%;">
+                            <table class="table dt-table-hover dataTable no-footer" id="tabla_empresas">
+                              <thead>
+                                <tr>
+                                  <th class="text-center" scope="col">Empresa</th>
+                                  <th class="text-center" scope="col">Porcentaje</th>
+                                  <th class="text-center" scope="col">Principal</th>
+                                </tr>
+                              </thead>
+                              <tbody id="listado_empresas">
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-4" id="slc_centro_costo">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Área <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select id="centro_de_costo" onchange="listado_dimension_3()">
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4" id="slc_dimension_3">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>División <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select id="dimension_3" onchange="listado_dimension_4()">
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <br>
-              <div class="row text-center">
-                <div class="col-4" id="slc_dimension_4">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Sub División</p>
-                      <select id="dimension_4" onchange="listado_dimension_5()">
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4" id="slc_dimension_5">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Nivel 5</p>
-                      <select id="dimension_5">
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4" id="input_puesto">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Puesto <b style="color: red">(OBLIGATORIO)</b></p>
-                      <input id="puesto_empleado" type="text" placeholder="Ingrese el puesto o puestos del empleado"
-                        class="form-control" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="table-responsive" style="padding-top: 3%;">
 
-                  <table class="table dt-table-hover dataTable no-footer" id="tabla_empresas">
-                    <thead>
-                      <tr>
-                        <th class="text-center" scope="col">Empresa
-                        </th>
-                        <th class="text-center" scope="col">
-                          Porcentaje</th>
-                        <th class="text-center" scope="col">
-                          Principal</th>
-                      </tr>
-                    </thead>
-                    <tbody id="listado_empresas">
+                <!-- CARD 1: Información Personal -->
+                <div class="col-12 mb-4">
+                  <div class="card shadow-sm">
+                    <div class="card-header bg-transparent border-bottom">
+                      <h5 class="mb-0">Información Personal</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row mb-3">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>Primer Nombre <b style="color: red">(OBLIGATORIO)</b></p>
+                            <input id="primer_nombre" type="text" placeholder="Ingrese el primer nombre" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>Segundo nombre</p>
+                            <input id="segundo_nombre" type="text" placeholder="Ingrese el segundo nombre" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>Otros Nombres</p>
+                            <input id="otro_nombre" type="text" placeholder="Ingrese otros nombres" class="form-control" required />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>Primer Apellido <b style="color: red">(OBLIGATORIO)</b></p>
+                            <input id="primer_apellido" type="text" placeholder="Ingrese el primer apellido" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>Segundo Apellido</p>
+                            <input id="segundo_apellido" type="text" placeholder="Ingrese el segundo apellido" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>Apellido Casada</p>
+                            <input id="apellido_casada" type="text" placeholder="Ingrese el apellido de casada" class="form-control" required />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>Fecha de Nacimiento <b style="color: red">(OBLIGATORIO)</b></p>
+                            <input id="fecha_nacimiento" onchange="obtener_edad_empleado()" class="form-control flatpickr flatpickr-input" type="text" placeholder="Fecha de nacimiento.." readonly="readonly" />
+                          </div>
+                        </div>
+                        <div class="col-md-2">
+                          <div class="form-group">
+                            <p>Edad <b style="color: red">(OBLIGATORIO)</b></p>
+                            <input id="edad_empleado" type="text" placeholder="Edad" class="form-control" disabled />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Estado Civil <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select class="select-box" id="estado_civil"></select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Género <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select class="select-box" id="genero"></select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <hr>
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Primer Nombre <b style="color: red">(OBLIGATORIO)</b></p>
-                    <input id="primer_nombre" type="text" placeholder="Ingrese el primer nombre" class="form-control"
-                      required />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Segundo nombre</p>
-                    <input id="segundo_nombre" type="text" placeholder="Ingrese el segundo nombre" class="form-control"
-                      required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-12|">
-                  <div class="form-group">
-                    <p>Otros Nombres <b></b></p>
-                    <input id="otro_nombre" type="text" placeholder="Ingrese otros nombres" class="form-control"
-                      required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Primer Apellido <b style="color: red">(OBLIGATORIO)</b></p>
-                    <input id="primer_apellido" type="text" placeholder="Ingrese el primer apellido"
-                      class="form-control" required />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Segundo Apellido</p>
-                    <input id="segundo_apellido" type="text" placeholder="Ingrese el segundo apellido"
-                      class="form-control" required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <p>Apellido Casada</p>
-                    <input id="apellido_casada" type="text" placeholder="Ingrese el apellido de casada"
-                      class="form-control" required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row text-center">
-                <div class="col-4">
-                  <div class="form-group">
-                    <div class="p-0">
-                      <p>Estado Empleado <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select class="select-box" id="estado"></select>
+                <!-- CARD 2: Documentos e Identidad -->
+                <div class="col-12 mb-4">
+                  <div class="card shadow-sm">
+                    <div class="card-header bg-transparent border-bottom">
+                      <h5 class="mb-0">Documentos e Identidad</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row mb-3">
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>DPI</p>
+                            <input id="dpi" type="text" placeholder="Ingrese número de dpi" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>Lugar Emisión DPI</p>
+                            <input id="lugar_dpi" type="text" placeholder="Lugar donde se emitio el DPI" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>No. IGSS</p>
+                            <input id="no_igss" type="text" placeholder="Ingrese el número de igss" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>NIT</p>
+                            <input id="nit" type="text" placeholder="Ingrese el número de nit" class="form-control" required />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Tipo Licencia</p>
+                              <select class="select-box" id="tipo_licencia"></select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Clase Licencia</p>
+                              <select class="select-box" id="clase_licencia"></select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <p>No. Licencia</p>
+                            <input id="licencia" type="text" placeholder="Ingrese numero de licencia" class="form-control" required />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-4">
-                  <div class="form-group">
-                    <div class="p-0">
-                      <p>Estado Civil <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select class="select-box" id="estado_civil"></select>
+
+                <!-- CARD 3: Información de Contacto -->
+                <div class="col-12 mb-4">
+                  <div class="card shadow-sm">
+                    <div class="card-header bg-transparent border-bottom">
+                      <h5 class="mb-0">Información de Contacto</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row mb-3">
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>Teléfono Domiciliar</p>
+                            <input id="telefono_domiciliar" type="text" placeholder="Número de teléfono fijo" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>Celular Personal</p>
+                            <input id="celular_personal" type="text" placeholder="Número de teléfono personal" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>Teléfono Emergencia</p>
+                            <input id="telefono_emergencia" type="text" placeholder="Teléfono en caso de emergencia" class="form-control" required />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <p>Nombre Emergencia</p>
+                            <input id="nombre_emergencia" type="text" placeholder="Nombre en caso de emergencia" class="form-control" required />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="form-group">
+                            <p>Dirección <b style="color: red">(OBLIGATORIO)</b></p>
+                            <input id="direccion" type="text" placeholder="Ingrese la direccion" class="form-control" required />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-4">
-                  <div class="form-group">
-                    <div class="p-0">
-                      <p>Género <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select class="select-box" id="genero"></select>
+
+                <!-- CARD 4: Información de Pago -->
+                <div class="col-12 mb-4">
+                  <div class="card shadow-sm">
+                    <div class="card-header bg-transparent border-bottom">
+                      <h5 class="mb-0">Información de Pago</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row mb-3">
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Tipo de pago <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select class="select-box" id="pago"></select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Banco</p>
+                              <select class="select-box" id="banco"></select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Tipo de Cuenta</p>
+                              <select class="select-box" id="tipo_cuenta"></select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Moneda <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select class="select-box" id="moneda"></select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <p>No. Cuenta</p>
+                            <input id="no_cuenta" type="text" placeholder="Ingrese el número de cuenta" class="form-control" required />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Teléfono Domiciliar</p>
-                    <input id="telefono_domiciliar" type="text" placeholder="Ingrese el número de teléfono fijo"
-                      class="form-control" required />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Celular Personal</p>
-                    <input id="celular_personal" type="text" placeholder="Ingrese el número de teléfono personal"
-                      class="form-control" required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Teléfono Emergencia</p>
-                    <input id="telefono_emergencia" type="text"
-                      placeholder="Ingrese el número de teléfono en caso de emergencia" class="form-control" required />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Nombre Emergencia</p>
-                    <input id="nombre_emergencia" type="text"
-                      placeholder="Ingrese el nombre de con quien comunicarse en caso de emergencia"
-                      class="form-control" required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-12">
-                  <div class="form-group">
-                    <p>Dirección <b style="color: red">(OBLIGATORIO)</b></p>
-                    <input id="direccion" type="text" placeholder="Ingrese la direccion" class="form-control"
-                      required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Fecha de Nacimiento <b style="color: red">(OBLIGATORIO)</b></p>
-                    <input id="fecha_nacimiento" onchange="obtener_edad_empleado()"
-                      class="form-control flatpickr flatpickr-input" type="text" placeholder="Fecha de nacimiento.."
-                      readonly="readonly" />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>Edad <b style="color: red">(OBLIGATORIO)</b></p>
-                    <input id="edad_empleado" type="text" placeholder="Ingrese la edad" class="form-control" disabled />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Tipo Licencia</p>
-                      <select class="select-box" id="tipo_licencia"></select>
+
+                <!-- CARD 5: Condiciones Laborales -->
+                <div class="col-12 mb-4">
+                  <div class="card shadow-sm">
+                    <div class="card-header bg-transparent border-bottom">
+                      <h5 class="mb-0">Condiciones Laborales</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row mb-3">
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <div class="p-0">
+                              <p>Estado Empleado <b style="color: red">(OBLIGATORIO)</b></p>
+                              <select class="select-box" id="estado"></select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Fecha Inicio <b style="color: red">(OBLIGATORIO)</b></p>
+                            <input id="fecha_inicio" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Fecha de inicio.." readonly="readonly" />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Fecha Baja</p>
+                            <input id="fecha_baja" class="form-control flatpickr flatpickr-input active" type="text" placeholder="Fecha de baja.." readonly="readonly" />
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Motivo Baja</p>
+                            <input id="motivo_baja" class="form-control" type="text" placeholder="Motivo de la baja.." />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Condición laboral <b style="color: red">(OBLIGATORIO)</b></p>
+                            <select class="select-box" id="condicion_laboral"></select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Jornada <b style="color: red">(OBLIGATORIO)</b></p>
+                            <select id="jornada" class="form-control" style="width: 100%;">
+                              <option value="0">Diurna</option>
+                              <option value="1">Nocturna</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>ID Permisos <b style="color: red">(OBLIGATORIO)</b></p>
+                            <input id="id_permisos" class="form-control" type="number" placeholder="ID En Aplicación De Permisos">
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Discapacidad</p>
+                            <input id="discapacidad" class="form-control" type="text" placeholder="Discapacidades">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-3">
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Horas Extra</p>
+                            <div class="form-check form-check-primary form-check-inline">
+                              <input class="form-check-input" type="checkbox" id="horas_extra" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group text-center">
+                            <p>Jubilación</p>
+                            <div class="form-check form-check-primary form-check-inline">
+                              <input class="form-check-input" type="checkbox" id="jubilacion">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Clase Licencia</p>
-                      <select class="select-box" id="clase_licencia"></select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group">
-                    <p>No. Licencia</p>
-                    <input id="licencia" type="text" placeholder="Ingrese numero de licencia" class="form-control"
-                      required />
-                  </div>
-                </div>
+
               </div>
-              <br />
-              <div class="row">
-                <div class="col-5">
-                  <div class="form-group">
-                    <p>DPI</p>
-                    <input id="dpi" type="text" placeholder="Ingrese número de dpi" class="form-control" required />
-                  </div>
-                </div>
-                <div class="col-5">
-                  <div class="form-group">
-                    <p>Lugar Emisión DPI</p>
-                    <input id="lugar_dpi" type="text" placeholder="Ingrese lugar donde se emitio el DPI"
-                      class="form-control" required />
-                  </div>
-                </div>
-                <div class="col-2">
-                  <div class="form-group text-center">
-                    <p>Horas Extra</p>
-                    <div class="form-check form-check-primary form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="horas_extra" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>No. IGSS</p>
-                    <input id="no_igss" type="text" placeholder="Ingrese el número de igss" class="form-control"
-                      required />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>NIT</p>
-                    <input id="nit" type="text" placeholder="Ingrese el número de nit" class="form-control" required />
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-6">
-                  <div class="form-group">
-                    <p>No. Cuenta</p>
-                    <input id="no_cuenta" type="text" placeholder="Ingrese el número de cuenta" class="form-control"
-                      required />
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Banco</p>
-                      <select class="select-box" id="banco"></select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Tipo de pago <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select class="select-box" id="pago"></select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Tipo de Cuenta</p>
-                      <select class="select-box" id="tipo_cuenta"></select>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <div class="p-0">
-                      <p>Moneda <b style="color: red">(OBLIGATORIO)</b></p>
-                      <select class="select-box" id="moneda"></select>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div class="row">
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <p>Fecha Inicio <b style="color: red">(OBLIGATORIO)</b></p>
-                    <input id="fecha_inicio" class="form-control flatpickr flatpickr-input active" type="text"
-                      placeholder="Fecha de inicio.." readonly="readonly" />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <p>Fecha Baja</p>
-                    <input id="fecha_baja" class="form-control flatpickr flatpickr-input active" type="text"
-                      placeholder="Fecha de baja.." readonly="readonly" />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <p>Condición laboral <b style="color: red">(OBLIGATORIO)</b></p>
-                    <select class="select-box" id="condicion_laboral"></select>
-                  </div>
-                </div>
-              </div>
-              <br>
-              <div class="row">
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <p>Jubilación</p>
-                    <div class="form-check form-check-primary form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="jubilacion">
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <p>Discapacidad</b></p>
-                    <input id="discapacidad" class="form-control" type="text" placeholder="Discapacidades">
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <p>Jornada <b style="color: red">(OBLIGATORIO)</b></p>
-                    <select id="jornada">
-                      <option value="0">Diurna</option>
-                      <option value="1">Nocturna</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <br>
-              <div class="row">
-                <div class="col-4">
-                </div>
-                <div class="col-4">
-                  <div class="form-group text-center">
-                    <p>ID Permisos <b style="color: red">(OBLIGATORIO)</b></p>
-                    <input id="id_permisos" class="form-control" type="number"
-                      placeholder="ID En Aplicación De Permisos">
-                  </div>
-                </div>
-                <div class="col-4">
-                </div>
-              </div>
-              <br>
               <!-- ARCHIVERO -->
               <div class="row">
                 <div class="col-12">
@@ -2298,6 +2315,41 @@
                           </div>
                         </div>
                         <!-- MODAL -->
+                        <div class="modal fade" id="modal_motivo_baja" tabindex="-1" role="dialog"
+                          aria-labelledby="modal_motivo_bajaLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="modal_motivo_bajaLabel">
+                                  Motivo de Baja
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="row">
+                                  <div class="col-12">
+                                    <div class="form-group text-center">
+                                      <p>Indique el motivo de la baja</p>
+                                      <input id="modal_input_motivo_baja" class="form-control" type="text"
+                                        placeholder="Ingrese el motivo de la baja.." />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="confirmar_motivo_baja()">
+                                  Confirmar
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                  Cerrar
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <div class="modal fade" id="modal_abandono" tabindex="-1" role="dialog"
                           aria-labelledby="modal_apertura_abandonoLabel" aria-hidden="true">
                           <div class="modal-dialog" role="document">

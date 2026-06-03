@@ -210,9 +210,9 @@ function datos_comision() {
                         if (elUni) {
                             elUni.value = comision.unidades_bono != null && comision.unidades_bono !== '' ? String(comision.unidades_bono) : '';
                         }
-                        const elOrigen = document.getElementById("origen_reporte");
-                        if (elOrigen) {
-                            elOrigen.value = comision.origen_reporte != null ? String(comision.origen_reporte) : '';
+                        const elPuesto = document.getElementById("puesto_trabajo");
+                        if (elPuesto) {
+                            elPuesto.value = comision.puesto_trabajo != null ? String(comision.puesto_trabajo) : '';
                         }
                         
                         document.getElementById("monto").value = formatear_numeros(comision.monto || 0);

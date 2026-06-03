@@ -103,21 +103,15 @@
 
         <div class="container-xxl p-4">
 
-            <div class="dashboard-header">
-                <h1 class="mb-4">Horas Extra</h1>
+            <div class="dashboard-header mb-4">
+                <h1 class="d-inline-block me-3">Aprobación de Comisiones</h1>
+                <span class="badge badge-primary" style="font-size: 1rem; vertical-align: super; background: #4361ee; color: white;" id="nombre_lote_badge"></span>
             </div>
 
                 <div class="middle-content container-xxl p-0">
                     <div class="p-2">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="text-center mb-0" id="titulo_panel">Mi Panel - Horas Extra</h5>
-                            <a href="./crear-bono-variable.html?tipo=hora_extra" class="btn btn-success">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                                Crear Hora Extra
-                            </a>
+                            <h5 class="text-center mb-0" id="titulo_panel">Mi Panel - Aprobación de Comisiones</h5>
                         </div>
                         
                         <!-- Pestañas -->
@@ -226,7 +220,7 @@
                                             </thead>
                                             <tbody id="cuerpo_tabla_historial_horas">
                                                 <tr>
-                                                    <td colspan="10" class="text-center">Cargando historial...</td>
+                                                        <td colspan="10" class="text-center">No hay comisiones pendientes de aprobación</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -361,7 +355,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="detalle_label">Hora Extra</h5>
+                            <h5 class="modal-title" id="detalle_label">Detalle Comisión</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -403,8 +397,8 @@
                             <br>
                             <div class="row text-center">
                                 <div class="col-4">
-                                    <div class="form-group">
-                                        <p>Horas trabajadas</p>
+                                    <h1 class="mb-4">Aprobación de Comisiones</h1>
+                                    <p class="mt-4 mb-0">Sistema de Aprobación de Bonos y Comisiones</p>
                                         <input id="horas_trabajadas_detalle" type="number"
                                             placeholder="Ingrese la cantidad de horas..." class="form-control">
                                     </div>

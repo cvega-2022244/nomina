@@ -392,7 +392,7 @@ function guardarBonoVariable() {
                     text: (tipo === 'bono' ? 'El bono se registró correctamente.' : 'La hora extra se registró correctamente.') + mensajeAdicional,
                     confirmButtonText: 'Continuar'
                 }).then(() => {
-                    limpiarFormulario();
+                    window.location.href = 'seleccion_bonos.html';
                 });
             } else {
 

@@ -246,18 +246,39 @@
                         <h5 class="text-center">Listado Pagos</h5>
                         <br>
                         <div class="row mb-3">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <select name="" id="slc_centro_costo" multiple></select>
                             </div>
-                            <div class="col-3">
+                            <div class="col-4">
                                 <select name="" id="slc_departamento" multiple></select>
                             </div>
-                            <div class="col-6 d-flex align-items-end">
-                                <button class="btn btn-primary me-2" onclick="aplicar_filtros()">Generar Reporte</button>
-                                <button class="btn btn-secondary" onclick="limpiar_filtros()">Limpiar Filtros</button>
+                            <div class="col-4">
+                                <select name="" id="slc_puesto" multiple></select>
                             </div>
                         </div>
-                        <br>
+                        <div class="row mb-3">
+                            <div class="col-6 d-flex align-items-center gap-2">
+                                <button class="btn btn-primary" onclick="aplicar_filtros()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                                    Generar Reporte
+                                </button>
+                                <button class="btn btn-secondary" onclick="limpiar_filtros()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                                    Limpiar Filtros
+                                </button>
+                            </div>
+                            <div class="col-6 d-flex align-items-center justify-content-end gap-2">
+                                <span class="text-muted me-1" style="font-size: 0.8rem;">Reporte Completo:</span>
+                                <button class="btn btn-success" onclick="exportar_completo('excel')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                    Excel Completo
+                                </button>
+                                <button class="btn btn-danger" onclick="exportar_completo('pdf')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                    PDF Completo
+                                </button>
+                            </div>
+                        </div>
                         <div class="statbox widget box box-shadow">
                             <div class="widget-content widget-content-area">
                                 <table id="tabla" class="table dt-table-hover dataTable no-footer" style="width:100%"
@@ -833,6 +854,12 @@
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script src="../src/plugins/src/table/datatable/datatables.js"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/dataTables.buttons.min.js"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/jszip.min.js"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/buttons.html5.min.js"></script>
+    <script src="../src/plugins/src/table/datatable/button-ext/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <!-- END PAGE LEVEL SCRIPTS -->
     <script src="./js/pagos.js"></script>
 </body>

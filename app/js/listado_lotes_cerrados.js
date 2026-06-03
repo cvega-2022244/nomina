@@ -13,7 +13,7 @@ function cargar_empresas() {
         type: 'GET',
         dataType: 'text',
         data: { quest: 'listado_empresas' },
-        success: function(res) {
+        success: function (res) {
             if (typeof res === 'string' && (res.includes('Query Falló') || res.includes('No hay datos'))) {
                 return;
             }
@@ -53,21 +53,21 @@ async function listado_lotes() {
             console.log('No hay lotes cerrados');
         } else {
             let lista;
+            if (typeof resp === 'string') {
+                let lista;
+
                 if (typeof resp === 'string') {
-                    let lista;
 
-                    if (typeof resp === 'string') {
+                    lista = JSON.parse(resp);
 
-                        lista = JSON.parse(resp);
-
-                    } else {
-
-                        lista = resp; // jQuery ya parseó el JSON
-
-                    }
                 } else {
+
                     lista = resp; // jQuery ya parseó el JSON
+
                 }
+            } else {
+                lista = resp; // jQuery ya parseó el JSON
+            }
             const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
             template = '';
             lista.forEach(lista => {
@@ -237,7 +237,7 @@ function eliminarLote(id, nombre) {
                         });
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("Error AJAX al eliminar lote:", error);
                     Swal.fire({
                         icon: 'error',

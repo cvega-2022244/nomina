@@ -407,9 +407,9 @@ if (isset($_GET["quest"]) && $_GET["quest"] == 'historial_completo_bonos') {
             LEFT JOIN estado_bono eb ON c.id_estado = eb.id
             WHERE c.tipo_registro = 'bono'";
     
-    // Si el rol es 'operaciones', solo mostrar los bonos creados por ese usuario
-    if ($user_role == 'operaciones' && $user_id) {
-        $sql .= " AND c.id_solicitante = $user_id";
+    // Si el rol es 'operaciones' o 'empleado', solo mostrar los bonos creados por ese usuario
+    if (in_array(strtolower($user_role), ['operaciones', 'empleado']) && $user_id) {
+        $sql .= " AND c.id_solicitante = " . intval($user_id);
     }
     // Admin ve todo, no necesita filtro adicional
     
@@ -503,9 +503,9 @@ if (isset($_GET["quest"]) && $_GET["quest"] == 'historial_completo_horas') {
             LEFT JOIN estado_bono eb ON c.id_estado = eb.id
             WHERE c.tipo_registro = 'hora_extra'";
     
-    // Si el rol es 'operaciones', solo mostrar las horas extra creadas por ese usuario
-    if ($user_role == 'operaciones' && $user_id) {
-        $sql .= " AND c.id_solicitante = $user_id";
+    // Si el rol es 'operaciones' o 'empleado', solo mostrar las horas extra creadas por ese usuario
+    if (in_array(strtolower($user_role), ['operaciones', 'empleado']) && $user_id) {
+        $sql .= " AND c.id_solicitante = " . intval($user_id);
     }
     // Admin ve todo, no necesita filtro adicional
     

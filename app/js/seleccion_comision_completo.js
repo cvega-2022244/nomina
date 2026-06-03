@@ -40,7 +40,7 @@ function getActionButtons(comisionId, idEmpleado) {
                 </svg>
             </button>
         `;
-    } else if (userRole === 'operaciones') {
+    } else if (userRole === 'operaciones' || userRole === 'empleado') {
         // Operaciones solo puede ver detalles de sus bonos pendientes
         return `
             <button type="button" class="btn btn-outline-primary btn-sm" onclick="detalle(${comisionId}, ${empleadoId})" title="Ver Detalles">
@@ -63,7 +63,25 @@ function getActionButtons(comisionId, idEmpleado) {
     }
 }
 
+function obtener_lote_activo_info() {
+    $.ajax({
+        url: 'php/servidor.php',
+        type: 'GET',
+        data: { quest: 'lote_activo' },
+        success: function (resp) {
+            try {
+                let lista = typeof resp === 'string' ? JSON.parse(resp) : resp;
+                if (lista && lista.length > 0) {
+                    const badge = document.getElementById('nombre_lote_badge');
+                    if (badge) badge.innerHTML = lista[0].nombre;
+                }
+            } catch (e) {}
+        }
+    });
+}
+
 $(document).ready(function () {
+    obtener_lote_activo_info();
     console.log('🚀 Iniciando carga de comisiones con pestañas...');
     cargando();
     
@@ -170,7 +188,7 @@ function listado_comisiones_pendientes() {
                     let template = '';
                     // Verificar si el usuario es operaciones para ocultar checkbox
                     const userRole = sessionStorage.getItem('rol') || '';
-                    const isOperaciones = userRole === 'operaciones';
+                    const isOperaciones = userRole === 'operaciones' || userRole === 'empleado';
                     
                     if (lista != 0 && lista.length > 0) {
                         lista.forEach(item => {
@@ -278,7 +296,7 @@ function listado_comisiones_autorizadas() {
                     let template = '';
                     // Verificar si el usuario es operaciones para ocultar checkbox
                     const userRoleAut = sessionStorage.getItem('rol') || '';
-                    const isOperacionesAut = userRoleAut === 'operaciones';
+                    const isOperacionesAut = userRoleAut === 'operaciones' || userRoleAut === 'empleado';
                     
                     if (lista != 0 && lista.length > 0) {
                         lista.forEach(item => {
@@ -844,7 +862,7 @@ function listado_comisiones_rechazadas() {
                 let template = '';
                 // Verificar si el usuario es operaciones para ocultar checkbox
                 const userRoleRech = sessionStorage.getItem('rol') || '';
-                const isOperacionesRech = userRoleRech === 'operaciones';
+                const isOperacionesRech = userRoleRech === 'operaciones' || userRoleRech === 'empleado';
                 
                 if (lista != 0 && lista.length > 0) {
                     lista.forEach(item => {

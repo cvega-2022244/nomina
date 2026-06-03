@@ -265,6 +265,17 @@
         <div class="user-info-wrapper d-flex align-items-center ms-auto me-3">
             <span id="usuario_nombre_header" class="me-3" style="font-size: 14px; font-weight: 600; color: var(--dash-title);"></span>
             
+            <button class="btn btn-primary btn-sm d-flex align-items-center gap-2 me-2" onclick="abrirModalEmpresa()" style="border-radius: 8px; padding: 6px 15px; font-weight: 600; background-color: #4361ee; border-color: #4361ee;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>Cambiar Empresa</span>
+            </button>
+
             <button class="btn btn-custom-danger btn-sm d-flex align-items-center gap-2" onclick="cerrarSesion()" style="border-radius: 8px; padding: 6px 15px; font-weight: 600;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -283,13 +294,12 @@
 
             <div class="dashboard-header">
                 <h1 id="nombre_lote">Nómina Activa</h1>
-                <p class="mb-0">Gestión y cálculo detallado de la nómina del período</p>
+                <p class="mb-0" id="subtitulo_nomina">Gestión y cálculo detallado de la nómina del período</p>
             </div>
 
             <div class="middle-content p-0">
 
-                <div class="row layout-top-spacing g-4">
-
+                <div class="row layout-top-spacing g-4 justify-content-center">
 
                     <div class="col-12 col-md-4 administrar-nomina card-horas" style="cursor: pointer" onclick="horas_extra()">
                         <div class="info-box-3">
@@ -302,8 +312,8 @@
                                 </svg>
                             </div>
                             <div class="info-box-3-content-wrapper">
-                                <h3 class="info-box-3-title">Horas Extra</h3>
-                                <div class="info-box-3-content">Cálculo y gestión de horas extraordinarias laboradas.
+                                <h3 class="info-box-3-title">Comisiones</h3>
+                                <div class="info-box-3-content">Cálculo y gestión de horas extraordinarias y bonos.
                                 </div>
                             </div>
                         </div>
@@ -328,9 +338,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row layout-top-spacing g-4 mt-2">
                     <div class="col-12 col-md-4 administrar-nomina card-descuentos" style="cursor: pointer" onclick="descuentos()">
                         <div class="info-box-3">
                             <div class="info-box-3-icon">

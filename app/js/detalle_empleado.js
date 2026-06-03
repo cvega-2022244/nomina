@@ -106,6 +106,7 @@ var pago = document.getElementById("pago");
 var moneda = document.getElementById("moneda");
 var fecha_inicio = document.getElementById("fecha_inicio");
 var fecha_baja = document.getElementById("fecha_baja");
+var motivo_baja = document.getElementById("motivo_baja");
 var departamento_laboral = document.getElementById("departamento_laboral");
 var centro_de_costo = document.getElementById("centro_de_costo");
 var dimension_3 = document.getElementById("dimension_3");
@@ -336,6 +337,18 @@ async function cargarEstados() {
     } else {
       selectBox.enable();
     }
+
+    document.getElementById("estado").addEventListener('change', function(e) {
+      var selectedText = this.options[this.selectedIndex] ? this.options[this.selectedIndex].text : "";
+      if (this.value == "2" || selectedText === "De Baja") {
+          var modal_input = document.getElementById("modal_input_motivo_baja");
+          var motivo_baja = document.getElementById("motivo_baja");
+          if (modal_input && motivo_baja) {
+              modal_input.value = motivo_baja.value;
+          }
+          $('#modal_motivo_baja').modal('show');
+      }
+    });
   } catch (error) {
     console.error("Error al cargar estados:", error);
   }
@@ -1719,6 +1732,7 @@ function llenar_inputs_empleado() {
           updateSelectBoxText(moneda);
           fecha_inicio.value = lista[0].fecha_inicio;
           fecha_baja.value = lista[0].fecha_baja;
+          if (motivo_baja) motivo_baja.value = lista[0].motivo_baja;
           departamento_laboral.value = lista[0].departamento_laboral;
           updateSelectBoxText(departamento_laboral);
           centro_de_costo.value = lista[0].centro_de_costo;
@@ -5546,7 +5560,116 @@ function validar_fecha_baja() {
   }
 }
 
-function editar_empleado() {
+async function editar_empleado() {
+  var dpi = document.getElementById("dpi");
+  var no_igss = document.getElementById("no_igss");
+  
+  if (dpi.value == '') {
+    Swal.fire({
+      title: 'DPI Vacio',
+      html: 'Por favor, asegurese de haber ingresado el DPI',
+      icon: 'warning',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+      showCancelButton: false
+    });
+    return;
+  }
+
+  if (no_igss.value == '') {
+    Swal.fire({
+      title: 'IGSS Vacio',
+      html: 'Por favor, asegurese de haber ingresado el número de IGSS',
+      icon: 'warning',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+      showCancelButton: false
+    });
+    return;
+  }
+
+  cargando();
+
+  const respDpi = await $.ajax({
+    url: 'php/servidor.php',
+    type: 'GET',
+    data: {
+      quest: 'buscar_empleado_dpi',
+      dpi: dpi.value,
+      id_empleado: id_empleado
+    },
+  });
+
+  let listaDpi;
+  if (typeof respDpi === 'string') {
+    listaDpi = JSON.parse(respDpi);
+  } else {
+    listaDpi = respDpi;
+  }
+
+  if (listaDpi.error && listaDpi.error.includes('Query Fall')) {
+    Swal.fire({
+      title: 'Error',
+      html: 'Ha ocurrido un error al validar el DPI',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+    });
+    return;
+  } else if (listaDpi.cantidad > 0) {
+    Swal.fire({
+      title: 'DPI Duplicado',
+      html: 'El DPI ingresado ya se encuentra registrado a nombre de otro empleado. No puede continuar.',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+      confirmButtonText: 'Cerrar'
+    });
+    return;
+  }
+
+  const respIgss = await $.ajax({
+    url: 'php/servidor.php',
+    type: 'GET',
+    data: {
+      quest: 'buscar_empleado_igss',
+      igss: no_igss.value,
+      id_empleado: id_empleado
+    },
+  });
+
+  let listaIgss;
+  if (typeof respIgss === 'string') {
+    listaIgss = JSON.parse(respIgss);
+  } else {
+    listaIgss = respIgss;
+  }
+
+  if (listaIgss.error && listaIgss.error.includes('Query Fall')) {
+    Swal.fire({
+      title: 'Error',
+      html: 'Ha ocurrido un error al validar el IGSS',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+    });
+    return;
+  } else if (listaIgss.cantidad > 0) {
+    Swal.fire({
+      title: 'IGSS Duplicado',
+      html: 'El número de IGSS ingresado ya se encuentra registrado a nombre de otro empleado. No puede continuar.',
+      icon: 'error',
+      allowOutsideClick: false,
+      showConfirmButton: true,
+      confirmButtonText: 'Cerrar'
+    });
+    return;
+  }
+
+  editar_empleado_final();
+}
+
+function editar_empleado_final() {
   cargando();
   if (validar_inputs_empleado()) {
     if (validar_fecha_baja()) {
@@ -5583,6 +5706,7 @@ function editar_empleado() {
                         puesto: puesto_empleado.value,
                         fecha_inicio: fecha_inicio.value,
                         fecha_baja: fecha_baja.value,
+                        motivo_baja: motivo_baja ? motivo_baja.value : "",
                         telefono: telefono_domiciliar.value,
                         genero: genero.options[genero.selectedIndex].value,
                         licencia: no_licencia.value,
@@ -6399,4 +6523,13 @@ function obtenerNombreEmpleado() {
 
 function disciplinaria() {
   window.location.href = './disciplinaria.htm';
+}
+
+function confirmar_motivo_baja() {
+  var modal_input = document.getElementById("modal_input_motivo_baja");
+  var motivo_baja = document.getElementById("motivo_baja");
+  if (modal_input && motivo_baja) {
+    motivo_baja.value = modal_input.value;
+  }
+  $('#modal_motivo_baja').modal('hide');
 }

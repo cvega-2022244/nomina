@@ -6,7 +6,7 @@ function traer_cumpleañeros() {
         url: 'php/servidor.php',
         type: 'GET',
         data: {
-            quest: 'cumpleañeros',
+            quest: 'cumpleaneros',
             mes,
             anio
 
@@ -28,21 +28,11 @@ function traer_cumpleañeros() {
             } else {
                 try {
                     let lista;
-                if (typeof res === 'string') {
-                    let lista;
-
                     if (typeof res === 'string') {
-
                         lista = JSON.parse(res);
-
                     } else {
-
-                        lista = res; // jQuery ya parseó el JSON
-
+                        lista = res;
                     }
-                } else {
-                    lista = res; // jQuery ya parseó el JSON
-                }
 
                     function formatearNombreEmpleado(item) {
                         let nombre_empleado = `${item.primer_nombre}${item.segundo_nombre ? ` ${item.segundo_nombre}` : ''}${item.otro_nombre ? ` ${item.otro_nombre}` : ''}${item.primer_apellido ? ` ${item.primer_apellido}` : ''}${item.segundo_apellido ? ` ${item.segundo_apellido}` : ''}`;

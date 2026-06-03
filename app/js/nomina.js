@@ -103,6 +103,10 @@ function continuarConEmpresaSeleccionada() {
         const ruta = rutaPendienteNomina;
         rutaPendienteNomina = null;
         window.location.href = ruta;
+    } else {
+        if (window.location.pathname.endsWith('nomina.html')) {
+            window.location.reload();
+        }
     }
 }
 
@@ -305,7 +309,18 @@ async function obtener_lote_activo() {
                     lista = resp; // jQuery ya parseó el JSON
                 }
             id_lote_activo = lista[0].id;
-            nombre_lote.innerHTML = lista[0].nombre
+            nombre_lote.innerHTML = lista[0].nombre;
+            
+            // Reflejar la empresa seleccionada en el subtítulo
+            const slcEmpresa = document.getElementById('slc_empresa');
+            let nombreEmpresa = '';
+            if (slcEmpresa && slcEmpresa.selectedIndex >= 0) {
+                nombreEmpresa = slcEmpresa.options[slcEmpresa.selectedIndex].text;
+            }
+            const subtitulo = document.getElementById('subtitulo_nomina');
+            if (subtitulo && nombreEmpresa) {
+                subtitulo.innerHTML = `Gestión y cálculo detallado de la nómina del período <span class="badge badge-primary ms-2" style="background: #4361ee; color: white;">Empresa: ${nombreEmpresa}</span>`;
+            }
         }
     } catch (error) {
         

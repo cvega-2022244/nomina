@@ -26,6 +26,10 @@ $data_source = 'zzzz';
 $user = 'sa';
 $password = 'Empres@s0425';
 
+// $dsn = "Driver={SQL Server};Server=LAPTOP-VURT2290;Port=1433;Database=Permisos"; 
+// $user = 'admin';
+// $password = '1215';
+
 $conn = odbc_connect($dsn, $user, $password);
 if (!$conn) {
     // En lugar de exit, devolver JSON de error
@@ -47,11 +51,9 @@ $con->set_charset("utf8");
 
 // ----------------------- CONSULTAS ------------------------ //
 // --------------------- GET -------------------------- //
-error_log("DEBUG: Iniciando servidor");
 if (isset($_GET)) {
-    error_log("DEBUG: GET est? definido");
     if (isset($_GET["quest"])) {
-        error_log("DEBUG: Quest recibido: " . $_GET["quest"]);
+        $quest = $_GET["quest"];
         if ($_GET["quest"] == 'lista_comisiones_rechazadas') {
             $user_id = $_GET['user_id'] ?? null;
             $user_role = $_GET['user_role'] ?? null;
@@ -97,12 +99,12 @@ if (isset($_GET)) {
         // Listar horas extra pendientes de aprobaci?n
         if ($_GET["quest"] == 'lista_horas_pendientes') {
             $user_id = $_GET['user_id'] ?? null;
-            $user_role = $_GET['user_role'] ?? null;
+            $user_role = strtolower($_GET['user_role'] ?? '');
 
-            if ($user_id && $user_role == 'operaciones') {
+            if ($user_id && in_array($user_role, ['operaciones', 'empleado'])) {
                 // Si es operaciones, mostrar solo las horas extra que cre? con estado 1 (Solicitado/Pendiente)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 1 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
-            } else if ($user_role == 'admin') {
+            } else if (in_array($user_role, ['admin', 'rh', 'jefe', 'gerente'])) {
                 // Si es Admin, mostrar todas las horas extra pendientes de aprobaci?n
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_estado = 1 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
             } else {
@@ -128,12 +130,12 @@ if (isset($_GET)) {
         // Listar horas extra autorizadas
         if ($_GET["quest"] == 'lista_horas_autorizadas') {
             $user_id = $_GET['user_id'] ?? null;
-            $user_role = $_GET['user_role'] ?? null;
+            $user_role = strtolower($_GET['user_role'] ?? '');
 
-            if ($user_id && $user_role == 'operaciones') {
+            if ($user_id && in_array($user_role, ['operaciones', 'empleado'])) {
                 // Si es operaciones, mostrar solo las horas extra que cre? con estado 2 (Aprobado RH)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 2 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
-            } else if ($user_role == 'admin') {
+            } else if (in_array($user_role, ['admin', 'rh', 'jefe', 'gerente'])) {
                 // Si es Admin, mostrar todas las horas extra autorizadas
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_estado = 2 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
             } else {
@@ -159,12 +161,12 @@ if (isset($_GET)) {
         // Listar horas extra rechazadas
         if ($_GET["quest"] == 'lista_horas_rechazadas') {
             $user_id = $_GET['user_id'] ?? null;
-            $user_role = $_GET['user_role'] ?? null;
+            $user_role = strtolower($_GET['user_role'] ?? '');
 
-            if ($user_id && $user_role == 'operaciones') {
+            if ($user_id && in_array($user_role, ['operaciones', 'empleado'])) {
                 // Si es operaciones, mostrar solo las horas extra que cre? con estado 3 (Rechazado)
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_solicitante = " . intval($user_id) . " AND c.id_estado = 3 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
-            } else if ($user_role == 'admin') {
+            } else if (in_array($user_role, ['admin', 'rh', 'jefe', 'gerente'])) {
                 // Si es Admin, mostrar todas las horas extra rechazadas
                 $sql = "SELECT c.id, CONCAT(e.primer_nombre, ' ', e.primer_apellido) as empleado, e.id as id_empleado, c.fecha_trabajado, c.horas, c.tipo_jornada as jornada, c.monto, eb.nombre as estado, c.seleccionado FROM comision c LEFT JOIN empleado e ON c.id_empleado = e.id LEFT JOIN estado_bono eb ON c.id_estado = eb.id WHERE c.id_estado = 3 AND c.tipo_registro = 'hora_extra' ORDER BY c.id DESC";
             } else {
@@ -241,7 +243,7 @@ if (isset($_GET)) {
             }
         }
 
-        if ($_GET["quest"] == 'cumplea?eros') {
+        if ($_GET["quest"] == 'cumpleaneros') {
             $sql = "SELECT e.id, primer_nombre, segundo_nombre, otro_nombre, primer_apellido, e.segundo_apellido, DATE_ADD( e.fecha_nacimiento, INTERVAL( " . $_GET["anio"] . " - YEAR(e.fecha_nacimiento)) YEAR ) fecha_nacimiento, d.nombre FROM empleado e INNER JOIN departamento d ON e.departamento_laboral = d.id WHERE MONTH(fecha_nacimiento) = " . $_GET["mes"] . " and e.estado = 1 ORDER BY fecha_nacimiento";
 
             $result = mysqli_query($con, $sql);
@@ -568,7 +570,47 @@ if (isset($_GET)) {
 
         if ($_GET["quest"] == 'buscar_empleado_dpi') {
             $dpi = mysqli_real_escape_string($con, $_GET["dpi"]);
+            if (empty(trim($dpi))) {
+                echo json_encode(['cantidad' => 0]);
+                exit;
+            }
             $sql = "SELECT COUNT(*) as cantidad FROM empleado WHERE LOWER(TRIM(dpi)) = LOWER(TRIM('$dpi'))";
+            
+            if (isset($_GET["id_empleado"]) && !empty($_GET["id_empleado"])) {
+                $id_empleado = mysqli_real_escape_string($con, $_GET["id_empleado"]);
+                $sql .= " AND id != '$id_empleado'";
+            }
+
+            $result = mysqli_query($con, $sql);
+
+            if (!$result) {
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
+                exit;
+            }
+
+            if (mysqli_num_rows($result) > 0) {
+                $row = mysqli_fetch_array($result);
+                $json = array(
+                    'cantidad' => (int) $row["cantidad"]
+                );
+                echo json_encode($json);
+            } else {
+                echo json_encode(['cantidad' => 0]);
+            }
+        }
+
+        if ($_GET["quest"] == 'buscar_empleado_igss') {
+            $igss = mysqli_real_escape_string($con, $_GET["igss"]);
+            if (empty(trim($igss))) {
+                echo json_encode(['cantidad' => 0]);
+                exit;
+            }
+            $sql = "SELECT COUNT(*) as cantidad FROM empleado WHERE LOWER(TRIM(no_igss)) = LOWER(TRIM('$igss'))";
+            
+            if (isset($_GET["id_empleado"]) && !empty($_GET["id_empleado"])) {
+                $id_empleado = mysqli_real_escape_string($con, $_GET["id_empleado"]);
+                $sql .= " AND id != '$id_empleado'";
+            }
 
             $result = mysqli_query($con, $sql);
 
@@ -589,7 +631,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'bajas_altas') {
-            $sql = "SELECT e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada, e.fecha_baja, d.nombre departamento FROM empleado e INNER JOIN departamento d ON e.departamento_laboral = d.id WHERE MONTH(e.fecha_baja) = " . $_GET["mes"] . " AND YEAR(e.fecha_baja) = " . $_GET["anio"] . "";
+            $sql = "SELECT e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.apellido_casada, e.fecha_baja, e.motivo_baja, d.nombre departamento FROM empleado e INNER JOIN departamento d ON e.departamento_laboral = d.id WHERE MONTH(e.fecha_baja) = " . $_GET["mes"] . " AND YEAR(e.fecha_baja) = " . $_GET["anio"] . "";
             // echo $sql;
             $result = mysqli_query($con, $sql);
 
@@ -609,6 +651,7 @@ if (isset($_GET)) {
                         'segundo_apellido' => $row["segundo_apellido"],
                         'apellido_casada' => $row["apellido_casada"],
                         'fecha_baja' => $row["fecha_baja"],
+                        'motivo_baja' => $row["motivo_baja"],
                         'departamento' => $row["departamento"]
                     );
                 }
@@ -1675,6 +1718,29 @@ if (isset($_GET)) {
             }
         }
 
+        if ($_GET["quest"] == 'listado_nombres_puestos') {
+            $id_empresa = isset($_GET['id_empresa']) ? intval($_GET['id_empresa']) : 0;
+            $sql = "SELECT DISTINCT e.puesto FROM empleado e INNER JOIN empresa_empleado ee ON ee.id_empleado = e.id AND ee.activo = 1 AND ee.principal = 1 WHERE e.estado = 1 AND e.puesto IS NOT NULL AND e.puesto != '' AND ee.id_empresa = $id_empresa ORDER BY e.puesto";
+
+            $result = mysqli_query($con, $sql);
+
+            if (!$result) {
+                echo json_encode(['error' => 'Query Falló: ' . mysqli_error($con)]);
+                exit;
+            }
+
+            if (mysqli_num_rows($result) > 0) {
+                $json = array();
+                while ($row = mysqli_fetch_array($result)) {
+                    $json[] = array('puesto' => $row["puesto"]);
+                }
+                echo json_encode($json);
+            } else {
+                echo 'No hay datos';
+            }
+            exit;
+        }
+
         if ($_GET["quest"] == 'listado_dimension_3') {
             $sql = "SELECT id, nombre FROM dimension_3 where id_estado = 1";
 
@@ -2304,23 +2370,61 @@ if (isset($_GET)) {
                 $json_string = json_encode($json);
                 echo $json_string;
             } else {
+                echo 'No';
+            }
+        }
+
+        if ($_GET["quest"] == 'lista_comisiones_rechazadas') {
+            $user_id = $_GET['user_id'] ?? null;
+            $user_role = strtolower($_GET['user_role'] ?? '');
+
+            if ($user_id && in_array($user_role, ['operaciones', 'empleado'])) {
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . intval($user_id) . " AND eb.id = 3 AND (b.tipo_registro = 'bono' OR b.tipo_registro = 'comision' OR b.tipo_registro = '') GROUP BY b.id ORDER BY b.id DESC";
+            } else if (in_array($user_role, ['admin', 'rh', 'jefe', 'gerente'])) {
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE eb.id = 3 AND (b.tipo_registro = 'bono' OR b.tipo_registro = 'comision' OR b.tipo_registro = '') GROUP BY b.id ORDER BY b.id DESC";
+            } else {
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE 1=0 GROUP BY b.id ORDER BY b.id DESC";
+            }
+
+            $result = mysqli_query($con, $sql);
+
+            if (!$result) {
+                echo json_encode(['error' => 'Query Fall?: ' . mysqli_error($con)]);
+                exit;
+            }
+
+            if (mysqli_num_rows($result) > 0) {
+                $json = array();
+                while ($row = mysqli_fetch_array($result)) {
+                    $json[] = array(
+                        'id' => $row["id"],
+                        'departamento' => $row["departamento"],
+                        'empleado' => $row["empleado"],
+                        'solicitante' => $row["solicitante"],
+                        'fecha_generado' => $row["fecha_generado"],
+                        'monto' => $row["monto"],
+                        'estado' => $row["estado"],
+                        'seleccionado' => $row["seleccionado"],
+                        'id_empleado' => $row["id_empleado"]
+                    );
+                }
+                $json_string = json_encode($json);
+                echo $json_string;
+            } else {
                 echo 0;
             }
         }
 
         if ($_GET["quest"] == 'lista_comisiones_autorizados') {
             $user_id = $_GET['user_id'] ?? null;
-            $user_role = $_GET['user_role'] ?? null;
+            $user_role = strtolower($_GET['user_role'] ?? '');
 
-            if ($user_id && $user_role == 'operaciones') {
-                // Si es operaciones, mostrar solo los bonos que cre? que ya est?n autorizados (estado 2)
-                $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . $user_id . " AND eb.id = 2 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
-            } else if ($user_role == 'admin') {
-                // Si es Admin, mostrar todos los bonos autorizados (estado 2)
-                $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE eb.id = 2 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
+            if ($user_id && in_array($user_role, ['operaciones', 'empleado'])) {
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . intval($user_id) . " AND eb.id = 2 AND (b.tipo_registro = 'bono' OR b.tipo_registro = 'comision' OR b.tipo_registro = '') GROUP BY b.id ORDER BY b.id DESC";
+            } else if (in_array($user_role, ['admin', 'rh', 'jefe', 'gerente'])) {
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE eb.id = 2 AND (b.tipo_registro = 'bono' OR b.tipo_registro = 'comision' OR b.tipo_registro = '') GROUP BY b.id ORDER BY b.id DESC";
             } else {
-                // Por defecto (capturador u otros), no mostrar autorizados
-                $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE 1=0 GROUP BY b.id ORDER BY b.id DESC";
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE 1=0 GROUP BY b.id ORDER BY b.id DESC";
             }
 
             $result = mysqli_query($con, $sql);
@@ -2354,17 +2458,17 @@ if (isset($_GET)) {
 
         if ($_GET["quest"] == 'lista_comisiones_pendientes') {
             $user_id = $_GET['user_id'] ?? null;
-            $user_role = $_GET['user_role'] ?? null;
+            $user_role = strtolower($_GET['user_role'] ?? '');
 
-            if ($user_id && $user_role == 'operaciones') {
+            if ($user_id && in_array($user_role, ['operaciones', 'empleado'])) {
                 // Si es operaciones, mostrar solo los bonos que cre? con estado 1 (Solicitado/Pendiente)
-                $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . $user_id . " AND eb.id = 1 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
-            } else if ($user_role == 'admin') {
-                // Si es Admin, mostrar todos los bonos pendientes de aprobaci?n (estado 1 = Solicitado)
-                $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE eb.id = 1 AND b.tipo_registro = 'bono' GROUP BY b.id ORDER BY b.id DESC";
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id_solicitante = " . intval($user_id) . " AND eb.id = 1 AND (b.tipo_registro = 'bono' OR b.tipo_registro = 'comision' OR b.tipo_registro = '') GROUP BY b.id ORDER BY b.id DESC";
+            } else if (in_array($user_role, ['admin', 'rh', 'jefe', 'gerente'])) {
+                // Si es Admin u otros roles aprobadores, mostrar todos los bonos pendientes de aprobaci?n (estado 1 = Solicitado)
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE eb.id = 1 AND (b.tipo_registro = 'bono' OR b.tipo_registro = 'comision' OR b.tipo_registro = '') GROUP BY b.id ORDER BY b.id DESC";
             } else {
-                // Por defecto (capturador u otros), no mostrar pendientes
-                $sql = "SELECT b.id, d.nombre departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, u.nombre solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b INNER JOIN empleado emp ON b.id_empleado = emp.id INNER JOIN departamento d ON emp.departamento_laboral = d.id INNER JOIN usuario u ON b.id_solicitante = u.id INNER JOIN estado_bono eb ON b.id_estado = eb.id WHERE 1=0 GROUP BY b.id ORDER BY b.id DESC";
+                // Por defecto
+                $sql = "SELECT b.id, COALESCE(d.nombre, 'Sin Depto') departamento, CONCAT( emp.primer_nombre, ' ', emp.primer_apellido ) empleado, emp.id id_empleado, COALESCE(u.nombre, 'Sin Solicitante') solicitante, DATE(b.fecha_generado) fecha_generado, b.monto, eb.nombre estado, b.seleccionado FROM comision b LEFT JOIN empleado emp ON b.id_empleado = emp.id LEFT JOIN departamento d ON emp.departamento_laboral = d.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE 1=0 GROUP BY b.id ORDER BY b.id DESC";
             }
 
             $result = mysqli_query($con, $sql);
@@ -2394,6 +2498,7 @@ if (isset($_GET)) {
             } else {
                 echo 0;
             }
+            exit;
         }
 
         if ($_GET["quest"] == 'detalle_bono') {
@@ -2430,7 +2535,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'detalle_comision') {
-            $sql = "SELECT b.id, COALESCE(e.nombre_comercial, 'Sin Empresa') as empresa, b.fecha_trabajado, DATE(b.fecha_generado) as fecha_generado, b.horas, b.tipo_jornada, b.monto, b.tarea, COALESCE(u.nombre, 'Sin Usuario') as usuario, COALESCE(eb.nombre, 'Sin Estado') as estado, '' as observacion, b.autorizado_cenas, b.mes_trabajo, b.tipo_hora_dn, b.unidades_bono, b.origen_reporte FROM comision b LEFT JOIN empresa e ON b.empresa_trabajo = e.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id = " . $_GET["id"];
+            $sql = "SELECT b.id, COALESCE(e.nombre_comercial, 'Sin Empresa') as empresa, b.fecha_trabajado, DATE(b.fecha_generado) as fecha_generado, b.horas, b.tipo_jornada, b.monto, b.tarea, COALESCE(u.nombre, 'Sin Usuario') as usuario, COALESCE(eb.nombre, 'Sin Estado') as estado, '' as observacion, b.autorizado_cenas, b.mes_trabajo, b.tipo_hora_dn, b.unidades_bono, b.puesto_trabajo, b.origen_reporte FROM comision b LEFT JOIN empresa e ON b.empresa_trabajo = e.id LEFT JOIN usuario u ON b.id_solicitante = u.id LEFT JOIN estado_bono eb ON b.id_estado = eb.id WHERE b.id = " . $_GET["id"];
             $result = mysqli_query($con, $sql);
 
             if (!$result) {
@@ -2455,6 +2560,7 @@ if (isset($_GET)) {
                             'mes_trabajo' => isset($row["mes_trabajo"]) ? $row["mes_trabajo"] : '',
                             'tipo_hora_dn' => isset($row["tipo_hora_dn"]) ? $row["tipo_hora_dn"] : '',
                             'unidades_bono' => isset($row["unidades_bono"]) ? $row["unidades_bono"] : '',
+                            'puesto_trabajo' => isset($row["puesto_trabajo"]) ? $row["puesto_trabajo"] : '',
                             'origen_reporte' => isset($row["origen_reporte"]) ? $row["origen_reporte"] : '',
                         );
                     }
@@ -3561,7 +3667,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados_baja') {
-            $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 GROUP BY e.id";
+            $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.dpi, e.motivo_baja, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 GROUP BY e.id";
 
             $result = mysqli_query($con, $sql);
 
@@ -3581,6 +3687,7 @@ if (isset($_GET)) {
                         'primer_apellido' => $row["primer_apellido"],
                         'segundo_apellido' => $row["segundo_apellido"],
                         'dpi' => $row["dpi"],
+                        'motivo_baja' => $row["motivo_baja"],
                         'empresa' => $row["empresa"],
                         'id_empresa' => $row["id_empresa"],
                         'id_permisos' => $row["id_permisos"],
@@ -3756,7 +3863,7 @@ if (isset($_GET)) {
         }
 
         if ($_GET["quest"] == 'listado_empleados_empresa_baja') {
-            $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.dpi, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 and ee.id_empresa = " . $_GET['id_empresa'] . " GROUP BY e.id";
+            $sql = "SELECT e.id, e.primer_nombre, e.segundo_nombre, e.otro_nombre, e.primer_apellido, e.segundo_apellido, e.dpi, e.motivo_baja, emp.nombre_comercial empresa, emp.id id_empresa, e.id_permisos id_permisos FROM empleado e LEFT JOIN empresa_empleado ee on e.id = ee.id_empleado LEFT JOIN empresa emp on ee.id_empresa = emp.id where e.estado = 2 and ee.activo = 1 and ee.principal = 1 and ee.id_empresa = " . $_GET['id_empresa'] . " GROUP BY e.id";
 
             $result = mysqli_query($con, $sql);
 
@@ -3776,6 +3883,7 @@ if (isset($_GET)) {
                         'primer_apellido' => $row["primer_apellido"],
                         'segundo_apellido' => $row["segundo_apellido"],
                         'dpi' => $row["dpi"],
+                        'motivo_baja' => $row["motivo_baja"],
                         'empresa' => $row["empresa"],
                         'id_empresa' => $row["id_empresa"],
                         'id_permisos' => $row["id_permisos"],
@@ -4430,6 +4538,7 @@ if (isset($_GET)) {
                         'puesto' => $row["puesto"],
                         'fecha_inicio' => $row["fecha_inicio"],
                         'fecha_baja' => $row["fecha_baja"],
+                        'motivo_baja' => $row["motivo_baja"],
                         'telefono' => $row["telefono"],
                         'genero' => $row["genero"],
                         'licencia' => $row["licencia"],
@@ -6359,6 +6468,7 @@ if (isset($_POST)) {
             $id_empresa = intval($_POST['id_empresa']);
             $centros = isset($_POST['centros']) && is_array($_POST['centros']) ? $_POST['centros'] : [];
             $departamentos = isset($_POST['departamentos']) && is_array($_POST['departamentos']) ? $_POST['departamentos'] : [];
+            $puestos = isset($_POST['puestos']) && is_array($_POST['puestos']) ? $_POST['puestos'] : [];
 
             $sql = "SELECT e.id AS id_empleado, tp.nombre tipo_pago, bnc.nombre banco, e.no_cuenta no_cuenta, tc.nombre tipo_cuenta, cl.nombre condicion_laboral, 
                 CONCAT_WS(' ', e.primer_nombre, e.segundo_nombre, e.primer_apellido, e.segundo_apellido) AS nombre_empleado, 
@@ -6410,6 +6520,10 @@ if (isset($_POST)) {
             if (!empty($departamentos)) {
                 $dept_str = implode(',', array_map('intval', $departamentos));
                 $sql .= " AND dc.id_departamento IN ($dept_str) ";
+            }
+            if (!empty($puestos)) {
+                $puestos_str = implode(',', array_map(function($val) use ($con) { return "'" . mysqli_real_escape_string($con, $val) . "'"; }, $puestos));
+                $sql .= " AND e.puesto IN ($puestos_str) ";
             }
 
             $sql .= " GROUP BY e.id";
@@ -7444,7 +7558,7 @@ if (isset($_POST)) {
 
         if ($_POST["quest"] == 'editar_empleado') {
 
-            $sql = "UPDATE empleado SET estado = " . $_POST['estado'] . ", primer_nombre = '" . $_POST['primer_nombre'] . "', segundo_nombre = '" . $_POST['segundo_nombre'] . "', otro_nombre = '" . $_POST['otro_nombre'] . "', primer_apellido = '" . $_POST['primer_apellido'] . "', segundo_apellido = '" . $_POST['segundo_apellido'] . "', direccion = '" . $_POST['direccion'] . "', estado_civil = " . $_POST['estado_civil'] . ", fecha_nacimiento = '" . $_POST['fecha_nacimiento'] . "', dpi = '" . $_POST['dpi'] . "', no_igss = '" . $_POST['no_igss'] . "', centro_de_costo = " . $_POST['centro_de_costo'] . ", fecha_inicio = '" . $_POST['fecha_inicio'] . "', fecha_baja = '" . $_POST['fecha_baja'] . "', telefono = '" . $_POST['telefono'] . "', genero = " . $_POST['genero'] . ", licencia = '" . $_POST['licencia'] . "', id_tipo_licencia = " . $_POST['id_tipo_licencia'] . ", id_clase_licencia = " . $_POST['id_clase_licencia'] . ", horas_extra = " . $_POST['horas_extra'] . ", tipo_de_pago = " . $_POST['tipo_de_pago'] . ", banco = " . $_POST['banco'] . ", no_cuenta = '" . $_POST['no_cuenta'] . "', moneda = " . $_POST['moneda'] . ", conyugue = '" . $_POST['conyuge'] . "', bon_dec_37_2001 = '" . $_POST['bon_dec_37_2001'] . "', bon_incentivo = '" . $_POST['bon_incentivo'] . "', horas_extras_dobles = '" . $_POST['horas_extras_dobles'] . "', horas_extras_simples = '" . $_POST['horas_extras_simples'] . "', sueldo_ordinario = '" . $_POST['sueldo_ordinario'] . "', otro_ingresos = '" . $_POST['otro_ingresos'] . "', vacaciones = '" . $_POST['vacaciones'] . "', anticipo_quincenal = '" . $_POST['anticipo_quincenal'] . "', bantrab = '" . $_POST['bantrab'] . "', boleto_de_ornato = '" . $_POST['boleto_de_ornato'] . "', isr = '" . $_POST['isr'] . "', otro_descuentos = '" . $_POST['otro_descuentos'] . "', prestamo_empresa = '" . $_POST['prestamo_empresa'] . "', bancos = '" . $_POST['bancos'] . "', judiciales = '" . $_POST['judiciales'] . "', seguro = '" . $_POST['seguro'] . "', parqueo = '" . $_POST['parqueo'] . "', primaria = " . $_POST['primaria'] . ", grado_primaria = '" . $_POST['grado_primaria'] . "', secundaria = " . $_POST['secundaria'] . ", grado_secundaria = '" . $_POST['grado_secundaria'] . "', diversificado = " . $_POST['diversificado'] . ", universidad = " . $_POST['universidad'] . ", nacionalidad = '" . $_POST['nacionalidad'] . "', region_originario = '" . $_POST['region_originario'] . "', departamento_originario = '" . $_POST['departamento_originario'] . "', municipio_originario = '" . $_POST['municipio_originario'] . "', municipio_laboral = '" . $_POST['municipio_laboral'] . "', apellido_casada = '" . $_POST['apellido_casada'] . "', condicion_laboral = " . $_POST['condicion_laboral'] . ", codigo_ocupacion = '" . $_POST['codigo_ocupacion'] . "', tipo_plantilla = " . $_POST['tipo_plantilla'] . ", horas_laborales = " . $_POST['horas_laborales'] . ", ventas_economicas = '" . $_POST['ventas_economicas'] . "', temporal = '" . $_POST['temporal'] . "', telefono_celular = '" . $_POST['telefono_celular'] . "', telefono_emergencia = '" . $_POST['telefono_emergencia'] . "', nombre_emergencia = '" . $_POST['nombre_emergencia'] . "', edad = '" . $_POST['edad'] . "', emision_dpi = '" . $_POST['emision_dpi'] . "', edad_conyuge = '" . $_POST['edad_conyuge'] . "', ocupacion_conyuge = '" . $_POST['ocupacion_conyuge'] . "', nombre_padre = '" . $_POST['nombre_padre'] . "', edad_padre = '" . $_POST['edad_padre'] . "', ocupacion_padre = '" . $_POST['ocupacion_padre'] . "', nombre_madre = '" . $_POST['nombre_madre'] . "', edad_madre = '" . $_POST['edad_madre'] . "', ocupacion_madre = '" . $_POST['ocupacion_madre'] . "', nit = '" . $_POST['nit'] . "', departamento_laboral = '" . $_POST['departamento_laboral'] . "', apellido_casada_originario = '" . $_POST['apellido_casada_originario'] . "', tipo_cuenta = " . $_POST['tipo_cuenta'] . ", puesto = '" . $_POST['puesto'] . "', jubilacion = " . $_POST['jubilacion'] . ", discapacidad = '" . $_POST['discapacidad'] . "', jornada = " . $_POST['jornada'] . ", id_permisos = " . $_POST['id_permisos'] . ", titulo_diploma = '" . $_POST['titulos_diplomas'] . "', afiliacion = '" . $_POST['afiliacion_igss'] . "', dimension_3 = " . $_POST['dimension_3'] . ", dimension_4 = " . $_POST['dimension_4'] . ", dimension_5 = " . $_POST['dimension_5'] . " WHERE id = " . $_POST['id'] . "";
+            $sql = "UPDATE empleado SET estado = " . $_POST['estado'] . ", primer_nombre = '" . $_POST['primer_nombre'] . "', segundo_nombre = '" . $_POST['segundo_nombre'] . "', otro_nombre = '" . $_POST['otro_nombre'] . "', primer_apellido = '" . $_POST['primer_apellido'] . "', segundo_apellido = '" . $_POST['segundo_apellido'] . "', direccion = '" . $_POST['direccion'] . "', estado_civil = " . $_POST['estado_civil'] . ", fecha_nacimiento = '" . $_POST['fecha_nacimiento'] . "', dpi = '" . $_POST['dpi'] . "', no_igss = '" . $_POST['no_igss'] . "', centro_de_costo = " . $_POST['centro_de_costo'] . ", fecha_inicio = '" . $_POST['fecha_inicio'] . "', fecha_baja = '" . $_POST['fecha_baja'] . "', motivo_baja = '" . $_POST['motivo_baja'] . "', telefono = '" . $_POST['telefono'] . "', genero = " . $_POST['genero'] . ", licencia = '" . $_POST['licencia'] . "', id_tipo_licencia = " . $_POST['id_tipo_licencia'] . ", id_clase_licencia = " . $_POST['id_clase_licencia'] . ", horas_extra = " . $_POST['horas_extra'] . ", tipo_de_pago = " . $_POST['tipo_de_pago'] . ", banco = " . $_POST['banco'] . ", no_cuenta = '" . $_POST['no_cuenta'] . "', moneda = " . $_POST['moneda'] . ", conyugue = '" . $_POST['conyuge'] . "', bon_dec_37_2001 = '" . $_POST['bon_dec_37_2001'] . "', bon_incentivo = '" . $_POST['bon_incentivo'] . "', horas_extras_dobles = '" . $_POST['horas_extras_dobles'] . "', horas_extras_simples = '" . $_POST['horas_extras_simples'] . "', sueldo_ordinario = '" . $_POST['sueldo_ordinario'] . "', otro_ingresos = '" . $_POST['otro_ingresos'] . "', vacaciones = '" . $_POST['vacaciones'] . "', anticipo_quincenal = '" . $_POST['anticipo_quincenal'] . "', bantrab = '" . $_POST['bantrab'] . "', boleto_de_ornato = '" . $_POST['boleto_de_ornato'] . "', isr = '" . $_POST['isr'] . "', otro_descuentos = '" . $_POST['otro_descuentos'] . "', prestamo_empresa = '" . $_POST['prestamo_empresa'] . "', bancos = '" . $_POST['bancos'] . "', judiciales = '" . $_POST['judiciales'] . "', seguro = '" . $_POST['seguro'] . "', parqueo = '" . $_POST['parqueo'] . "', primaria = " . $_POST['primaria'] . ", grado_primaria = '" . $_POST['grado_primaria'] . "', secundaria = " . $_POST['secundaria'] . ", grado_secundaria = '" . $_POST['grado_secundaria'] . "', diversificado = " . $_POST['diversificado'] . ", universidad = " . $_POST['universidad'] . ", nacionalidad = '" . $_POST['nacionalidad'] . "', region_originario = '" . $_POST['region_originario'] . "', departamento_originario = '" . $_POST['departamento_originario'] . "', municipio_originario = '" . $_POST['municipio_originario'] . "', municipio_laboral = '" . $_POST['municipio_laboral'] . "', apellido_casada = '" . $_POST['apellido_casada'] . "', condicion_laboral = " . $_POST['condicion_laboral'] . ", codigo_ocupacion = '" . $_POST['codigo_ocupacion'] . "', tipo_plantilla = " . $_POST['tipo_plantilla'] . ", horas_laborales = " . $_POST['horas_laborales'] . ", ventas_economicas = '" . $_POST['ventas_economicas'] . "', temporal = '" . $_POST['temporal'] . "', telefono_celular = '" . $_POST['telefono_celular'] . "', telefono_emergencia = '" . $_POST['telefono_emergencia'] . "', nombre_emergencia = '" . $_POST['nombre_emergencia'] . "', edad = '" . $_POST['edad'] . "', emision_dpi = '" . $_POST['emision_dpi'] . "', edad_conyuge = '" . $_POST['edad_conyuge'] . "', ocupacion_conyuge = '" . $_POST['ocupacion_conyuge'] . "', nombre_padre = '" . $_POST['nombre_padre'] . "', edad_padre = '" . $_POST['edad_padre'] . "', ocupacion_padre = '" . $_POST['ocupacion_padre'] . "', nombre_madre = '" . $_POST['nombre_madre'] . "', edad_madre = '" . $_POST['edad_madre'] . "', ocupacion_madre = '" . $_POST['ocupacion_madre'] . "', nit = '" . $_POST['nit'] . "', departamento_laboral = '" . $_POST['departamento_laboral'] . "', apellido_casada_originario = '" . $_POST['apellido_casada_originario'] . "', tipo_cuenta = " . $_POST['tipo_cuenta'] . ", puesto = '" . $_POST['puesto'] . "', jubilacion = " . $_POST['jubilacion'] . ", discapacidad = '" . $_POST['discapacidad'] . "', jornada = " . $_POST['jornada'] . ", id_permisos = " . $_POST['id_permisos'] . ", titulo_diploma = '" . $_POST['titulos_diplomas'] . "', afiliacion = '" . $_POST['afiliacion_igss'] . "', dimension_3 = " . $_POST['dimension_3'] . ", dimension_4 = " . $_POST['dimension_4'] . ", dimension_5 = " . $_POST['dimension_5'] . " WHERE id = " . $_POST['id'] . "";
             $result = mysqli_query($con, $sql);
 
             if (!$result) {

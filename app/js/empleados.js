@@ -390,6 +390,7 @@ function listado_empleados_baja() {
                     <td class="text-center">${nombreCompleto}</td>
                     <td class="text-center">${lista.dpi}</td>
                     <td class="text-center">${lista.empresa}</td>
+                    <td class="text-center">${lista.motivo_baja ? lista.motivo_baja : ''}</td>
                     <td class="text-center">
                         <div class="action-btns">
                             <a onclick="detalle_empleado(${lista.id})" class="action-btn btn-view bs-tooltip me-2"
@@ -704,7 +705,10 @@ function listado_empleados_empresa_baja(id_empresa) {
                             <td class="text-center">${nombreCompleto}</td>
                             <td class="text-center">${lista.dpi}</td>
                             <td class="text-center">${lista.empresa}</td>
-                            <a onclick="detalle_empleado(${lista.id})" class="action-btn btn-view bs-tooltip me-2"
+                            <td class="text-center">${lista.motivo_baja ? lista.motivo_baja : ''}</td>
+                            <td class="text-center">
+                                <div class="action-btns">
+                                    <a onclick="detalle_empleado(${lista.id})" class="action-btn btn-view bs-tooltip me-2"
                                         data-toggle="tooltip" data-placement="top" title="Detalle">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -714,8 +718,6 @@ function listado_empleados_empresa_baja(id_empresa) {
                                             <circle cx="12" cy="12" r="3"></circle>
                                         </svg>
                                     </a>
-                            <td class="text-center">
-                                <div class="action-btns">
                                      <a onclick="vacaciones(${lista.id_permisos})" class="action-btn btn-view bs-tooltip me-2"
                                 data-toggle="tooltip" data-placement="top" title="Vacaciones">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
